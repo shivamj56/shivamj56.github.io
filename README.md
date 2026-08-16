@@ -34,6 +34,7 @@ There is no build step, so any static host serves this directly from the repo ro
 | -------------------- | ------- |
 | `index.html`         | The whole page. Content, styles and page logic. |
 | `support.js`         | Claude Design `dc-runtime`. Parses `<x-dc>`, hoists `<helmet>` into `<head>`, resolves `{{ }}` bindings, and transpiles `<x-import>` components. Generated — do not edit. |
+| `nav.js`             | Retracts the nav pills on scroll down. Deliberately **not** inline in the `<helmet>` — see below. |
 | `flying-posters.jsx` | WebGL poster reel for the "all twelve screens" section. Adapted from React Bits so the page's own scroll drives it instead of hijacking the wheel. See [The user manual reel](#the-user-manual-reel). |
 | `screens/`           | The twelve app screenshots, in the order a trade moves through them. WebP q88 — 304 KB for all twelve, against 4.3 MB as PNG. |
 
@@ -50,6 +51,19 @@ then, at runtime in the browser:
 4. transpiles and mounts `<x-import>` components such as `FlyingPosters`.
 
 To change copy, edit the `EN` and `HI` objects near the bottom of `index.html`.
+
+## Two runtime traps, both hit here
+
+- **Inline `<helmet>` scripts are hoisted by copying `textContent` onto a fresh
+  `<script>`.** Logic that parses perfectly standalone can fail on the way
+  through — this cost a `SyntaxError: Unexpected token '-'` from
+  `support.js:1446` with no clue as to which script. If an inline helmet script
+  misbehaves, move it to its own file and load it with `<script src>`; that is
+  why `nav.js` exists.
+- **The runtime renders through React and replaces elements.** A DOM reference
+  captured once ends up on a detached node: your class gets set, the computed
+  value looks right in a debugger, and nothing on screen moves. Re-query when
+  `!node.isConnected`.
 
 ## Responsiveness
 

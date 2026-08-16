@@ -13,6 +13,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0a0b'/%3E%3Cpath d='M16 6a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4.4a5.6 5.6 0 1 1 0 11.2 5.6 5.6 0 0 1 0-11.2z' fill='%23f0561a'/%3E%3C/svg%3E">
 <script src="./support.js"></script>
+<script src="./nav.js" defer></script>
 </head>
 <body>
 <x-dc>
@@ -181,8 +182,20 @@ a:hover{color:var(--accent-hi)}
    half a narrow viewport restating it and pushing the CTA off screen. */
 /* A soft fade rather than a bar: content dissolves as it passes under the pills
    instead of colliding with them, and there is no edge to look at. */
-.nav-float{position:sticky;top:0;z-index:50;padding:14px var(--gut) 30px;pointer-events:none;
-  background:linear-gradient(180deg,rgba(10,10,11,calc(.92 - var(--lit) * .78)),rgba(10,10,11,calc(.6 - var(--lit) * .52)) 46%,transparent)}
+.nav-float{position:sticky;top:0;z-index:50;padding:14px var(--gut) 30px;pointer-events:none}
+/* The top fade lives on a pseudo-element so it can be faded independently, and
+   so .nav-float itself never takes a transform — a transformed ancestor turns
+   position:fixed into position:absolute, which would break the progress line. */
+.nav-float::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(10,10,11,calc(.92 - var(--lit) * .78)),rgba(10,10,11,calc(.6 - var(--lit) * .52)) 46%,transparent);
+  transition:opacity .4s ease}
+.nav-row{transition:transform .5s cubic-bezier(.2,.85,.2,1),opacity .32s ease}
+/* Out of the way while the reader is moving down the page, back on the first
+   upward flick — so the sections present full-screen without stranding the CTA
+   at the far end of a very long page. */
+.nav-float.is-away::before{opacity:0}
+.nav-float.is-away .nav-row{transform:translateY(-155%);opacity:0;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.nav-row,.nav-float::before{transition:none}}
 .cta-card{-webkit-backdrop-filter:blur(calc(var(--lit) * 16px)) saturate(calc(100% + var(--lit) * 40%));
   backdrop-filter:blur(calc(var(--lit) * 16px)) saturate(calc(100% + var(--lit) * 40%))}
 .nav-progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;pointer-events:none}
