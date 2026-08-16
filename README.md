@@ -36,6 +36,7 @@ There is no build step, so any static host serves this directly from the repo ro
 | `support.js`         | Claude Design `dc-runtime`. Parses `<x-dc>`, hoists `<helmet>` into `<head>`, resolves `{{ }}` bindings, and transpiles `<x-import>` components. Generated — do not edit. |
 | `nav.js`             | Retracts the nav pills on scroll down. Deliberately **not** inline in the `<helmet>` — see below. |
 | `flying-posters.jsx` | WebGL poster reel for the "all twelve screens" section. Adapted from React Bits so the page's own scroll drives it instead of hijacking the wheel. See [The user manual reel](#the-user-manual-reel). |
+| `tools-refine-screens.py` | Keys the backdrop out of a raw screenshot and gives it a clean rounded silhouette. Run it on any new capture before adding it — see below. |
 | `screens/`           | The twelve app screenshots, in the order a trade moves through them. WebP q88 — 304 KB for all twelve, against 4.3 MB as PNG. |
 
 ## How the page is built
@@ -207,6 +208,31 @@ done
 Text over the light half carries a **white** halo, not a dark one — `--lit`
 inverts the `text-shadow` along with the ink. Mid-grey body copy with a dark glow
 on a light, busy backdrop is what makes type look smudged rather than set.
+
+## Adding or replacing a screenshot
+
+**Do not drop a raw capture straight in.** Every screenshot arrives as a
+rectangle with whatever sat behind the phone baked into its corners — the
+original set was shot on the app's dark backdrop, later exports on light grey.
+Composited onto the page that reads as a dirty, unfinished edge, and the two sets
+do not match each other.
+
+```bash
+python3 tools-refine-screens.py raw-capture.png /tmp/out.png
+cwebp -lossless -m 6 -mt -quiet /tmp/out.png -o screens/03-weight.webp
+```
+
+The script floods inward from the four corners to find the backdrop whatever its
+colour, measures the card, then **draws** the mask as a real rounded rectangle
+rather than using the flood result directly. That matters: the flood stops at the
+antialiased boundary and leaves a one-or-two pixel fringe of the old backdrop
+clinging to the arc, which is visible once composited. It also pads every card to
+one shared aspect so they are all the same shape in the reel.
+
+The threshold is adaptive with a leak guard, because the two sets need very
+different values — a dark gradient needs a loose threshold to span it, while a
+light-grey backdrop sits only ~28 levels from the card and floods straight
+through the screen if the threshold is loose.
 
 ## The hero device mockup
 
