@@ -277,7 +277,7 @@ Tune it with the props on the `<x-import>` in `index.html`:
 | `hold`       |  `0.46` | Share of each screen's scroll spent parked. Raise to linger longer. |
 | `dwell`      |   `0.1` | How far a card can drift from centre before it starts tilting. |
 | `turn-end`   |   `0.8` | Distance at which the tilt has reached its maximum. |
-| `max-turn`   |  `0.42` | Ceiling on the tilt, in half-turns. **Keep below `0.5`** — at `0.5` the card is edge-on, and past it the reader sees the mirrored back face with the copy running backwards. |
+| `max-turn`   |   `0.5` | Ceiling on the turn, in half-turns. **`0.5` exactly is the point.** The card turns a full quarter, flat to edge-on — the poster-fall flip at full strength — and because it stops precisely at 90° it can never come round far enough to show its mirrored back. Lower values read as a lean, not a turn; higher values expose the back face with the copy running backwards. |
 | `gap`        |  `0.05` | Clearance between cards, as a share of viewport height. Larger values leave more empty frame mid-transition. |
 | `distortion` |   `2.2` | Twist applied during the turn only. Peaks mid-turn and is zero whenever the card is legible. |
 | `scroll-ease`| `0.085` | Lerp toward the scroll target. Lower is smoother and lazier. |

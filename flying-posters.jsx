@@ -222,9 +222,12 @@ function makeClasses(ogl) {
       const d = this.plane.position.y / this.height;
       this.d = d;
       this.program.uniforms.uPosition.value = d;
-      /* Dissolve at the very edge of the frame so the recycle below — which
-         flips the sign of d, and so of the tilt — always happens out of sight. */
-      this.program.uniforms.uOpacity.value = 1 - smootherstep(0.80, 0.99, Math.abs(d));
+      /* Held opaque right through the turn: fading at 0.80 was cutting the card
+         away exactly when it was most rotated, which is why the flip stopped
+         reading. By the time this bites the card is already edge-on and has no
+         width, so this only covers the recycle — which flips the sign of d, and
+         so of the tilt — happening out of sight. */
+      this.program.uniforms.uOpacity.value = 1 - smootherstep(0.90, 1.0, Math.abs(d));
       this.program.uniforms.uTime.value += 0.04;
       this.program.uniforms.uSpeed.value = scroll.current;
       const h = this.plane.scale.y, vh = this.viewport.height;
@@ -491,10 +494,14 @@ function FlyingPosters({
   stepSync = true,
   progressSelector = '[data-manual-track]',
   entryDelay = 700,
-  dwell = 0.1,        // stays perfectly flat within this many slots of centre
-  turnEnd = 0.8,      // ...and has reached its full tilt by here
-  maxTurn = 0.42,     // hard ceiling on the tilt, in half-turns (0.5 === 90°)
-  gap = 0.05,         // clearance between cards, as a share of viewport height
+  dwell = 0.07,       // stays perfectly flat within this many slots of centre
+  turnEnd = 0.76,     // ...and is fully edge-on by here
+  /* Exactly 0.5 is the whole trick. The card turns a full quarter, from flat to
+     edge-on, which is the poster-fall flip at full strength — and because it
+     stops precisely at 90° it can never come round far enough to present its
+     mirrored back. Lower values were readable but barely looked like a turn. */
+  maxTurn = 0.5,
+  gap = 0.03,         // clearance between cards, as a share of viewport height
   hold = 0.46,        // share of each screen's scroll spent parked and still
   steps,
   className = '',
