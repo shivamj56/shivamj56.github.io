@@ -121,13 +121,23 @@ full visibility.
 | `.site-bg-scrim` | radial | Protects the middle, where copy sits |
 | `[data-step-left]`, `[data-step-right]`, `[data-over-art]` | `text-shadow` | Contrast for copy sitting directly over the glow |
 
-**Pacing.** `EASE` in the background script (4.2) shapes scroll progress before
-it maps to a frame. The clip's first ~13 frames are a near-static dark wall
-(mean luma .143 → .182), so stretching them over most of the page costs no
-visible motion, while the burst and the emblem resolving — the only parts that
-actually move — get the last quarter. This keeps the manual reel whole on one
-theme instead of straddling the changeover. Set `EASE = 1` to play the clip
+**Pacing.** `EASE` in the background script (0.75) shapes scroll progress before
+it maps to a frame. It is a mild lead, bringing the clip's dark-to-light turn
+forward so the backdrop has resolved to white *before* the manual section starts
+— that section is designed to be read on white. Keep it mild: heavy easing parks
+the footage and reads as a stall rather than a pace. `EASE = 1` plays the clip
 evenly across the page.
+
+The burst is the brightest, busiest stretch of the clip and it passes behind a
+copy-heavy section, so `vis` dips ~30% while it goes by and recovers after —
+short enough not to register as the artwork being dimmed.
+
+**Captions sit on their own field, not on a dimmed backdrop.** On white the
+emblem's trails run straight through the reel's copy. Each caption block carries
+a radial that fades to nothing (`[data-step-left]::before`), keyed to `--lit` so
+it does not exist while the page is dark. Fixing contrast this way keeps the
+artwork at full strength — dimming the background to make room for text is the
+wrong trade.
 
 **Time `--lit` from the frames, never by eye.** Mean luminance climbs from 0.18
 at p=0.24 to 0.72 by p=0.43, so the ramp is `smoothstep(0.24, 0.40)` — leading it

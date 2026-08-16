@@ -84,6 +84,17 @@ a:hover{color:var(--accent-hi)}
 /* With the emblem this bright, the copy over it needs its own contrast rather
    than a heavier scrim — otherwise brightening the art just dims the art again.
    These carry the text that sits directly over the glow. */
+/* On white the emblem's trails run straight through the caption copy. Rather
+   than dim the artwork, each caption sits on its own soft field: a radial that
+   fades to nothing, so it reads as clean space rather than a panel with edges.
+   Keyed to --lit, so it does not exist while the page is dark. */
+[data-step-left],[data-step-right]{position:relative;isolation:isolate}
+[data-step-left]::before,[data-step-right]::before{content:'';position:absolute;
+  inset:-26% -16%;z-index:-1;pointer-events:none;
+  background:radial-gradient(58% 52% at 50% 50%,
+    rgba(247,247,249,calc(var(--lit) * .88)) 0%,
+    rgba(247,247,249,calc(var(--lit) * .62)) 42%,
+    rgba(247,247,249,0) 74%)}
 [data-step-left],[data-step-right],[data-over-art]{text-shadow:0 2px 18px rgba(10,10,11,calc(.95 - var(--lit) * .95)),0 1px 4px rgba(10,10,11,calc(.9 - var(--lit) * .9)),
    0 1px 14px rgba(255,255,255,calc(var(--lit) * .92)),0 0 3px rgba(255,255,255,calc(var(--lit) * .85))}
 /* ---- hero device mockup ----------------------------------------------
@@ -255,7 +266,7 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
    on every scroll event stalls badly on Safari and iOS. */
 (function(){
   if(window.__omBg) return; window.__omBg = true;
-  var N = 50, POOL = 6, EASE = 4.2, inited = false;
+  var N = 50, POOL = 6, EASE = 0.75, inited = false;
   var src = function(i){ return 'bg/f' + ('00' + (i + 1)).slice(-3) + '.webp'; };
 
   function init(){
@@ -325,15 +336,19 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
       var start = vh * 0.92;
       var span = Math.max(1, document.documentElement.scrollHeight - vh - start);
       var linear = Math.min(1, Math.max(0, (y - start) / span));
-      /* Frames 1-13 are a near-static dark wall (mean luma .143 -> .182), so
-         stretching them over most of the page costs no visible motion — while
-         the burst and the emblem resolving, which are the only parts that
-         actually move, get the last quarter. This keeps the manual reel whole on
-         one theme instead of straddling the changeover, and makes the reveal a
-         payoff rather than a mid-page event. EASE is the single knob: 1 plays
-         the clip evenly across the page. */
+      /* A slight lead, not a hold. EASE < 1 brings the clip's dark-to-light turn
+         forward so the backdrop has resolved to white before the manual section
+         begins — that section is meant to be read on white. It is a mild curve
+         on purpose: heavy easing parks the footage and reads as a stall.
+         EASE = 1 plays the clip evenly across the page. */
       want = Math.pow(linear, EASE);
       var vis = smoothstep(vh * 0.42, vh * 1.05, y);
+      /* The burst is the brightest and busiest stretch of the clip, and it now
+         passes behind a copy-heavy section. Ease the backdrop back while it goes
+         by — a few percent of opacity, recovered afterwards, so the artwork is
+         never dimmed for long enough to notice but the copy keeps its contrast. */
+      var burst = smoothstep(0.22, 0.34, want) * (1 - smoothstep(0.48, 0.66, want));
+      vis *= 1 - 0.30 * burst;
       document.documentElement.style.setProperty('--bg-vis', vis.toFixed(4));
       /* Measured from the frames, not guessed: mean luminance climbs from 0.18
          at p=0.24 to 0.72 by p=0.43. The theme leads that slightly so the copy
@@ -823,7 +838,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div class="manual-flank" data-flank="left" style="height:min(78vh,780px);display:flex;align-items:center;justify-content:flex-end;pointer-events:none">
 <div data-step-left style="text-align:right;will-change:transform,opacity">
 <div data-cap="tag" style="font-size:10.5px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;color:var(--accent);margin-bottom:20px">Part one</div>
-<div data-cap="num" style="font-size:64px;font-weight:800;letter-spacing:-.05em;line-height:.9;color:color-mix(in srgb,rgba(255,255,255,.16),rgba(20,20,28,.34) calc(var(--lit) * 100%))">01</div>
+<div data-cap="num" style="font-size:64px;font-weight:800;letter-spacing:-.05em;line-height:.9;color:color-mix(in srgb,rgba(255,255,255,.16),rgba(22,22,30,.52) calc(var(--lit) * 100%))">01</div>
 <div data-cap="title" style="font-size:34px;font-weight:800;letter-spacing:-.035em;line-height:1.08;margin-top:12px">Open the app</div>
 </div>
 </div>
