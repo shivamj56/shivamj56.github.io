@@ -70,16 +70,22 @@ the background never competes with content for bandwidth. Frame 1 lands first an
 the rest stream in six at a time; scrubbing works throughout, falling back to the
 nearest decoded frame rather than flashing empty.
 
-**Legibility is the thing to watch when tuning.** Two knobs, both in the CSS:
+**Legibility is the thing to watch when tuning.** Three knobs, all in the CSS:
 
 | | Default | |
 | --- | --- | --- |
-| `.site-bg.is-ready canvas` opacity | `.58` | Overall presence of the emblem |
+| `.site-bg.is-ready canvas` opacity | `.88` | Overall presence of the emblem |
 | `.site-bg-scrim` | radial + linear | Darkens the middle, where the copy sits |
+| `[data-step-left]`, `[data-step-right]`, `[data-over-art]` | `text-shadow` | Contrast for the copy that sits directly over the glow |
 
-Raising the opacity past roughly `.7` starts to cost contrast on the manual
-section's captions. Check that section specifically after any change — it is the
-first place text becomes hard to read.
+At this brightness the scrim alone is not enough — darkening it far enough to
+protect the text would just dim the art you brightened. So the copy that sits
+over the emblem carries its own shadow instead: the manual section's captions,
+and the closing CTA block. Anything new placed over the brightest part of the
+frame wants `data-over-art` too.
+
+The manual section's captions and the closing CTA subhead are the two places to
+check after any change — they are where text goes unreadable first.
 
 Under `prefers-reduced-motion` the sequence is not scrubbed at all: the last
 frame is drawn once, statically.
