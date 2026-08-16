@@ -86,16 +86,24 @@ blitting them is what scroll-scrubbed product pages actually do. Adjacent frames
 are crossfaded, which is what lets 50 stills read as continuous motion over a
 page this tall.
 
-**The frames carry alpha, and that is load-bearing.** The source clip runs from a
-dark stone wall to a bright studio white. Composited straight onto a dark page
-the back half would wash every section out. `scratchpad/key.py` keys the backdrop
-away at encode time so only the emblem and its trails composite onto the page.
+**The frames ship exactly as supplied — nothing is keyed, tinted or re-graded.**
+An earlier pass keyed the backdrop away to keep the page dark; that rewrote the
+asset rather than using it, and was reverted.
 
-The key is on **saturation, not luminance**. Both ends of the clip are
-essentially unsaturated while the emblem is strongly saturated throughout, so
-luminance keying would drop the dark start and keep the white end — exactly
-backwards. Any "keep the bright pixels" rescue rule hands the white backdrop
-straight back as a milky haze over the copy; there was one, and it did.
+Instead the *page* follows the footage. The clip runs from a dark stone wall to a
+bright studio white, so the site crossfades to a light theme over the same
+stretch. The scroll handler writes `--lit` (0 → 1) on `<html>`, and the ink and
+glass tokens in `:root` are all functions of it via `color-mix()`. That is why no
+section is hand-themed: change `--lit` and the whole page follows.
+
+Anything hardcoded to a light colour is invisible once `--lit` reaches 1 and has
+to be converted too. `color:#ffb08a` and the reel's ghosted step number were both
+caught this way; check for new ones after adding markup near the bottom of the
+page.
+
+The closing CTA card frosts (`backdrop-filter`) in proportion to `--lit`, so the
+copy reads against a surface while the emblem stays visible behind it rather than
+being dimmed away.
 
 ### Entry
 

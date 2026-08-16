@@ -23,9 +23,17 @@
 <style>
 :root{
   --accent:#f0561a; --accent-lo:#ff8a52; --accent-hi:#d9420b;
-  --ink:#f4f4f5; --ink-2:#9c9ca6; --ink-3:#6c6c76;
-  --glass:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
-  --glass-brd:1px solid rgba(255,255,255,.09);
+  /* --lit is written by the background scroll handler: 0 while the clip's
+     backdrop is dark, 1 once it has resolved to white. Every ink and glass
+     token is a function of it, so the whole page crossfades to a light theme
+     in step with the footage instead of needing each section hand-themed. */
+  --lit:0;
+  --ink-warm:color-mix(in srgb,#ffb08a,#9c3d0c calc(var(--lit) * 100%));
+  --ink:color-mix(in srgb,#f4f4f5,#101017 calc(var(--lit) * 100%));
+  --ink-2:color-mix(in srgb,#9c9ca6,#45454f calc(var(--lit) * 100%));
+  --ink-3:color-mix(in srgb,#6c6c76,#6f6f7b calc(var(--lit) * 100%));
+  --glass:linear-gradient(155deg,rgba(255,255,255,calc(.055 + var(--lit) * .58)),rgba(255,255,255,calc(.018 + var(--lit) * .5)));
+  --glass-brd:1px solid rgba(255,255,255,calc(.09 + var(--lit) * .5));
   --glass-sh:0 20px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);
   --pill:linear-gradient(180deg,var(--accent-lo) 0%,var(--accent) 46%,var(--accent-hi) 100%);
   --gut:clamp(16px,4.4vw,32px);
@@ -68,15 +76,15 @@ a:hover{color:var(--accent-hi)}
 /* Driven by --bg-vis from the scroll handler, so the emblem is absent over the
    hero and eases in on the screen after it. The scale settle rides the same
    value; without it the entry reads as an image popping in. */
-.site-bg.is-ready canvas{opacity:calc(var(--bg-vis,0) * .72);
+.site-bg.is-ready canvas{opacity:calc(var(--bg-vis,0) * 1);
   transform:scale(calc(1.055 - var(--bg-vis,0) * .055));
   transform-origin:50% 45%;will-change:opacity,transform}
 .site-bg-scrim{position:absolute;inset:0;
-  background:radial-gradient(76% 64% at 50% 46%,rgba(10,10,11,.1),rgba(10,10,11,.62) 84%)}
+  background:radial-gradient(78% 66% at 50% 46%,rgba(10,10,11,calc(.05 - var(--lit) * .05)),rgba(10,10,11,calc(.42 - var(--lit) * .34)) 86%)}
 /* With the emblem this bright, the copy over it needs its own contrast rather
    than a heavier scrim — otherwise brightening the art just dims the art again.
    These carry the text that sits directly over the glow. */
-[data-step-left],[data-step-right],[data-over-art]{text-shadow:0 2px 18px rgba(10,10,11,.95),0 1px 4px rgba(10,10,11,.9)}
+[data-step-left],[data-step-right],[data-over-art]{text-shadow:0 2px 18px rgba(10,10,11,calc(.95 - var(--lit) * .95)),0 1px 4px rgba(10,10,11,calc(.9 - var(--lit) * .9))}
 /* ---- hero device mockup ----------------------------------------------
    The screenshots in screens/ are the single source of truth: the hero shows
    the same files the manual section does, so a UI change lands in both.
@@ -163,7 +171,9 @@ a:hover{color:var(--accent-hi)}
 /* A soft fade rather than a bar: content dissolves as it passes under the pills
    instead of colliding with them, and there is no edge to look at. */
 .nav-float{position:sticky;top:0;z-index:50;padding:14px var(--gut) 30px;pointer-events:none;
-  background:linear-gradient(180deg,rgba(10,10,11,.92),rgba(10,10,11,.6) 46%,transparent)}
+  background:linear-gradient(180deg,rgba(10,10,11,calc(.92 - var(--lit) * .78)),rgba(10,10,11,calc(.6 - var(--lit) * .52)) 46%,transparent)}
+.cta-card{-webkit-backdrop-filter:blur(calc(var(--lit) * 16px)) saturate(calc(100% + var(--lit) * 40%));
+  backdrop-filter:blur(calc(var(--lit) * 16px)) saturate(calc(100% + var(--lit) * 40%))}
 .nav-progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;pointer-events:none}
 .nav-row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:flex-end;
   gap:9px;flex-wrap:wrap}
@@ -172,7 +182,7 @@ a:hover{color:var(--accent-hi)}
   -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
   border:var(--glass-brd);box-shadow:var(--glass-sh)}
 .nav-help{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 18px;
-  border-radius:999px;font-size:13.5px;font-weight:700;color:#ffb08a;text-decoration:none;
+  border-radius:999px;font-size:13.5px;font-weight:700;color:var(--ink-warm);text-decoration:none;
   white-space:nowrap;background:rgba(10,10,11,.74);
   -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
   border:var(--glass-brd);box-shadow:var(--glass-sh);transition:color .25s ease}
@@ -300,7 +310,11 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
       var span = Math.max(1, document.documentElement.scrollHeight - vh - start);
       want = Math.min(1, Math.max(0, (y - start) / span));
       var vis = smoothstep(vh * 0.42, vh * 1.05, y);
-      root.style.setProperty('--bg-vis', vis.toFixed(4));
+      document.documentElement.style.setProperty('--bg-vis', vis.toFixed(4));
+      /* The footage resolves to white across roughly the last third, so the
+         theme crossfades over the same stretch rather than switching. */
+      var lit = smoothstep(0.62, 0.78, want);
+      document.documentElement.style.setProperty('--lit', lit.toFixed(4));
       if(!raf) raf = requestAnimationFrame(function(){ raf = null; draw(want); });
     }
     function load(i, done){
@@ -314,7 +328,7 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
     size();
     addEventListener('resize', size, {passive:true});
 
-    if(reduce){ root.style.setProperty('--bg-vis','1'); load(N - 1, function(){ want = 1; draw(1); }); return; }
+    if(reduce){ document.documentElement.style.setProperty('--bg-vis','1'); document.documentElement.style.setProperty('--lit','1'); load(N - 1, function(){ want = 1; draw(1); }); return; }
 
     addEventListener('scroll', onScroll, {passive:true});
     /* Frame 1 lands first so the page is never a blank canvas, then the rest
@@ -457,7 +471,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <!-- ============ HERO ============ -->
 <div style="max-width:1180px;margin:0 auto;padding:72px 32px 0;display:flex;gap:56px;align-items:center;flex-wrap:wrap">
 <div style="flex:1 1 460px;min-width:340px">
-<div style="display:inline-flex;align-items:center;gap:9px;height:34px;padding:0 15px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#ffb08a;background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:var(--glass-sh);margin-bottom:26px">
+<div style="display:inline-flex;align-items:center;gap:9px;height:34px;padding:0 15px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-warm);background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:var(--glass-sh);margin-bottom:26px">
 <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(240,86,26,.9)"></span>{{ t.heroBadge }}
 </div>
 <h1 data-anim style="margin:0;font-size:82px;line-height:.95;font-weight:800;letter-spacing:-.045em">{{ t.heroTitle }}</h1>
@@ -471,7 +485,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <svg width="17" height="20" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" style="flex:0 0 auto"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-36.5-2.8-76.4 21.2-91 21.2-15.4 0-50.7-20.2-78.4-20.2C61.7 141.6 8 184.7 8 271.2c0 25.6 4.7 52 14 79.3 12.5 35.9 56.1 123.8 101.6 122.4 23.8-.6 40.6-16.9 71.6-16.9 30.1 0 45.6 16.9 72.2 16.9 45.9-.7 85.3-80.6 97.2-116.6-61.4-29-46.1-86.6-45.9-87.6zM255.2 84.6c15.2-18.5 22.9-40.1 21.6-64.6-24.3 1.4-45.9 13.2-63.6 33.5-15.7 18.2-24.1 39.7-22.5 63.3 26.1 2 49.4-10.5 64.5-32.2z"/></svg>
 <span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><span style="font-size:9.5px;font-weight:700;opacity:.7;letter-spacing:.09em;text-transform:uppercase">{{ t.storeIosSmall }}</span><span style="font-size:16.5px;font-weight:800">{{ t.storeIosBig }}</span></span>
 </a>
-<div style="height:60px;padding:0 28px;border-radius:999px;display:flex;align-items:center;gap:10px;font-size:15.5px;font-weight:700;color:#ffb08a;background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:0 12px 28px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.09);cursor:pointer">📞 {{ t.heroCall }}</div>
+<div style="height:60px;padding:0 28px;border-radius:999px;display:flex;align-items:center;gap:10px;font-size:15.5px;font-weight:700;color:var(--ink-warm);background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:0 12px 28px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.09);cursor:pointer">📞 {{ t.heroCall }}</div>
 </div>
 <div data-anim style="display:flex;gap:22px;margin-top:30px;flex-wrap:wrap">
 <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-2)"><span style="color:#4ade80;font-weight:800">✓</span>{{ t.heroPoint1 }}</div>
@@ -779,7 +793,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div class="manual-flank" data-flank="left" style="height:min(78vh,780px);display:flex;align-items:center;justify-content:flex-end;pointer-events:none">
 <div data-step-left style="text-align:right;will-change:transform,opacity">
 <div data-cap="tag" style="font-size:10.5px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;color:var(--accent);margin-bottom:20px">Part one</div>
-<div data-cap="num" style="font-size:64px;font-weight:800;letter-spacing:-.05em;line-height:.9;color:rgba(255,255,255,.16)">01</div>
+<div data-cap="num" style="font-size:64px;font-weight:800;letter-spacing:-.05em;line-height:.9;color:color-mix(in srgb,rgba(255,255,255,.16),rgba(20,20,28,.34) calc(var(--lit) * 100%))">01</div>
 <div data-cap="title" style="font-size:34px;font-weight:800;letter-spacing:-.035em;line-height:1.08;margin-top:12px">Open the app</div>
 </div>
 </div>
@@ -957,7 +971,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 
 <!-- ============ FINAL CTA ============ -->
 <div style="max-width:1180px;margin:0 auto;padding:104px 32px 0">
-<div data-anim style="border-radius:40px;padding:64px 44px;text-align:center;background:linear-gradient(155deg,rgba(255,255,255,.06),rgba(240,86,26,.10) 55%,rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:0 40px 90px -24px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.10);position:relative;overflow:hidden">
+<div class="cta-card" data-anim style="border-radius:40px;padding:64px 44px;text-align:center;background:linear-gradient(155deg,rgba(255,255,255,calc(.06 + var(--lit) * .66)),rgba(240,86,26,calc(.10 - var(--lit) * .04)) 55%,rgba(255,255,255,calc(.03 + var(--lit) * .66)));border:var(--glass-brd);box-shadow:0 40px 90px -24px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.10);position:relative;overflow:hidden">
 <div style="position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,150,90,.22),transparent 70%);top:-150px;left:-90px"></div>
 <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(150,160,255,.20),transparent 70%);bottom:-140px;right:-70px"></div>
 <div data-over-art style="position:relative">
@@ -972,7 +986,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <svg width="17" height="20" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" style="flex:0 0 auto"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-36.5-2.8-76.4 21.2-91 21.2-15.4 0-50.7-20.2-78.4-20.2C61.7 141.6 8 184.7 8 271.2c0 25.6 4.7 52 14 79.3 12.5 35.9 56.1 123.8 101.6 122.4 23.8-.6 40.6-16.9 71.6-16.9 30.1 0 45.6 16.9 72.2 16.9 45.9-.7 85.3-80.6 97.2-116.6-61.4-29-46.1-86.6-45.9-87.6zM255.2 84.6c15.2-18.5 22.9-40.1 21.6-64.6-24.3 1.4-45.9 13.2-63.6 33.5-15.7 18.2-24.1 39.7-22.5 63.3 26.1 2 49.4-10.5 64.5-32.2z"/></svg>
 <span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><span style="font-size:9.5px;font-weight:700;opacity:.7;letter-spacing:.09em;text-transform:uppercase">{{ t.storeIosSmall }}</span><span style="font-size:17px;font-weight:800">{{ t.storeIosBig }}</span></span>
 </a>
-<div style="height:62px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;color:#ffb08a;background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:0 12px 28px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.09);cursor:pointer" onClick="window.location.href='tel:+919120035500'">📞 {{ t.supportCta }}</div>
+<div style="height:62px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;color:var(--ink-warm);background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:0 12px 28px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.09);cursor:pointer" onClick="window.location.href='tel:+919120035500'">📞 {{ t.supportCta }}</div>
 </div>
 <div style="font-size:12.5px;font-weight:600;color:var(--ink-3);margin-top:22px">{{ t.ctaNote }}</div>
 </div>
