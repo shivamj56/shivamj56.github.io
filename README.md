@@ -121,6 +121,14 @@ full visibility.
 | `.site-bg-scrim` | radial | Protects the middle, where copy sits |
 | `[data-step-left]`, `[data-step-right]`, `[data-over-art]` | `text-shadow` | Contrast for copy sitting directly over the glow |
 
+**Pacing.** `EASE` in the background script (4.2) shapes scroll progress before
+it maps to a frame. The clip's first ~13 frames are a near-static dark wall
+(mean luma .143 → .182), so stretching them over most of the page costs no
+visible motion, while the burst and the emblem resolving — the only parts that
+actually move — get the last quarter. This keeps the manual reel whole on one
+theme instead of straddling the changeover. Set `EASE = 1` to play the clip
+evenly across the page.
+
 **Time `--lit` from the frames, never by eye.** Mean luminance climbs from 0.18
 at p=0.24 to 0.72 by p=0.43, so the ramp is `smoothstep(0.24, 0.40)` — leading it
 slightly, so copy has turned dark before the backdrop behind it turns light. It

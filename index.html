@@ -251,7 +251,7 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
    on every scroll event stalls badly on Safari and iOS. */
 (function(){
   if(window.__omBg) return; window.__omBg = true;
-  var N = 50, POOL = 6, inited = false;
+  var N = 50, POOL = 6, EASE = 4.2, inited = false;
   var src = function(i){ return 'bg/f' + ('00' + (i + 1)).slice(-3) + '.webp'; };
 
   function init(){
@@ -320,7 +320,15 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
       var vh = innerHeight, y = window.scrollY || window.pageYOffset || 0;
       var start = vh * 0.92;
       var span = Math.max(1, document.documentElement.scrollHeight - vh - start);
-      want = Math.min(1, Math.max(0, (y - start) / span));
+      var linear = Math.min(1, Math.max(0, (y - start) / span));
+      /* Frames 1-13 are a near-static dark wall (mean luma .143 -> .182), so
+         stretching them over most of the page costs no visible motion — while
+         the burst and the emblem resolving, which are the only parts that
+         actually move, get the last quarter. This keeps the manual reel whole on
+         one theme instead of straddling the changeover, and makes the reveal a
+         payoff rather than a mid-page event. EASE is the single knob: 1 plays
+         the clip evenly across the page. */
+      want = Math.pow(linear, EASE);
       var vis = smoothstep(vh * 0.42, vh * 1.05, y);
       document.documentElement.style.setProperty('--bg-vis', vis.toFixed(4));
       /* Measured from the frames, not guessed: mean luminance climbs from 0.18
