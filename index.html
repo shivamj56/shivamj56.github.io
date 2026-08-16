@@ -102,37 +102,15 @@ a:hover{color:var(--accent-hi)}
   perspective:1600px;perspective-origin:50% 40%}
 .hero-stage-glow{position:absolute;inset:-6% -12%;pointer-events:none;
   background:radial-gradient(46% 40% at 50% 46%,rgba(240,86,26,.3),transparent 72%)}
-/* Each level owns exactly one transform so they compose instead of fighting:
-   .hero-phone drifts (via `translate`), .phone-fan handles the fan-out, and
-   .phone-3d carries the tilt and the flip. */
 .hero-phone{
   --bezel:9px; --screen-r:32px; --tilt:rotateX(8deg) rotateY(15deg) rotateZ(-12deg);
-  --depth:15px;
-  position:absolute;
+  position:absolute;padding:var(--bezel);
+  transform:var(--tilt);
+  filter:drop-shadow(26px 40px 34px rgba(0,0,0,.66));
   animation:om-drift 8s ease-in-out infinite;
 }
-.phone-fan{transform:translate(0,0) scale(1);
-  transition:transform 1.5s cubic-bezier(.18,.85,.24,1) var(--in-delay,0s)}
-.phone-3d{position:relative;transform-style:preserve-3d;transform:var(--tilt);
-  transition:transform 1.6s cubic-bezier(.18,.85,.24,1) var(--in-delay,0s)}
-/* Only the front hides its backface. The back panel sits at z = -depth/2, so
-   preserve-3d depth-sorting already puts it behind the screen when the device
-   faces us — and leaving backface-visibility off it avoids the case where the
-   composed rotation culls it entirely. */
-
-/* No `filter` anywhere in this subtree: a filter establishes a containing block
-   and flattens the 3D rendering context, which silently disables
-   backface-visibility and leaves the back panel invisible. The device shadow is
-   therefore a box-shadow on the frame, not a drop-shadow on the face. */
-.phone-front{position:relative;padding:var(--bezel);transform:translateZ(calc(var(--depth) / 2))}
-/* Entrance: the devices swing in from a steep angle and fan out to rest. The
-   turn deliberately stops short of edge-on, so no back panel is ever required —
-   a CSS back is the one part of a device that does not survive being looked at
-   directly, and rotating past 90° would put it centre stage. */
-.hero-stage:not(.is-in) .phone-3d{transform:rotateX(2deg) rotateY(-58deg) rotateZ(-2deg)}
-.hero-stage:not(.is-in) .phone-fan{transform:translate(var(--from-x,0),var(--from-y,14%)) scale(.86)}
-.hero-phone--front{width:52%;left:0;top:0;z-index:2;--from-x:26%;--in-delay:.15s}
-.hero-phone--back{width:50%;right:0;bottom:0;z-index:1;animation-delay:-3.6s;--from-x:-30%;--in-delay:0s}
+.hero-phone--front{width:52%;left:0;top:0;z-index:2}
+.hero-phone--back{width:50%;right:0;bottom:0;z-index:1;animation-delay:-3.6s}
 .hero-phone-screen{position:relative;z-index:1;aspect-ratio:392/846;border-radius:var(--screen-r);
   overflow:hidden;background:#0a0a0b}
 /* A cool sheen raked across the glass, angled to agree with the tilt. */
@@ -165,16 +143,15 @@ a:hover{color:var(--accent-hi)}
   -webkit-mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
   mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
   padding:var(--bezel);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),0 0 0 1px rgba(0,0,0,.9),
-    26px 40px 40px -12px rgba(0,0,0,.72)}
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),0 0 0 1px rgba(0,0,0,.9)}
 /* Side buttons. They hang on the phone rather than the frame, because the
    frame masks out everything but its own ring and would erase them. */
-.phone-front::before,.phone-front::after{content:'';position:absolute;z-index:0;border-radius:2px}
+.hero-phone::before,.hero-phone::after{content:'';position:absolute;z-index:0;border-radius:2px}
 /* Volume pair: one element with the gap between the two keys punched through. */
-.phone-front::before{left:-3px;top:20%;width:3px;height:16%;
+.hero-phone::before{left:-3px;top:20%;width:3px;height:16%;
   background:linear-gradient(180deg,#6e6e78,#26262b 26%,#17171a 33%,
     transparent 33% 40%,#6e6e78 40%,#26262b 66%,#17171a 100%)}
-.phone-front::after{right:-3px;top:27%;width:3px;height:9%;
+.hero-phone::after{right:-3px;top:27%;width:3px;height:9%;
   background:linear-gradient(180deg,#6e6e78,#26262b 40%,#17171a)}
 /* Dynamic Island. The screenshots leave the middle of the status bar clear, so
    it lands in the gap the real device would occupy. It belongs to the screen
@@ -187,7 +164,6 @@ a:hover{color:var(--accent-hi)}
   background:var(--frame-src) center/100% 100% no-repeat;
   -webkit-mask:none;mask:none;box-shadow:none;padding:0}
 @media (prefers-reduced-motion:reduce){.hero-phone{animation:none}
-  .phone-fan,.phone-3d{transition:none}
   .hero-phone-screen img{transition:none}}
 .posters-container{width:100%;height:100%;overflow:hidden;position:relative;z-index:2}
 .posters-canvas{display:block;width:100%;height:100%;cursor:grab}
@@ -421,13 +397,6 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
     var phones = document.querySelectorAll('[data-hero-phone]');
     if(!phones.length) return;
     inited = true;
-    /* Play the flip once the first screen has actually decoded, so the device
-       never turns to reveal an empty panel. */
-    var stage = document.querySelector('.hero-stage');
-    var first = document.querySelector('.hero-phone--front [data-hero-shot]');
-    var reveal = function(){ if(stage) stage.classList.add('is-in'); };
-    if(!first || first.complete) setTimeout(reveal, 120);
-    else { first.addEventListener('load', function(){ setTimeout(reveal, 120); }); setTimeout(reveal, 2500); }
     if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     /* Each device runs its own list on its own offset, so the two are never
        showing the same screen or changing on the same beat. */
@@ -559,24 +528,18 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div class="hero-stage">
 <div class="hero-stage-glow" aria-hidden="true"></div>
 <div class="hero-phone hero-phone--back" data-hero-phone data-hero-delay="1300">
-<div class="phone-fan"><div class="phone-3d">
-<div class="phone-front"><div class="hero-phone-screen">
+<div class="hero-phone-screen">
 <img src="screens/10-order.webp" alt="{{ t.m10t }}" data-hero-shot class="is-on" width="392" height="846" loading="lazy" />
 <img src="screens/06-payment.webp" alt="{{ t.m6t }}" data-hero-shot width="392" height="846" loading="lazy" />
 <img src="screens/09-updates.webp" alt="{{ t.m9t }}" data-hero-shot width="392" height="846" loading="lazy" />
 </div>
-</div></div>
-</div>
 <div class="hero-phone-frame" aria-hidden="true"></div>
 </div>
 <div class="hero-phone hero-phone--front" data-hero-phone data-hero-delay="0">
-<div class="phone-fan"><div class="phone-3d">
-<div class="phone-front"><div class="hero-phone-screen">
+<div class="hero-phone-screen">
 <img src="screens/01-home.webp" alt="{{ t.m1t }}" data-hero-shot class="is-on" width="392" height="846" fetchpriority="high" />
 <img src="screens/04-rate.webp" alt="{{ t.m4t }}" data-hero-shot width="392" height="846" loading="lazy" />
 <img src="screens/08-confirm.webp" alt="{{ t.m8t }}" data-hero-shot width="392" height="846" loading="lazy" />
-</div>
-</div></div>
 </div>
 <div class="hero-phone-frame" aria-hidden="true"></div>
 </div>
