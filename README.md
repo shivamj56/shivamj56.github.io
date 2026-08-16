@@ -76,53 +76,60 @@ narrower than that minimum.
 
 ## The scroll-scrubbed background
 
-`bg/f001.webp` … `bg/f050.webp` are 50 frames of the brand emblem lighting up,
-scrubbed by scroll position across the whole page: the top of the page is the
-dark wall, the bottom is the emblem fully resolved. They are blitted to a fixed
-full-viewport canvas behind everything.
+`bg/f001.webp` … `bg/f050.webp` are 50 frames of the brand emblem forming,
+scrubbed by scroll. They are blitted to a fixed full-viewport canvas behind
+everything.
 
 It is an image sequence rather than a `<video>` on purpose. Seeking a video on
 every scroll event stalls badly on Safari and iOS; decoding stills once and
-blitting them is what scroll-scrubbed product pages actually do.
+blitting them is what scroll-scrubbed product pages actually do. Adjacent frames
+are crossfaded, which is what lets 50 stills read as continuous motion over a
+page this tall.
 
-Adjacent frames are crossfaded, which is what lets 50 stills read as continuous
-motion over a page this tall — without it the steps are obvious.
+**The frames carry alpha, and that is load-bearing.** The source clip runs from a
+dark stone wall to a bright studio white. Composited straight onto a dark page
+the back half would wash every section out. `scratchpad/key.py` keys the backdrop
+away at encode time so only the emblem and its trails composite onto the page.
 
-Loading is deliberately lazy: it waits for `load` and then an idle callback, so
-the background never competes with content for bandwidth. Frame 1 lands first and
-the rest stream in six at a time; scrubbing works throughout, falling back to the
-nearest decoded frame rather than flashing empty.
+The key is on **saturation, not luminance**. Both ends of the clip are
+essentially unsaturated while the emblem is strongly saturated throughout, so
+luminance keying would drop the dark start and keep the white end — exactly
+backwards. Any "keep the bright pixels" rescue rule hands the white backdrop
+straight back as a milky haze over the copy; there was one, and it did.
 
-**Legibility is the thing to watch when tuning.** Three knobs, all in the CSS:
+### Entry
+
+The hero is left clean. `--bg-vis` is driven from the scroll handler: the emblem
+holds off through the first screen, eases in over the next half viewport on a
+slight scale settle, and only starts scrubbing from there. Under
+`prefers-reduced-motion` nothing is scrubbed — the last frame is drawn once at
+full visibility.
+
+**Legibility knobs**, all in the CSS:
 
 | | Default | |
 | --- | --- | --- |
-| `.site-bg.is-ready canvas` opacity | `.88` | Overall presence of the emblem |
-| `.site-bg-scrim` | radial + linear | Darkens the middle, where the copy sits |
-| `[data-step-left]`, `[data-step-right]`, `[data-over-art]` | `text-shadow` | Contrast for the copy that sits directly over the glow |
+| `.site-bg.is-ready canvas` opacity | `.72` | Presence of the emblem |
+| `.site-bg-scrim` | radial | Protects the middle, where copy sits |
+| `[data-step-left]`, `[data-step-right]`, `[data-over-art]` | `text-shadow` | Contrast for copy sitting directly over the glow |
 
-At this brightness the scrim alone is not enough — darkening it far enough to
-protect the text would just dim the art you brightened. So the copy that sits
-over the emblem carries its own shadow instead: the manual section's captions,
-and the closing CTA block. Anything new placed over the brightest part of the
-frame wants `data-over-art` too.
+The manual section's captions and the closing CTA subhead are where text goes
+unreadable first. Check both after any change.
 
-The manual section's captions and the closing CTA subhead are the two places to
-check after any change — they are where text goes unreadable first.
+### Re-encoding
 
-Under `prefers-reduced-motion` the sequence is not scrubbed at all: the last
-frame is drawn once, statically.
-
-### Re-encoding the frames
-
-Source was 50 × 3840×2160 PNG, 206 MB. Shipped as 1440×810 WebP at q66, 1.9 MB:
+Source is 50 × 3840×2160 PNG. Shipped as keyed 1024×576 WebP with alpha, 3.3 MB:
 
 ```bash
 for i in $(seq -f "%03g" 1 50); do
-  sips -Z 1440 "src/ezgif-frame-$i.png" --out "/tmp/$i.png"
-  cwebp -q 66 -m 6 -mt -quiet "/tmp/$i.png" -o "bg/f$i.webp"
+  WIDTH=1024 python3 key.py "src/ezgif-frame-$i.png" "/tmp/$i.png"
+  cwebp -q 58 -alpha_q 52 -m 6 -mt -quiet "/tmp/$i.png" -o "bg/f$i.webp"
 done
 ```
+
+Alpha costs real bytes — the same frames opaque were 1.9 MB. Zeroing the colour
+of fully transparent pixels before encoding is worth about 25%, because it gives
+the encoder flat regions instead of keyed noise.
 
 ## The hero device mockup
 

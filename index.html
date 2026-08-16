@@ -64,13 +64,15 @@ a:hover{color:var(--accent-hi)}
    viewport behind everything; the scrim is what keeps copy readable over it,
    so lighten it only while watching the text. */
 .site-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:#0a0a0b}
-.site-bg canvas{position:absolute;inset:0;width:100%;height:100%;display:block;
-  opacity:0;transition:opacity 1.4s cubic-bezier(.2,.8,.2,1)}
-.site-bg.is-ready canvas{opacity:.88}
+.site-bg canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0}
+/* Driven by --bg-vis from the scroll handler, so the emblem is absent over the
+   hero and eases in on the screen after it. The scale settle rides the same
+   value; without it the entry reads as an image popping in. */
+.site-bg.is-ready canvas{opacity:calc(var(--bg-vis,0) * .72);
+  transform:scale(calc(1.055 - var(--bg-vis,0) * .055));
+  transform-origin:50% 45%;will-change:opacity,transform}
 .site-bg-scrim{position:absolute;inset:0;
-  background:
-    radial-gradient(70% 58% at 50% 46%,rgba(10,10,11,.22),rgba(10,10,11,.8) 80%),
-    linear-gradient(180deg,rgba(10,10,11,.34),rgba(10,10,11,.46))}
+  background:radial-gradient(76% 64% at 50% 46%,rgba(10,10,11,.1),rgba(10,10,11,.62) 84%)}
 /* With the emblem this bright, the copy over it needs its own contrast rather
    than a heavier scrim — otherwise brightening the art just dims the art again.
    These carry the text that sits directly over the glow. */
@@ -284,9 +286,21 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
       ctx.globalAlpha = 1;
       if(painted) root.classList.add('is-ready');
     }
+    function smoothstep(e0, e1, x){
+      var t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
+      return t * t * (3 - 2 * t);
+    }
+    /* The hero is left clean: the emblem holds off until the reader is past the
+       first screen, then eases in over the next half-viewport and only starts
+       scrubbing from there. Entering on a slight scale settle rather than a
+       straight fade is what stops it reading as a popped-in image. */
     function onScroll(){
-      var span = Math.max(1, document.documentElement.scrollHeight - innerHeight);
-      want = Math.min(1, Math.max(0, (window.scrollY || window.pageYOffset || 0) / span));
+      var vh = innerHeight, y = window.scrollY || window.pageYOffset || 0;
+      var start = vh * 0.92;
+      var span = Math.max(1, document.documentElement.scrollHeight - vh - start);
+      want = Math.min(1, Math.max(0, (y - start) / span));
+      var vis = smoothstep(vh * 0.42, vh * 1.05, y);
+      root.style.setProperty('--bg-vis', vis.toFixed(4));
       if(!raf) raf = requestAnimationFrame(function(){ raf = null; draw(want); });
     }
     function load(i, done){
@@ -300,7 +314,7 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
     size();
     addEventListener('resize', size, {passive:true});
 
-    if(reduce){ load(N - 1, function(){ want = 1; draw(1); }); return; }
+    if(reduce){ root.style.setProperty('--bg-vis','1'); load(N - 1, function(){ want = 1; draw(1); }); return; }
 
     addEventListener('scroll', onScroll, {passive:true});
     /* Frame 1 lands first so the page is never a blank canvas, then the rest
@@ -958,7 +972,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <svg width="17" height="20" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" style="flex:0 0 auto"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-36.5-2.8-76.4 21.2-91 21.2-15.4 0-50.7-20.2-78.4-20.2C61.7 141.6 8 184.7 8 271.2c0 25.6 4.7 52 14 79.3 12.5 35.9 56.1 123.8 101.6 122.4 23.8-.6 40.6-16.9 71.6-16.9 30.1 0 45.6 16.9 72.2 16.9 45.9-.7 85.3-80.6 97.2-116.6-61.4-29-46.1-86.6-45.9-87.6zM255.2 84.6c15.2-18.5 22.9-40.1 21.6-64.6-24.3 1.4-45.9 13.2-63.6 33.5-15.7 18.2-24.1 39.7-22.5 63.3 26.1 2 49.4-10.5 64.5-32.2z"/></svg>
 <span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><span style="font-size:9.5px;font-weight:700;opacity:.7;letter-spacing:.09em;text-transform:uppercase">{{ t.storeIosSmall }}</span><span style="font-size:17px;font-weight:800">{{ t.storeIosBig }}</span></span>
 </a>
-<div style="height:62px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;color:#ffb08a;background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:0 12px 28px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.09);cursor:pointer">📞 91200 35500</div>
+<div style="height:62px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;color:#ffb08a;background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:0 12px 28px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.09);cursor:pointer" onClick="window.location.href='tel:+919120035500'">📞 {{ t.supportCta }}</div>
 </div>
 <div style="font-size:12.5px;font-weight:600;color:var(--ink-3);margin-top:22px">{{ t.ctaNote }}</div>
 </div>
@@ -985,7 +999,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div>
 <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px">{{ t.footCol2 }}</div>
 <div style="display:flex;flex-direction:column;gap:9px;font-size:13px;font-weight:600;color:var(--ink-2)">
-<span>91200 35500</span><span>{{ t.footL4 }}</span><span>{{ t.footL5 }}</span>
+<span><a href="tel:+919120035500" style="color:inherit;text-decoration:none">{{ t.supportCta }}</a></span><span>{{ t.footL4 }}</span><span>{{ t.footL5 }}</span>
 </div>
 </div>
 </div>
@@ -1021,27 +1035,27 @@ const EN = {
   m11t:"Send the papers", m11b:"Photograph the slip or attach a file. Each paper shows whether it is yours to send or the office's.",
   m12t:"Get help", m12b:"The help button is on every screen. One tap gives you a number that a person answers.",
 
-  navKicker:"Pvt Ltd", navCta:"Get the app", navHelp:"Contact support",
+  navKicker:"Pvt Ltd", navCta:"Get the app", navHelp:"Customer support",
 
-  tenKicker:"Why sellers join us",
-  tenTitle:"Sellers who join us grow 10×.",
-  tenQuote:"Grain was never the bottleneck. Paper was.",
-  tenSub:"A trader's ceiling has never been how much grain they can move — it is how many trades one person can keep straight in their head and on paper. Take that ceiling away and the same trader, on the same phone, runs ten times the business.",
-  ten1Title:"Ten times the orders",
-  ten1Body:"A trade that cost two days of calls, slips and follow-ups is booked in two minutes. Same day, same phone, ten times the volume.",
-  ten2Title:"Nothing leaks",
-  ten2Body:"Every truck, every paper and every due date is tracked from the first call. Money stops falling through the gaps between slips.",
-  ten3Title:"Factories keep coming back",
-  ten3Body:"A complete file, every single time. The buyer trusts your name, and the next order is agreed before you ask for it.",
-  heroBadge:"Grow your trade 10× — built for the mandi",
+  tenKicker:"Why sellers grow 10× with us",
+  tenTitle:"Your hisaab, done before the call ends.",
+  tenQuote:"The sauda was never the hard part. The hisaab was.",
+  tenSub:"No trader was ever stopped by a shortage of buyers. They were stopped by hisaab — rate into weight into trucks, minus advance, due in fifteen days from a date nobody wrote down. Put that maths in their pocket, finished before the call ends, and the same trader on the same phone runs ten times the business.",
+  ten1Title:"The maths is instant",
+  ten1Body:"Rate, weight, trucks, advance, due date — calculated as you speak, and read back before anything is sent. No pen, no calculator, no arguing later about the number.",
+  ten2Title:"It is always in your pocket",
+  ten2Body:"Every rate, every due date, every truck — on the phone already in your hand, in the mandi, at the factory gate, at two in the morning. Not in a register at the office.",
+  ten3Title:"So you take the next sauda",
+  ten3Body:"When the hisaab of the last ten trades is not sitting on your head, you can say yes to the eleventh. That is the whole of it. That is where 10× comes from.",
+  heroBadge:"The hisaab, in your pocket — 10× your trade",
   heroTitle:"Your whole trade, in your voice.",
-  heroSub:"Speak an order and it becomes a purchase order. Every truck, every paper, every payment date — tracked from the first call to the last rupee.",
+  heroSub:"Speak the sauda and the app does the hisaab — rate, weight, trucks, advance, due date — and turns it into a purchase order. Every truck, every paper, every rupee, always in your pocket.",
   storeSmall:"Get it on", storeBig:"Google Play", storeIosSmall:"Download on the", storeIosBig:"App Store", heroCall:"Talk to us",
   heroPoint1:"No typing needed", heroPoint2:"Hindi and English", heroPoint3:"Works on any phone",
 
   probKicker:"The problem",
-  probTitle:"Grain moves fast. Paper doesn't.",
-  probSub:"A trade is agreed in a two-minute phone call. Then it takes three weeks of slips, calls and follow-ups to actually close — and that is where the money leaks.",
+  probTitle:"The sauda takes two minutes. The hisaab takes three weeks.",
+  probSub:"The trading is the easy part — you have done it your whole life. It is the hisaab behind it that eats the month: what is owed, on which truck, against which slip, due on which day. That is where the money leaks, and that is what we built for.",
   prob1Title:"Orders live in phone calls",
   prob1Body:"Rate, quantity, factory and terms are agreed verbally. Nothing is written down until someone remembers to write it down.",
   prob2Title:"Seven papers per truck",
@@ -1124,7 +1138,8 @@ const EN = {
 
   footBlurb:"Agricultural commodity trading, and the app that runs it. Built for the people doing the trade, in the language they do it in.",
   footCol1:"Product", footL1:"How it works", footL2:"For factories", footL3:"For brokers",
-  footCol2:"Contact", footL4:"Order support", footL5:"Partnerships"
+  footCol2:"Contact", footL4:"Order support", footL5:"Partnerships",
+  supportCta:"Customer support"
 };
 
 const HI = {
@@ -1150,27 +1165,27 @@ const HI = {
   m11t:"कागज़ भेजिए", m11b:"पर्ची की फ़ोटो लीजिए या फ़ाइल लगाइए। हर कागज़ पर लिखा है वह आपसे है या दफ़्तर से।",
   m12t:"मदद लीजिए", m12b:"मदद का बटन हर स्क्रीन पर है। एक टैप और वह नंबर मिलता है जिसे इंसान उठाता है।",
 
-  navKicker:"प्रा. लि.", navCta:"ऐप लें", navHelp:"सहायता",
+  navKicker:"प्रा. लि.", navCta:"ऐप लें", navHelp:"ग्राहक सहायता",
 
-  tenKicker:"व्यापारी हमसे क्यों जुड़ते हैं",
-  tenTitle:"हमसे जुड़ने वाले व्यापारी 10× बढ़ते हैं।",
-  tenQuote:"रुकावट अनाज कभी नहीं थी। कागज़ थी।",
-  tenSub:"व्यापारी की हद कभी यह नहीं रही कि वह कितना अनाज चला सकता है — हद यह है कि एक आदमी कितने सौदे दिमाग़ में और कागज़ पर सँभाल सकता है। वह हद हटा दीजिए, और वही व्यापारी, उसी फ़ोन पर, दस गुना काम करता है।",
-  ten1Title:"दस गुना ऑर्डर",
-  ten1Body:"जो सौदा दो दिन की कॉल, परचियों और पीछा करने में जाता था, वह दो मिनट में बुक होता है। वही दिन, वही फ़ोन, दस गुना काम।",
-  ten2Title:"कुछ नहीं छूटता",
-  ten2Body:"हर ट्रक, हर कागज़ और हर तारीख पहली कॉल से दर्ज रहती है। परचियों के बीच से पैसा गिरना बंद।",
-  ten3Title:"फैक्ट्री दोबारा आती है",
-  ten3Body:"हर बार पूरी फाइल। खरीदार आपके नाम पर भरोसा करता है, और अगला ऑर्डर माँगने से पहले तय हो जाता है।",
-  heroBadge:"अपना व्यापार 10× बढ़ाइए — मंडी के लिए बना",
+  tenKicker:"हमसे जुड़कर व्यापारी 10× क्यों बढ़ते हैं",
+  tenTitle:"हिसाब, कॉल ख़त्म होने से पहले।",
+  tenQuote:"सौदा कभी मुश्किल नहीं था। हिसाब था।",
+  tenSub:"किसी व्यापारी को खरीदार की कमी ने नहीं रोका। रोका हिसाब ने — भाव गुणा वज़न गुणा ट्रक, एडवांस घटाकर, पंद्रह दिन बाद उस तारीख से जो किसी ने लिखी ही नहीं। वह गणित उनकी जेब में डाल दीजिए, कॉल ख़त्म होने से पहले पूरा — और वही व्यापारी उसी फ़ोन पर दस गुना काम करता है।",
+  ten1Title:"हिसाब तुरंत",
+  ten1Body:"भाव, वज़न, ट्रक, एडवांस, ड्यू डेट — बोलते-बोलते जुड़ जाता है, और भेजने से पहले पूरा पढ़कर सुनाया जाता है। न कलम, न कैलकुलेटर, न बाद में नंबर पर बहस।",
+  ten2Title:"हमेशा आपकी जेब में",
+  ten2Body:"हर भाव, हर ड्यू डेट, हर ट्रक — उसी फ़ोन में जो पहले से हाथ में है। मंडी में, फैक्ट्री के गेट पर, रात दो बजे। दफ़्तर के रजिस्टर में नहीं।",
+  ten3Title:"तो अगला सौदा भी लीजिए",
+  ten3Body:"जब पिछले दस सौदों का हिसाब सिर पर नहीं होता, तब ग्यारहवाँ सौदा लिया जा सकता है। बस इतनी ही बात है। 10× यहीं से आता है।",
+  heroBadge:"हिसाब आपकी जेब में — व्यापार 10×",
   heroTitle:"आपका पूरा व्यापार, आपकी आवाज़ में।",
-  heroSub:"ऑर्डर बोलिए और वह परचेज़ ऑर्डर बन जाता है। हर ट्रक, हर कागज़, हर भुगतान की तारीख़ — पहली बात से आख़िरी रुपये तक दर्ज।",
+  heroSub:"सौदा बोलिए और ऐप हिसाब कर देता है — भाव, वज़न, ट्रक, एडवांस, ड्यू डेट — और उसे परचेज़ ऑर्डर बना देता है। हर ट्रक, हर कागज़, हर रुपया, हमेशा आपकी जेब में।",
   storeSmall:"डाउनलोड करें", storeBig:"Google Play", storeIosSmall:"डाउनलोड करें", storeIosBig:"App Store", heroCall:"बात कीजिए",
   heroPoint1:"टाइप करने की ज़रूरत नहीं", heroPoint2:"हिंदी और अंग्रेज़ी", heroPoint3:"किसी भी फ़ोन पर चले",
 
   probKicker:"समस्या",
-  probTitle:"अनाज तेज़ चलता है। कागज़ नहीं।",
-  probSub:"सौदा दो मिनट की फ़ोन कॉल में तय हो जाता है। फिर उसे पूरा करने में तीन हफ़्ते की पर्चियाँ, कॉल और तक़ाज़े लगते हैं — और पैसा वहीं फँसता है।",
+  probTitle:"सौदा दो मिनट में। हिसाब तीन हफ़्ते में।",
+  probSub:"व्यापार करना आसान हिस्सा है — वह आप उम्र भर करते आए हैं। महीना खाता है उसके पीछे का हिसाब: किसका बकाया, किस ट्रक पर, किस परची के बदले, किस दिन देना है। पैसा वहीं रिसता है, और हमने इसी के लिए बनाया है।",
   prob1Title:"ऑर्डर फ़ोन कॉल में रह जाते हैं",
   prob1Body:"रेट, मात्रा, फ़ैक्ट्री और शर्तें ज़ुबानी तय होती हैं। जब तक कोई लिखना याद न रखे, कहीं दर्ज नहीं होता।",
   prob2Title:"हर ट्रक पर सात कागज़",
@@ -1253,7 +1268,8 @@ const HI = {
 
   footBlurb:"कृषि जिंस का व्यापार, और उसे चलाने वाला ऐप। व्यापार करने वालों के लिए, उनकी ही भाषा में बना।",
   footCol1:"प्रोडक्ट", footL1:"कैसे चलता है", footL2:"फ़ैक्ट्रियों के लिए", footL3:"दलालों के लिए",
-  footCol2:"संपर्क", footL4:"ऑर्डर सहायता", footL5:"साझेदारी"
+  footCol2:"संपर्क", footL4:"ऑर्डर सहायता", footL5:"साझेदारी",
+  supportCta:"ग्राहक सहायता"
 };
 
 class Component extends DCLogic {
