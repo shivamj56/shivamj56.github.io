@@ -278,9 +278,17 @@ Tune it with the props on the `<x-import>` in `index.html`:
 | `dwell`      |   `0.1` | How far a card can drift from centre before it starts tilting. |
 | `turn-end`   |   `0.8` | Distance at which the tilt has reached its maximum. |
 | `max-turn`   |   `0.5` | Ceiling on the turn, in half-turns. **`0.5` exactly is the point.** The card turns a full quarter, flat to edge-on — the poster-fall flip at full strength — and because it stops precisely at 90° it can never come round far enough to show its mirrored back. Lower values read as a lean, not a turn; higher values expose the back face with the copy running backwards. |
-| `gap`        |  `0.05` | Clearance between cards, as a share of viewport height. Larger values leave more empty frame mid-transition. |
+| `gap`        |  `0.03` | Clearance between cards, as a share of viewport height. Larger values leave more empty frame mid-transition. |
+| `card-scale` |  `0.82` | Card height as a share of the **camera viewport**, not the container. Sizing off the container meant a taller canvas silently shrank every card. |
 | `distortion` |   `2.2` | Twist applied during the turn only. Peaks mid-turn and is zero whenever the card is legible. |
 | `scroll-ease`| `0.085` | Lerp toward the scroll target. Lower is smoother and lazier. |
+
+**The canvas is full-bleed, and the break-out is deliberate.** The reel used to
+be clipped to its 400px grid column, so cards were sliced off mid-travel and the
+section read as a box. Only `.posters-container` escapes — the grid cell stays in
+flow to reserve its track. Absolutely positioning `.manual-reel` itself instead
+collapses the three-column rig to two and throws the right-hand caption into the
+middle.
 
 Pacing is set by the track height in `index.html` — `[data-manual-track]` is
 `calc(100vh + 5040px)`, i.e. about 420px of scroll per screen. Shorten it to

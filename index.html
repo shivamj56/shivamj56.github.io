@@ -173,6 +173,17 @@ a:hover{color:var(--accent-hi)}
 @media (prefers-reduced-motion:reduce){.hero-phone{animation:none}
   .hero-phone-screen img{transition:none}}
 .posters-container{width:100%;height:100%;overflow:hidden;position:relative;z-index:2}
+/* The reel was clipped to its grid column, so cards were sliced off mid-travel
+   and the section read as a box. The canvas now fills the pinned rig; the grid
+   column stays in the layout to reserve the space, and the captions sit above
+   it. Card size no longer follows the container — see cardScale. */
+.manual-reel{position:static}
+/* The canvas breaks out, not the grid cell: taking .manual-reel out of flow
+   collapsed the three-column rig to two and threw the right-hand caption into
+   the middle. The cell stays put and reserves its track; only the canvas inside
+   it escapes, filling the pinned rig. */
+.manual-reel .posters-container{position:absolute!important;inset:0!important;z-index:1}
+.manual-flank{position:relative;z-index:3}
 .posters-canvas{display:block;width:100%;height:100%;cursor:grab}
 .posters-canvas:active{cursor:grabbing}
 
@@ -859,7 +870,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 </div>
 </div>
 <div class="manual-reel" style="height:min(78vh,780px)">
-<x-import component-from-global-scope="FlyingPosters" from="./flying-posters.jsx" items="{{ posterItems }}" dc-props="{{ posterProps }}" plane-width="{{ 300 }}" plane-height="{{ 640 }}" distortion="{{ 2.2 }}" scroll-ease="{{ 0.085 }}" camera-fov="{{ 45 }}" camera-z="{{ 20 }}" dwell="{{ 0.07 }}" turn-end="{{ 0.76 }}" max-turn="{{ 0.5 }}" gap="{{ 0.03 }}" hold="{{ 0.46 }}" entry-delay="{{ 700 }}" hint-size="100%,100%"></x-import>
+<x-import component-from-global-scope="FlyingPosters" from="./flying-posters.jsx" items="{{ posterItems }}" dc-props="{{ posterProps }}" plane-width="{{ 300 }}" plane-height="{{ 640 }}" distortion="{{ 2.2 }}" scroll-ease="{{ 0.085 }}" camera-fov="{{ 45 }}" camera-z="{{ 20 }}" dwell="{{ 0.07 }}" turn-end="{{ 0.76 }}" max-turn="{{ 0.5 }}" gap="{{ 0.03 }}" card-scale="{{ 0.82 }}" hold="{{ 0.46 }}" entry-delay="{{ 700 }}" hint-size="100%,100%"></x-import>
 </div>
 <div class="manual-flank" data-flank="right" style="height:min(78vh,780px);display:flex;align-items:center;pointer-events:none">
 <div data-step-right style="will-change:transform,opacity">

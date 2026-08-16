@@ -144,8 +144,8 @@ function makeClasses(ogl) {
   const { Renderer, Camera, Transform, Plane, Program, Mesh, Texture } = ogl;
 
   class Media {
-    constructor({ gl, geometry, scene, screen, viewport, image, length, index, planeWidth, planeHeight, distortion, dwell, turnEnd, maxTurn, gap, onLoad }) {
-      Object.assign(this, { extra: 0, gl, geometry, scene, screen, viewport, image, length, index, planeWidth, planeHeight, distortion, dwell, turnEnd, maxTurn, gap, onLoad });
+    constructor({ gl, geometry, scene, screen, viewport, image, length, index, planeWidth, planeHeight, distortion, dwell, turnEnd, maxTurn, gap, cardScale, onLoad }) {
+      Object.assign(this, { extra: 0, gl, geometry, scene, screen, viewport, image, length, index, planeWidth, planeHeight, distortion, dwell, turnEnd, maxTurn, gap, cardScale, onLoad });
       this.createShader();
       this.createMesh();
       this.onResize();
@@ -188,12 +188,14 @@ function makeClasses(ogl) {
       this.plane.setParent(this.scene);
     }
     setScale() {
+      /* Size the card against the camera's viewport, not the container's pixel
+         box. The original derived scale from screen.height, which meant making
+         the canvas full-bleed — taller — silently shrank every card. World units
+         are isotropic here (viewport.width tracks the canvas aspect), so height
+         times the aspect ratio gives the width directly. */
       const aspect = this.planeWidth / this.planeHeight;
-      // 0.86 leaves a margin so the whole screen capture stays inside the frustum
-      const h = Math.min(this.planeHeight, this.screen.height * 0.86);
-      const w = h * aspect;
-      this.plane.scale.x = (this.viewport.width * w) / this.screen.width;
-      this.plane.scale.y = (this.viewport.height * h) / this.screen.height;
+      this.plane.scale.y = this.viewport.height * this.cardScale;
+      this.plane.scale.x = this.plane.scale.y * aspect;
       this.plane.position.x = 0;
       this.plane.program.uniforms.uPlaneSize.value = [this.plane.scale.x, this.plane.scale.y];
     }
@@ -238,8 +240,8 @@ function makeClasses(ogl) {
   }
 
   class Canvas {
-    constructor({ container, canvas, items, planeWidth, planeHeight, distortion, scrollEase, cameraFov, cameraZ, scrollRange, stepSync, progressSelector, steps, entryDelay, dwell, turnEnd, maxTurn, gap, hold }) {
-      Object.assign(this, { container, canvas, items, planeWidth, planeHeight, distortion, cameraFov, cameraZ, scrollRange, dwell, turnEnd, maxTurn, gap, hold });
+    constructor({ container, canvas, items, planeWidth, planeHeight, distortion, scrollEase, cameraFov, cameraZ, scrollRange, stepSync, progressSelector, steps, entryDelay, dwell, turnEnd, maxTurn, gap, cardScale, hold }) {
+      Object.assign(this, { container, canvas, items, planeWidth, planeHeight, distortion, cameraFov, cameraZ, scrollRange, dwell, turnEnd, maxTurn, gap, cardScale, hold });
       this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0, position: 0 };
       this.raf = this.raf.bind(this);
       this.step = this.step.bind(this);
@@ -264,7 +266,7 @@ function makeClasses(ogl) {
         gl: this.gl, geometry: this.planeGeometry, scene: this.scene,
         screen: this.screen, viewport: this.viewport, image,
         length: items.length, index, planeWidth, planeHeight, distortion,
-        dwell, turnEnd, maxTurn, gap, onLoad
+        dwell, turnEnd, maxTurn, gap, cardScale, onLoad
       }));
       if (this.medias[0]) this.scrollRange = this.medias[0].heightTotal;
       this.stepSync = stepSync;
@@ -502,6 +504,7 @@ function FlyingPosters({
      mirrored back. Lower values were readable but barely looked like a turn. */
   maxTurn = 0.5,
   gap = 0.03,         // clearance between cards, as a share of viewport height
+  cardScale = 0.82,   // card height as a share of the camera viewport height
   hold = 0.46,        // share of each screen's scroll spent parked and still
   steps,
   className = '',
@@ -524,7 +527,7 @@ function FlyingPosters({
         const inst = new Canvas({
           container: containerRef.current, canvas: canvasRef.current,
           items, planeWidth, planeHeight, distortion, scrollEase, cameraFov, cameraZ, scrollRange, stepSync, progressSelector, steps, entryDelay,
-          dwell, turnEnd, maxTurn, gap, hold
+          dwell, turnEnd, maxTurn, gap, cardScale, hold
         });
         inst.dragOffset = 0;
         if (!inst.frame) inst.frame = requestAnimationFrame(inst.raf);
@@ -535,7 +538,7 @@ function FlyingPosters({
       }
     })();
     return () => { disposed = true; };
-  }, [itemsKey, planeWidth, planeHeight, distortion, scrollEase, cameraFov, cameraZ, scrollRange, stepSync, progressSelector, dwell, turnEnd, maxTurn, gap, hold]);
+  }, [itemsKey, planeWidth, planeHeight, distortion, scrollEase, cameraFov, cameraZ, scrollRange, stepSync, progressSelector, dwell, turnEnd, maxTurn, gap, cardScale, hold]);
 
   useEffect(() => () => {
     if (instanceRef.current) { instanceRef.current.destroy(); instanceRef.current = null; }
