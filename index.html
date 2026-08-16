@@ -41,6 +41,9 @@ a:hover{color:var(--accent-hi)}
 [data-lift]:hover{transform:translateY(-6px)}
 @keyframes om-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @keyframes om-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+/* Drifts via the independent `translate` property rather than `transform`, so it
+   composes with a 3D tilt instead of replacing it. */
+@keyframes om-drift{0%,100%{translate:0 0}50%{translate:0 -15px}}
 @keyframes om-pulse{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:.9;transform:scale(1.12)}}
 @keyframes om-sheen{from{background-position:-200% 0}to{background-position:200% 0}}
 @media (prefers-reduced-motion:reduce){
@@ -64,28 +67,60 @@ a:hover{color:var(--accent-hi)}
      --bezel   thickness of the frame around the screen aperture
      --screen-r  corner radius of the aperture
    then add data-frame-image to [data-hero-phone]. Nothing else changes. */
+/* Two devices floating at a shared angle, the way a product mockup render
+   stages them. The tilt is a real 3D transform on the live markup rather than a
+   flattened export, so the screens keep cycling and stay swappable. */
+.hero-stage{position:relative;width:min(100%,444px);aspect-ratio:444/612;
+  perspective:1600px;perspective-origin:50% 40%}
+.hero-stage-glow{position:absolute;inset:-6% -12%;pointer-events:none;
+  background:radial-gradient(46% 40% at 50% 46%,rgba(240,86,26,.3),transparent 72%)}
 .hero-phone{
-  --bezel:11px; --screen-r:40px;
-  position:relative;width:min(100%,332px);padding:var(--bezel);
-  filter:drop-shadow(0 44px 70px rgba(0,0,0,.6));
-  animation:om-float 7s ease-in-out infinite;
+  --bezel:9px; --screen-r:32px; --tilt:rotateX(8deg) rotateY(15deg) rotateZ(-12deg);
+  position:absolute;padding:var(--bezel);
+  transform:var(--tilt);
+  filter:drop-shadow(26px 40px 34px rgba(0,0,0,.66));
+  animation:om-drift 8s ease-in-out infinite;
 }
-.hero-phone-glow{position:absolute;inset:-14% -22%;z-index:0;pointer-events:none;
-  background:radial-gradient(50% 42% at 50% 46%,rgba(240,86,26,.3),transparent 70%)}
+.hero-phone--front{width:52%;left:0;top:0;z-index:2}
+.hero-phone--back{width:50%;right:0;bottom:0;z-index:1;animation-delay:-3.6s}
 .hero-phone-screen{position:relative;z-index:1;aspect-ratio:392/846;border-radius:var(--screen-r);
   overflow:hidden;background:#0a0a0b}
+/* A cool sheen raked across the glass, angled to agree with the tilt. */
+.hero-phone-screen::before{content:'';position:absolute;inset:0;z-index:4;pointer-events:none;
+  background:linear-gradient(104deg,transparent 0 4%,rgba(255,255,255,.075) 9%,transparent 22% 100%)}
+/* One device below the two-up breakpoint, and barely tilted: a rotated element's
+   axis-aligned box is wider than the element, so a steep angle on a narrow
+   screen pushes the phone past the viewport. */
+@media (max-width:1080px){
+  .hero-stage{width:min(100%,330px);aspect-ratio:392/846}
+  .hero-phone--back{display:none}
+  .hero-phone--front{width:100%;--tilt:rotateX(3deg) rotateY(7deg) rotateZ(-3deg)}
+}
 .hero-phone-screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   opacity:0;transition:opacity .85s cubic-bezier(.4,0,.2,1)}
 .hero-phone-screen img.is-on{opacity:1}
 /* The bezel, drawn in CSS so the hero ships without waiting on an asset.
    A frame image, when supplied, replaces all of it. */
+/* Brushed-titanium rail. The bright stops sit where the raking light in the
+   glow would catch a real chamfer, which is what reads as metal rather than a
+   flat grey border. */
 .hero-phone-frame{position:absolute;inset:0;z-index:2;pointer-events:none;
   border-radius:calc(var(--screen-r) + var(--bezel));
-  background:linear-gradient(148deg,#3a3a40,#141416 34%,#0e0e10 62%,#45454c);
+  background:linear-gradient(112deg,#8e8e99 0%,#2c2c31 9%,#0d0d0f 26%,#131316 52%,
+    #0c0c0e 74%,#3c3c43 92%,#9a9aa4 100%);
   -webkit-mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
   mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
   padding:var(--bezel);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 0 0 1px rgba(0,0,0,.85)}
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),0 0 0 1px rgba(0,0,0,.9)}
+/* Side buttons. They hang on the phone rather than the frame, because the
+   frame masks out everything but its own ring and would erase them. */
+.hero-phone::before,.hero-phone::after{content:'';position:absolute;z-index:0;border-radius:2px}
+/* Volume pair: one element with the gap between the two keys punched through. */
+.hero-phone::before{left:-3px;top:20%;width:3px;height:16%;
+  background:linear-gradient(180deg,#6e6e78,#26262b 26%,#17171a 33%,
+    transparent 33% 40%,#6e6e78 40%,#26262b 66%,#17171a 100%)}
+.hero-phone::after{right:-3px;top:27%;width:3px;height:9%;
+  background:linear-gradient(180deg,#6e6e78,#26262b 40%,#17171a)}
 /* Dynamic Island. The screenshots leave the middle of the status bar clear, so
    it lands in the gap the real device would occupy. It belongs to the screen
    rather than the frame: the frame's mask cuts out its own content box, which
@@ -108,29 +143,40 @@ a:hover{color:var(--accent-hi)}
    while the hero is off screen so it costs nothing further down the page. */
 (function(){
   if(window.__omHeroPhone) return; window.__omHeroPhone = true;
-  var HOLD = 2600, inited = false;
+  var HOLD = 2800, inited = false;
   function start(){
     if(inited) return;
-    var shots = document.querySelectorAll('[data-hero-shot]');
-    if(shots.length < 2) return;
+    var phones = document.querySelectorAll('[data-hero-phone]');
+    if(!phones.length) return;
     inited = true;
     if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var i = 0, timer = null;
-    function tick(){
-      shots[i].classList.remove('is-on');
-      i = (i + 1) % shots.length;
-      shots[i].classList.add('is-on');
-    }
-    function run(on){
-      if(on && !timer) timer = setInterval(tick, HOLD);
-      else if(!on && timer){ clearInterval(timer); timer = null; }
-    }
-    var phone = document.querySelector('[data-hero-phone]');
-    if(phone && window.IntersectionObserver){
-      new IntersectionObserver(function(es){
-        es.forEach(function(e){ run(e.isIntersecting); });
-      }, {threshold:0.15}).observe(phone);
-    } else run(true);
+    /* Each device runs its own list on its own offset, so the two are never
+       showing the same screen or changing on the same beat. */
+    Array.prototype.forEach.call(phones, function(phone){
+      var shots = phone.querySelectorAll('[data-hero-shot]');
+      if(shots.length < 2) return;
+      var i = 0, timer = null, lead = null;
+      var delay = parseInt(phone.getAttribute('data-hero-delay'), 10) || 0;
+      function tick(){
+        shots[i].classList.remove('is-on');
+        i = (i + 1) % shots.length;
+        shots[i].classList.add('is-on');
+      }
+      function run(on){
+        if(on){
+          if(timer || lead) return;
+          lead = setTimeout(function(){ lead = null; tick(); timer = setInterval(tick, HOLD); }, delay + HOLD);
+        } else {
+          if(lead){ clearTimeout(lead); lead = null; }
+          if(timer){ clearInterval(timer); timer = null; }
+        }
+      }
+      if(window.IntersectionObserver){
+        new IntersectionObserver(function(es){
+          es.forEach(function(e){ run(e.isIntersecting); });
+        }, {threshold:0.15}).observe(phone);
+      } else run(true);
+    });
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();
@@ -237,17 +283,25 @@ window.dispatchEvent(new Event('ogl-ready'));
 </div>
 </div>
 
-<div data-anim style="flex:1 1 430px;min-width:320px;display:flex;justify-content:center;align-items:center">
-<div class="hero-phone" data-hero-phone>
-<div class="hero-phone-glow" aria-hidden="true"></div>
+<div data-anim style="flex:1 1 470px;min-width:320px;display:flex;justify-content:center;align-items:center">
+<div class="hero-stage">
+<div class="hero-stage-glow" aria-hidden="true"></div>
+<div class="hero-phone hero-phone--back" data-hero-phone data-hero-delay="1300">
 <div class="hero-phone-screen">
-<img src="screens/01-home.png" alt="{{ t.m1t }}" data-hero-shot class="is-on" width="392" height="846" fetchpriority="high" />
-<img src="screens/02-selling.png" alt="{{ t.m2t }}" data-hero-shot width="392" height="846" loading="lazy" />
-<img src="screens/04-rate.png" alt="{{ t.m4t }}" data-hero-shot width="392" height="846" loading="lazy" />
-<img src="screens/08-confirm.png" alt="{{ t.m8t }}" data-hero-shot width="392" height="846" loading="lazy" />
-<img src="screens/10-order.png" alt="{{ t.m10t }}" data-hero-shot width="392" height="846" loading="lazy" />
+<img src="screens/10-order.png" alt="{{ t.m10t }}" data-hero-shot class="is-on" width="392" height="846" loading="lazy" />
+<img src="screens/06-payment.png" alt="{{ t.m6t }}" data-hero-shot width="392" height="846" loading="lazy" />
+<img src="screens/09-updates.png" alt="{{ t.m9t }}" data-hero-shot width="392" height="846" loading="lazy" />
 </div>
 <div class="hero-phone-frame" aria-hidden="true"></div>
+</div>
+<div class="hero-phone hero-phone--front" data-hero-phone data-hero-delay="0">
+<div class="hero-phone-screen">
+<img src="screens/01-home.png" alt="{{ t.m1t }}" data-hero-shot class="is-on" width="392" height="846" fetchpriority="high" />
+<img src="screens/04-rate.png" alt="{{ t.m4t }}" data-hero-shot width="392" height="846" loading="lazy" />
+<img src="screens/08-confirm.png" alt="{{ t.m8t }}" data-hero-shot width="392" height="846" loading="lazy" />
+</div>
+<div class="hero-phone-frame" aria-hidden="true"></div>
+</div>
 </div>
 </div>
 </div>

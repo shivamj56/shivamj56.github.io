@@ -53,11 +53,24 @@ To change copy, edit the `EN` and `HI` objects near the bottom of `index.html`.
 
 ## The hero device mockup
 
-The hero shows a phone that crossfades through five screens — home, commodity,
-rate, confirm, order — every 2.6s. It uses the same files in `screens/` that the
-manual section does, so a screenshot only ever has to be updated in one place. It
-stops cycling while the hero is off screen, and holds on a single screen under
-`prefers-reduced-motion`.
+Two devices float at a shared angle, staged the way a product mockup render would
+stage them — but as live markup, not a flattened export. Each crossfades through
+its own three screens every 2.8s, on opposite beats, so the pair is never showing
+the same thing. They use the same files in `screens/` the manual section does, so
+a screenshot only ever has to be updated in one place. Cycling stops while the
+hero is off screen, and holds on one screen under `prefers-reduced-motion`.
+
+Below 1080px the back device is dropped and the front one straightens out: a
+rotated element's axis-aligned box is wider than the element, so the steep desktop
+angle would push it past a narrow viewport.
+
+Two things to know before editing the tilt:
+
+- The drift animation uses the independent `translate` property, **not**
+  `transform`. `transform` already carries the tilt, and a keyframe writing
+  `transform` replaces it outright rather than composing with it.
+- The side buttons hang on `.hero-phone`, not `.hero-phone-frame`. The frame
+  masks away everything but its own ring, which would erase them.
 
 The bezel is drawn in CSS so the hero needs no image asset. **To swap in an
 exported Figma frame:**
@@ -65,23 +78,26 @@ exported Figma frame:**
 1. In Figma, hide or delete the placeholder screenshot inside the frame, so the
    screen aperture exports transparent. Export the frame as PNG @3x (or SVG if it
    is vector) to `assets/phone-frame.png`.
-2. On `[data-hero-phone]` in `index.html`, add the `data-frame-image` attribute
-   and set three custom properties to match the exported frame:
+2. On each `[data-hero-phone]` in `index.html`, add the `data-frame-image`
+   attribute and set three custom properties to match the exported frame:
 
    ```html
-   <div class="hero-phone" data-hero-phone data-frame-image
+   <div class="hero-phone hero-phone--front" data-hero-phone data-frame-image
         style="--frame-src:url(assets/phone-frame.png);--bezel:14px;--screen-r:44px">
    ```
 
    `--bezel` is the frame thickness around the aperture and `--screen-r` its
-   corner radius, both at the size the phone renders (332px wide by default).
+   corner radius, both at the size the phone renders (~230px wide by default).
 
-That is the whole change: the CSS bezel and the drawn Dynamic Island switch off
-on their own, and the crossfade is untouched. If the aperture does not line up,
-adjust `--bezel` and `--screen-r` — nothing else is involved.
+That is the whole change: the CSS rail and the drawn Dynamic Island switch off on
+their own, and the tilt, drift and crossfade are untouched. If the aperture does
+not line up, adjust `--bezel` and `--screen-r` — nothing else is involved.
 
-To change which screens appear, edit the `[data-hero-shot]` list in the hero
-markup; any number of images works, and the first one carries `class="is-on"`.
+Export the frame **flat and straight-on**, not at an angle. The tilt is applied in
+CSS, so an already-angled export would be tilted twice.
+
+To change which screens appear, edit the `[data-hero-shot]` list inside a phone;
+any number of images works, and the first carries `class="is-on"`.
 
 ## The user manual reel
 
