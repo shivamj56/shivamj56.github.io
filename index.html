@@ -55,11 +55,90 @@ a:hover{color:var(--accent-hi)}
   [data-manual-reel-wrap]{display:none!important}
   [data-manual-mobile]{display:flex!important}
 }
+/* ---- hero device mockup ----------------------------------------------
+   The screenshots in screens/ are the single source of truth: the hero shows
+   the same files the manual section does, so a UI change lands in both.
+
+   To swap in the exported Figma frame, put the transparent PNG/SVG at
+   assets/phone-frame.png and set two custom properties to match it:
+     --bezel   thickness of the frame around the screen aperture
+     --screen-r  corner radius of the aperture
+   then add data-frame-image to [data-hero-phone]. Nothing else changes. */
+.hero-phone{
+  --bezel:11px; --screen-r:40px;
+  position:relative;width:min(100%,332px);padding:var(--bezel);
+  filter:drop-shadow(0 44px 70px rgba(0,0,0,.6));
+  animation:om-float 7s ease-in-out infinite;
+}
+.hero-phone-glow{position:absolute;inset:-14% -22%;z-index:0;pointer-events:none;
+  background:radial-gradient(50% 42% at 50% 46%,rgba(240,86,26,.3),transparent 70%)}
+.hero-phone-screen{position:relative;z-index:1;aspect-ratio:392/846;border-radius:var(--screen-r);
+  overflow:hidden;background:#0a0a0b}
+.hero-phone-screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .85s cubic-bezier(.4,0,.2,1)}
+.hero-phone-screen img.is-on{opacity:1}
+/* The bezel, drawn in CSS so the hero ships without waiting on an asset.
+   A frame image, when supplied, replaces all of it. */
+.hero-phone-frame{position:absolute;inset:0;z-index:2;pointer-events:none;
+  border-radius:calc(var(--screen-r) + var(--bezel));
+  background:linear-gradient(148deg,#3a3a40,#141416 34%,#0e0e10 62%,#45454c);
+  -webkit-mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  padding:var(--bezel);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 0 0 1px rgba(0,0,0,.85)}
+/* Dynamic Island. The screenshots leave the middle of the status bar clear, so
+   it lands in the gap the real device would occupy. It belongs to the screen
+   rather than the frame: the frame's mask cuts out its own content box, which
+   would take a pseudo-element positioned there with it. */
+.hero-phone-screen::after{content:'';position:absolute;z-index:3;top:1.5%;left:50%;
+  transform:translateX(-50%);width:26%;height:3.4%;border-radius:999px;background:#000}
+.hero-phone[data-frame-image] .hero-phone-screen::after{display:none}
+.hero-phone[data-frame-image] .hero-phone-frame{
+  background:var(--frame-src) center/100% 100% no-repeat;
+  -webkit-mask:none;mask:none;box-shadow:none;padding:0}
+@media (prefers-reduced-motion:reduce){.hero-phone{animation:none}
+  .hero-phone-screen img{transition:none}}
 .posters-container{width:100%;height:100%;overflow:hidden;position:relative;z-index:2}
 .posters-canvas{display:block;width:100%;height:100%;cursor:grab}
 .posters-canvas:active{cursor:grabbing}
 </style>
-<script src="https://embed.mckp.live/embed.js" async></script>
+<script>
+/* Hero device: crossfade through the key screens inside the frame. Holds on a
+   single screen for anyone who has asked for less motion, and stops entirely
+   while the hero is off screen so it costs nothing further down the page. */
+(function(){
+  if(window.__omHeroPhone) return; window.__omHeroPhone = true;
+  var HOLD = 2600, inited = false;
+  function start(){
+    if(inited) return;
+    var shots = document.querySelectorAll('[data-hero-shot]');
+    if(shots.length < 2) return;
+    inited = true;
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var i = 0, timer = null;
+    function tick(){
+      shots[i].classList.remove('is-on');
+      i = (i + 1) % shots.length;
+      shots[i].classList.add('is-on');
+    }
+    function run(on){
+      if(on && !timer) timer = setInterval(tick, HOLD);
+      else if(!on && timer){ clearInterval(timer); timer = null; }
+    }
+    var phone = document.querySelector('[data-hero-phone]');
+    if(phone && window.IntersectionObserver){
+      new IntersectionObserver(function(es){
+        es.forEach(function(e){ run(e.isIntersecting); });
+      }, {threshold:0.15}).observe(phone);
+    } else run(true);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+  /* The markup is rendered by the dc-runtime, so the nodes may not exist yet
+     when this first runs. One retry after mount covers that. */
+  setTimeout(start, 1200);
+})();
+</script>
 <script type="module">
 import * as ogl from 'https://unpkg.com/ogl@1.0.11/src/index.js';
 window.ogl = ogl;
@@ -158,9 +237,17 @@ window.dispatchEvent(new Event('ogl-ready'));
 </div>
 </div>
 
-<div data-anim style="flex:1 1 430px;min-width:320px;display:flex;justify-content:center">
-<div style="width:100%;border-radius:28px;overflow:hidden;box-shadow:0 40px 80px -24px rgba(0,0,0,.45)">
-<mockup-player style="display:block;width:100%;aspect-ratio:4/3" mockup-id="20b2ea20-9ec0-4a45-b978-56879bc2dbb5" width="100%" aspect-ratio="4 / 3" cursor-affect-page="false" cursor-range="17-69-16-75" click-range="41-19-42-21" camera-zoom="39" background-color="#0a0a0b"></mockup-player>
+<div data-anim style="flex:1 1 430px;min-width:320px;display:flex;justify-content:center;align-items:center">
+<div class="hero-phone" data-hero-phone>
+<div class="hero-phone-glow" aria-hidden="true"></div>
+<div class="hero-phone-screen">
+<img src="screens/01-home.png" alt="{{ t.m1t }}" data-hero-shot class="is-on" width="392" height="846" fetchpriority="high" />
+<img src="screens/02-selling.png" alt="{{ t.m2t }}" data-hero-shot width="392" height="846" loading="lazy" />
+<img src="screens/04-rate.png" alt="{{ t.m4t }}" data-hero-shot width="392" height="846" loading="lazy" />
+<img src="screens/08-confirm.png" alt="{{ t.m8t }}" data-hero-shot width="392" height="846" loading="lazy" />
+<img src="screens/10-order.png" alt="{{ t.m10t }}" data-hero-shot width="392" height="846" loading="lazy" />
+</div>
+<div class="hero-phone-frame" aria-hidden="true"></div>
 </div>
 </div>
 </div>

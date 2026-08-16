@@ -51,6 +51,38 @@ then, at runtime in the browser:
 
 To change copy, edit the `EN` and `HI` objects near the bottom of `index.html`.
 
+## The hero device mockup
+
+The hero shows a phone that crossfades through five screens — home, commodity,
+rate, confirm, order — every 2.6s. It uses the same files in `screens/` that the
+manual section does, so a screenshot only ever has to be updated in one place. It
+stops cycling while the hero is off screen, and holds on a single screen under
+`prefers-reduced-motion`.
+
+The bezel is drawn in CSS so the hero needs no image asset. **To swap in an
+exported Figma frame:**
+
+1. In Figma, hide or delete the placeholder screenshot inside the frame, so the
+   screen aperture exports transparent. Export the frame as PNG @3x (or SVG if it
+   is vector) to `assets/phone-frame.png`.
+2. On `[data-hero-phone]` in `index.html`, add the `data-frame-image` attribute
+   and set three custom properties to match the exported frame:
+
+   ```html
+   <div class="hero-phone" data-hero-phone data-frame-image
+        style="--frame-src:url(assets/phone-frame.png);--bezel:14px;--screen-r:44px">
+   ```
+
+   `--bezel` is the frame thickness around the aperture and `--screen-r` its
+   corner radius, both at the size the phone renders (332px wide by default).
+
+That is the whole change: the CSS bezel and the drawn Dynamic Island switch off
+on their own, and the crossfade is untouched. If the aperture does not line up,
+adjust `--bezel` and `--screen-r` — nothing else is involved.
+
+To change which screens appear, edit the `[data-hero-shot]` list in the hero
+markup; any number of images works, and the first one carries `class="is-on"`.
+
 ## The user manual reel
 
 The twelve screenshots are one WebGL reel, and the section is built so a reader
@@ -90,11 +122,8 @@ All are loaded from a CDN at runtime; nothing is vendored.
 - **React 18.3.1, ReactDOM, Babel Standalone** — unpkg, pulled in by `support.js`.
 - **ogl 1.0.11** — unpkg, WebGL library behind the poster reel.
 - **Google Fonts** — Plus Jakarta Sans and Noto Sans Devanagari.
-- **`embed.mckp.live`** — the `<mockup-player>` element in the hero, which plays the
-  interactive app mockup. Third-party; the hero degrades to empty space without it.
-
-Both the hero mockup and the poster reel need WebGL. Browsers without it show a
-fallback message rather than the animation.
+The hero device is plain CSS and needs no WebGL. The poster reel does; where it is
+unavailable the section falls back to the static screenshot list.
 
 ## Accessibility and motion
 
