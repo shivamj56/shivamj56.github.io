@@ -29,9 +29,9 @@
      in step with the footage instead of needing each section hand-themed. */
   --lit:0;
   --ink-warm:color-mix(in srgb,#ffb08a,#9c3d0c calc(var(--lit) * 100%));
-  --ink:color-mix(in srgb,#f4f4f5,#0a0a10 calc(var(--lit) * 100%));
-  --ink-2:color-mix(in srgb,#9c9ca6,#2e2e38 calc(var(--lit) * 100%));
-  --ink-3:color-mix(in srgb,#6c6c76,#54545e calc(var(--lit) * 100%));
+  --ink:color-mix(in srgb,#f4f4f5,#000000 calc(var(--lit) * 100%));
+  --ink-2:color-mix(in srgb,#9c9ca6,#14141a calc(var(--lit) * 100%));
+  --ink-3:color-mix(in srgb,#6c6c76,#3d3d47 calc(var(--lit) * 100%));
   --glass:linear-gradient(155deg,rgba(255,255,255,calc(.055 + var(--lit) * .58)),rgba(255,255,255,calc(.018 + var(--lit) * .5)));
   --glass-brd:1px solid rgba(255,255,255,calc(.09 + var(--lit) * .5));
   --glass-sh:0 20px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);
@@ -76,27 +76,22 @@ a:hover{color:var(--accent-hi)}
 /* Driven by --bg-vis from the scroll handler, so the emblem is absent over the
    hero and eases in on the screen after it. The scale settle rides the same
    value; without it the entry reads as an image popping in. */
-.site-bg.is-ready canvas{opacity:calc(var(--bg-vis,0) * 1);
+.site-bg.is-ready canvas{opacity:calc(var(--bg-vis,0) * .40);
   transform:scale(calc(1.055 - var(--bg-vis,0) * .055));
   transform-origin:50% 45%;will-change:opacity,transform}
 .site-bg-scrim{position:absolute;inset:0;
-  background:radial-gradient(78% 66% at 50% 46%,rgba(10,10,11,calc(.05 - var(--lit) * .05)),rgba(10,10,11,calc(.42 - var(--lit) * .34)) 86%)}
+  background:
+    radial-gradient(58% 50% at 50% 46%,
+      rgba(10,10,11,calc(.42 - var(--lit) * .42)) 0%,
+      rgba(10,10,11,calc(.30 - var(--lit) * .30)) 55%,
+      rgba(10,10,11,0) 100%),
+    linear-gradient(180deg,
+      rgba(247,247,249,calc(var(--lit) * .52)),
+      rgba(247,247,249,calc(var(--lit) * .40)))}
 /* With the emblem this bright, the copy over it needs its own contrast rather
    than a heavier scrim — otherwise brightening the art just dims the art again.
    These carry the text that sits directly over the glow. */
-/* On white the emblem's trails run straight through the caption copy. Rather
-   than dim the artwork, each caption sits on its own soft field: a radial that
-   fades to nothing, so it reads as clean space rather than a panel with edges.
-   Keyed to --lit, so it does not exist while the page is dark. */
-[data-step-left],[data-step-right]{position:relative;isolation:isolate}
-[data-step-left]::before,[data-step-right]::before{content:'';position:absolute;
-  inset:-26% -16%;z-index:-1;pointer-events:none;
-  background:radial-gradient(58% 52% at 50% 50%,
-    rgba(247,247,249,calc(var(--lit) * .88)) 0%,
-    rgba(247,247,249,calc(var(--lit) * .62)) 42%,
-    rgba(247,247,249,0) 74%)}
-[data-step-left],[data-step-right],[data-over-art]{text-shadow:0 2px 18px rgba(10,10,11,calc(.95 - var(--lit) * .95)),0 1px 4px rgba(10,10,11,calc(.9 - var(--lit) * .9)),
-   0 1px 14px rgba(255,255,255,calc(var(--lit) * .92)),0 0 3px rgba(255,255,255,calc(var(--lit) * .85))}
+/* No halos behind type. Contrast comes from the ink itself. */
 /* ---- hero device mockup ----------------------------------------------
    The screenshots in screens/ are the single source of truth: the hero shows
    the same files the manual section does, so a UI change lands in both.
@@ -190,8 +185,6 @@ a:hover{color:var(--accent-hi)}
   background:linear-gradient(180deg,rgba(10,10,11,calc(.92 - var(--lit) * .78)),rgba(10,10,11,calc(.6 - var(--lit) * .52)) 46%,transparent)}
 .cta-card{-webkit-backdrop-filter:blur(calc(var(--lit) * 16px)) saturate(calc(100% + var(--lit) * 40%));
   backdrop-filter:blur(calc(var(--lit) * 16px)) saturate(calc(100% + var(--lit) * 40%))}
-h1,h2,h3,p,li{text-shadow:0 1px 14px rgba(255,255,255,calc(var(--lit) * .8)),
-  0 0 3px rgba(255,255,255,calc(var(--lit) * .7))}
 .nav-progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;pointer-events:none}
 .nav-row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:flex-end;
   gap:9px;flex-wrap:wrap}
@@ -355,7 +348,7 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
          has already turned dark by the time the backdrop behind it is light.
          Set from a guess of 0.62-0.78 originally, which left roughly a third of
          the page showing light text on a light background. */
-      var lit = smoothstep(0.24, 0.40, want);
+      var lit = smoothstep(0.30, 0.37, want);
       document.documentElement.style.setProperty('--lit', lit.toFixed(4));
       /* Published for the reel, which has to fade its captions less once they
          are dark copy on a light ground — see flying-posters.jsx. */
@@ -838,7 +831,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div class="manual-flank" data-flank="left" style="height:min(78vh,780px);display:flex;align-items:center;justify-content:flex-end;pointer-events:none">
 <div data-step-left style="text-align:right;will-change:transform,opacity">
 <div data-cap="tag" style="font-size:10.5px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;color:var(--accent);margin-bottom:20px">Part one</div>
-<div data-cap="num" style="font-size:64px;font-weight:800;letter-spacing:-.05em;line-height:.9;color:color-mix(in srgb,rgba(255,255,255,.16),rgba(22,22,30,.52) calc(var(--lit) * 100%))">01</div>
+<div data-cap="num" style="font-size:64px;font-weight:800;letter-spacing:-.05em;line-height:.9;color:color-mix(in srgb,rgba(255,255,255,.16),rgba(0,0,0,.62) calc(var(--lit) * 100%))">01</div>
 <div data-cap="title" style="font-size:34px;font-weight:800;letter-spacing:-.035em;line-height:1.08;margin-top:12px">Open the app</div>
 </div>
 </div>

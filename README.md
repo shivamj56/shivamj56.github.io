@@ -132,12 +132,19 @@ The burst is the brightest, busiest stretch of the clip and it passes behind a
 copy-heavy section, so `vis` dips ~30% while it goes by and recovers after —
 short enough not to register as the artwork being dimmed.
 
-**Captions sit on their own field, not on a dimmed backdrop.** On white the
-emblem's trails run straight through the reel's copy. Each caption block carries
-a radial that fades to nothing (`[data-step-left]::before`), keyed to `--lit` so
-it does not exist while the page is dark. Fixing contrast this way keeps the
-artwork at full strength — dimming the background to make room for text is the
-wrong trade.
+**The background is ambient, and that is a composition decision, not a
+compromise.** The canvas runs at 0.40 opacity under a centre-weighted scrim. At
+full strength the emblem is a large, high-contrast graphic sitting directly
+behind body copy, and no amount of ink weight, halo or local field rescues that
+— the page stops reading as a landing page and starts reading as artwork with
+text on top. Copy is primary; the emblem is texture.
+
+Halos and per-caption backing fields were both tried and both removed. They are
+patches for a background that is too loud, and they look like patches.
+
+The theme flips across a **narrow** band (`smoothstep(0.30, 0.37)`). A wide ramp
+leaves a stretch of mid-grey copy over mid-tone artwork, which is the worst
+combination on the page.
 
 **Time `--lit` from the frames, never by eye.** Mean luminance climbs from 0.18
 at p=0.24 to 0.72 by p=0.43, so the ramp is `smoothstep(0.24, 0.40)` — leading it
