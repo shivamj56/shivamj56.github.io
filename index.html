@@ -124,9 +124,13 @@ a:hover{color:var(--accent-hi)}
   .hero-phone--back{display:none}
   .hero-phone--front{width:100%;--tilt:rotateX(3deg) rotateY(6deg) rotateZ(-2deg)}
 }
+/* Two dense UI screenshots cross-dissolving read as a rendering fault, not a
+   transition — for 0.85s of every 2.8s the phone showed both screens at once.
+   The outgoing one leaves first and the incoming waits for it, so they never
+   overlap at readable opacity. */
 .hero-phone-screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:0;transition:opacity .85s cubic-bezier(.4,0,.2,1)}
-.hero-phone-screen img.is-on{opacity:1}
+  opacity:0;transition:opacity .26s ease-in}
+.hero-phone-screen img.is-on{opacity:1;transition:opacity .34s cubic-bezier(.2,.8,.2,1) .22s}
 /* The bezel, drawn in CSS so the hero ships without waiting on an asset.
    A frame image, when supplied, replaces all of it. */
 /* Brushed-titanium rail. The bright stops sit where the raking light in the
