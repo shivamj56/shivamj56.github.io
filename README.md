@@ -51,6 +51,50 @@ then, at runtime in the browser:
 
 To change copy, edit the `EN` and `HI` objects near the bottom of `index.html`.
 
+## The scroll-scrubbed background
+
+`bg/f001.webp` … `bg/f050.webp` are 50 frames of the brand emblem lighting up,
+scrubbed by scroll position across the whole page: the top of the page is the
+dark wall, the bottom is the emblem fully resolved. They are blitted to a fixed
+full-viewport canvas behind everything.
+
+It is an image sequence rather than a `<video>` on purpose. Seeking a video on
+every scroll event stalls badly on Safari and iOS; decoding stills once and
+blitting them is what scroll-scrubbed product pages actually do.
+
+Adjacent frames are crossfaded, which is what lets 50 stills read as continuous
+motion over a page this tall — without it the steps are obvious.
+
+Loading is deliberately lazy: it waits for `load` and then an idle callback, so
+the background never competes with content for bandwidth. Frame 1 lands first and
+the rest stream in six at a time; scrubbing works throughout, falling back to the
+nearest decoded frame rather than flashing empty.
+
+**Legibility is the thing to watch when tuning.** Two knobs, both in the CSS:
+
+| | Default | |
+| --- | --- | --- |
+| `.site-bg.is-ready canvas` opacity | `.58` | Overall presence of the emblem |
+| `.site-bg-scrim` | radial + linear | Darkens the middle, where the copy sits |
+
+Raising the opacity past roughly `.7` starts to cost contrast on the manual
+section's captions. Check that section specifically after any change — it is the
+first place text becomes hard to read.
+
+Under `prefers-reduced-motion` the sequence is not scrubbed at all: the last
+frame is drawn once, statically.
+
+### Re-encoding the frames
+
+Source was 50 × 3840×2160 PNG, 206 MB. Shipped as 1440×810 WebP at q66, 1.9 MB:
+
+```bash
+for i in $(seq -f "%03g" 1 50); do
+  sips -Z 1440 "src/ezgif-frame-$i.png" --out "/tmp/$i.png"
+  cwebp -q 66 -m 6 -mt -quiet "/tmp/$i.png" -o "bg/f$i.webp"
+done
+```
+
 ## The hero device mockup
 
 Two devices float at a shared angle, staged the way a product mockup render would
