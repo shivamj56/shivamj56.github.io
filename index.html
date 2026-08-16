@@ -200,7 +200,12 @@ a:hover{color:var(--accent-hi)}
 .nav-float::before{content:'';position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(180deg,rgba(10,10,11,calc(.92 - var(--lit) * .78)),rgba(10,10,11,calc(.6 - var(--lit) * .52)) 46%,transparent);
   transition:opacity .4s ease}
-.nav-row{transition:transform .5s cubic-bezier(.2,.85,.2,1),opacity .32s ease}
+/* The top fade is an absolutely-positioned pseudo-element, and .nav-row was not
+   positioned — so the fade painted OVER the pills instead of behind them, which
+   is why the CTA looked washed out at the top of the page and brightened as the
+   fade thinned out on scroll. Positioning the row puts it back on top. */
+.nav-row{position:relative;z-index:1;
+  transition:transform .5s cubic-bezier(.2,.85,.2,1),opacity .32s ease}
 /* Out of the way while the reader is moving down the page, back on the first
    upward flick — so the sections present full-screen without stranding the CTA
    at the far end of a very long page. */
