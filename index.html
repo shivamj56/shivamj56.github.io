@@ -279,13 +279,22 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
       }
       return -1;
     }
+    /* The emblem is not centred in its own frame: cropping the watermark took
+       centring is baked into the crop instead (see the README), so ART_CX is
+       simply 0.5 and no zoom is needed. Zoom was tried first and had to be large
+       enough to give the pan room, which cropped the emblem top and bottom. The
+       anchor is kept so the framing stays tunable without re-encoding. */
+    var ART_CX = 0.5, ART_CY = 0.485, ZOOM = 1.0;
     function blit(i, alpha){
       var k = nearest(i); if(k < 0) return false;
       var im = imgs[k];
-      var s = Math.max(cw / im.naturalWidth, ch / im.naturalHeight);
+      var s = Math.max(cw / im.naturalWidth, ch / im.naturalHeight) * ZOOM;
       var w = im.naturalWidth * s, h = im.naturalHeight * s;
+      /* Clamped so the pan can never expose an edge of the frame. */
+      var x = Math.min(0, Math.max(cw - w, cw / 2 - w * ART_CX));
+      var y = Math.min(0, Math.max(ch - h, ch / 2 - h * ART_CY));
       ctx.globalAlpha = alpha;
-      ctx.drawImage(im, (cw - w) / 2, (ch - h) / 2, w, h);
+      ctx.drawImage(im, x, y, w, h);
       return true;
     }
     function draw(p){

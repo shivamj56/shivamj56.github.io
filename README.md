@@ -134,9 +134,18 @@ source. An earlier pass encoded at 1440w and the background looked soft for
 exactly that reason — it was being upscaled 2×, and no amount of quality setting
 fixes an upscale.
 
-Frames are cropped to the left 88% before resizing. The generator's watermark
-sits at 88.8–92.5% of the width, so that crop takes it out of frame; the
-artwork's widest trails end around 82%, so nothing is lost.
+**Framing is baked into the crop, measured from the frames themselves.** The
+artwork spans x 22.1–81.3% (centre 51.7%) and the generator's watermark sits at
+88.8–92.5%. Cropping to x 14.6–88.8% therefore does two jobs at once: it drops
+the watermark, and it puts the artwork's own centre at exactly 50%.
+
+That matters because the alternative — cover-fit plus a pan to recentre — needs
+a large zoom to give the pan any room, and on artwork that already fills 1.6–95.5%
+of the frame height that zoom crops the emblem top and bottom. Centring in the
+crop needs no zoom at all.
+
+`ART_CX` / `ART_CY` / `ZOOM` in the draw are kept so framing stays tunable
+without re-encoding; they are 0.5 / 0.485 / 1.0 for the current frames.
 
 ```bash
 for i in $(seq -f "%03g" 1 50); do
