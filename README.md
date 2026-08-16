@@ -20,6 +20,14 @@ Then open <http://localhost:8787>.
 Opening `index.html` over `file://` will **not** work: the runtime fetches
 `flying-posters.jsx` with `fetch()`, which browsers block on the file protocol.
 
+## Deploying
+
+There is no build step, so any static host serves this directly from the repo root.
+
+- **Netlify** — connect the repo; `netlify.toml` already sets the publish directory,
+  so leave the build command empty.
+- **Vercel** — connect the repo and pick the "Other" framework preset. No config needed.
+
 ## Layout
 
 | Path                 | Purpose |
