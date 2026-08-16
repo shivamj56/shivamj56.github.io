@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Om Shri Hari — Your whole trade, in your voice.</title>
+<meta name="description" content="Speak an order and it becomes a purchase order. Every truck, every paper, every payment date — tracked from the first call to the last rupee.">
+<meta name="theme-color" content="#0a0a0b">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Om Shri Hari — Your whole trade, in your voice.">
+<meta property="og:description" content="Speak an order and it becomes a purchase order. Every truck, every paper, every payment date — tracked from the first call to the last rupee.">
+<meta property="og:image" content="screens/01-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0a0b'/%3E%3Cpath d='M16 6a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4.4a5.6 5.6 0 1 1 0 11.2 5.6 5.6 0 0 1 0-11.2z' fill='%23f0561a'/%3E%3C/svg%3E">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#f0561a; --accent-lo:#ff8a52; --accent-hi:#d9420b;
+  --ink:#f4f4f5; --ink-2:#9c9ca6; --ink-3:#6c6c76;
+  --glass:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+  --glass-brd:1px solid rgba(255,255,255,.09);
+  --glass-sh:0 20px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);
+  --pill:linear-gradient(180deg,var(--accent-lo) 0%,var(--accent) 46%,var(--accent-hi) 100%);
+  --pill-sh:0 14px 30px -6px rgba(226,72,16,.55),inset 0 2px 3px rgba(255,255,255,.6),inset 0 -8px 16px rgba(150,38,0,.32);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#0a0a0b;font-family:'Plus Jakarta Sans','Noto Sans Devanagari',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-hi)}
+
+[data-motion] [data-anim]{opacity:0;transform:translateY(30px);transition:opacity .85s cubic-bezier(.2,.8,.2,1),transform .85s cubic-bezier(.2,.8,.2,1)}
+[data-motion] [data-anim="in"]{opacity:1;transform:none}
+[data-lift]{transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s cubic-bezier(.2,.8,.2,1)}
+[data-lift]:hover{transform:translateY(-6px)}
+@keyframes om-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes om-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes om-pulse{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:.9;transform:scale(1.12)}}
+@keyframes om-sheen{from{background-position:-200% 0}to{background-position:200% 0}}
+@media (prefers-reduced-motion:reduce){
+  [data-anim]{opacity:1;transform:none;transition:none}
+  [data-lift]:hover{transform:none}
+}
+@media (max-width:820px){
+  [data-manual-reel-wrap]{display:none!important}
+  [data-manual-mobile]{display:flex!important}
+}
+.posters-container{width:100%;height:100%;overflow:hidden;position:relative;z-index:2}
+.posters-canvas{display:block;width:100%;height:100%;cursor:grab}
+.posters-canvas:active{cursor:grabbing}
+</style>
+<script src="https://embed.mckp.live/embed.js" async></script>
+<script type="module">
+import * as ogl from 'https://unpkg.com/ogl@1.0.11/src/index.js';
+window.ogl = ogl;
+window.dispatchEvent(new Event('ogl-ready'));
+</script>
+<script>
+(function(){
+  if(window.__omMotion) return; window.__omMotion = true;
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.documentElement.setAttribute('data-motion','');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var p = e.target.parentElement;
+      var sibs = p ? Array.prototype.filter.call(p.children, function(n){ return n.hasAttribute && n.hasAttribute('data-anim'); }) : [];
+      var i = Math.max(0, sibs.indexOf(e.target));
+      setTimeout(function(){ e.target.setAttribute('data-anim','in'); }, Math.min(i,6)*85);
+      io.unobserve(e.target);
+    });
+  }, { rootMargin:'0px 0px -12% 0px', threshold:0.08 });
+  function scan(){
+    var els = document.querySelectorAll('[data-anim]:not([data-anim="in"])');
+    for(var i=0;i<els.length;i++){ if(!els[i].__omObs){ els[i].__omObs = 1; io.observe(els[i]); } }
+  }
+  function start(){
+    scan();
+    new MutationObserver(scan).observe(document.body, { childList:true, subtree:true });
+    var bar = null;
+    function onScroll(){
+      bar = bar || document.querySelector('[data-progress]');
+      if(!bar) return;
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? Math.min(100, (window.scrollY / h) * 100) : 0) + '%';
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', onScroll, { passive:true });
+    onScroll();
+    setInterval(function(){
+      document.querySelectorAll('[data-anim]:not([data-anim="in"])').forEach(function(el){
+        if(el.getBoundingClientRect().top < window.innerHeight * 0.98) el.setAttribute('data-anim','in');
+      });
+    }, 1200);
+  }
+  if(document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+</script>
+</helmet>
+
+<div style="{{ themeVars }}">
+<div style="background:radial-gradient(70% 45% at 12% -5%,rgba(240,86,26,.16),transparent 62%),radial-gradient(55% 38% at 92% 6%,rgba(90,110,255,.10),transparent 64%),radial-gradient(60% 40% at 50% 102%,rgba(240,86,26,.07),transparent 64%),#0a0a0b;min-height:100vh;overflow-x:clip">
+
+<!-- ============ NAV ============ -->
+<div style="position:sticky;top:0;z-index:50;padding:14px 32px;backdrop-filter:blur(20px) saturate(160%);background:linear-gradient(180deg,rgba(10,10,11,.88),rgba(10,10,11,.68));border-bottom:1px solid rgba(255,255,255,.08)">
+<div style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:0 8px 18px -5px rgba(226,72,16,.5),inset 0 2px 3px rgba(255,255,255,.55)">ॐ</div>
+<div>
+<div style="font-size:15px;font-weight:800;letter-spacing:-.01em">Om Shri Hari Trading</div>
+<div style="font-size:10.5px;font-weight:600;color:var(--ink-3);letter-spacing:.04em">{{ t.navKicker }}</div>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<div style="display:flex;padding:3px;border-radius:999px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div onClick="{{ setEn }}" style="{{ enTabStyle }}">English</div>
+<div onClick="{{ setHi }}" style="{{ hiTabStyle }}">हिंदी</div>
+</div>
+<div style="height:42px;padding:0 22px;border-radius:999px;display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:800;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:0 12px 26px -8px rgba(226,72,16,.5),inset 0 2px 3px rgba(255,255,255,.55),inset 0 -6px 12px rgba(150,38,0,.3);cursor:pointer">▶ {{ t.navCta }}</div>
+</div>
+</div>
+<div style="position:absolute;left:0;bottom:0;height:2px;width:100%"><div data-progress style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent-lo),var(--accent-hi));box-shadow:0 0 10px rgba(226,72,16,.7)"></div></div>
+</div>
+
+<!-- ============ HERO ============ -->
+<div style="max-width:1180px;margin:0 auto;padding:72px 32px 0;display:flex;gap:56px;align-items:center;flex-wrap:wrap">
+<div style="flex:1 1 460px;min-width:340px">
+<div style="display:inline-flex;align-items:center;gap:9px;height:34px;padding:0 15px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#ffb08a;background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:var(--glass-sh);margin-bottom:26px">
+<span style="width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(240,86,26,.9)"></span>{{ t.heroBadge }}
+</div>
+<h1 data-anim style="margin:0;font-size:82px;line-height:.95;font-weight:800;letter-spacing:-.045em">{{ t.heroTitle }}</h1>
+<p data-anim style="margin:22px 0 0;font-size:18.5px;line-height:1.6;font-weight:450;color:var(--ink-2);max-width:520px">{{ t.heroSub }}</p>
+<div data-anim style="display:flex;gap:13px;margin-top:34px;flex-wrap:wrap">
+<div style="height:60px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:12px;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:var(--pill-sh);cursor:pointer">
+<span style="font-size:20px">▶</span>
+<span style="display:flex;flex-direction:column;line-height:1.15"><span style="font-size:9.5px;font-weight:700;opacity:.85;letter-spacing:.09em;text-transform:uppercase">{{ t.storeSmall }}</span><span style="font-size:16.5px;font-weight:800">{{ t.storeBig }}</span></span>
+</div>
+<a href="#" style="height:60px;padding:0 28px;border-radius:999px;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh);cursor:pointer">
+<svg width="17" height="20" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" style="flex:0 0 auto"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-36.5-2.8-76.4 21.2-91 21.2-15.4 0-50.7-20.2-78.4-20.2C61.7 141.6 8 184.7 8 271.2c0 25.6 4.7 52 14 79.3 12.5 35.9 56.1 123.8 101.6 122.4 23.8-.6 40.6-16.9 71.6-16.9 30.1 0 45.6 16.9 72.2 16.9 45.9-.7 85.3-80.6 97.2-116.6-61.4-29-46.1-86.6-45.9-87.6zM255.2 84.6c15.2-18.5 22.9-40.1 21.6-64.6-24.3 1.4-45.9 13.2-63.6 33.5-15.7 18.2-24.1 39.7-22.5 63.3 26.1 2 49.4-10.5 64.5-32.2z"/></svg>
+<span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><span style="font-size:9.5px;font-weight:700;opacity:.7;letter-spacing:.09em;text-transform:uppercase">{{ t.storeIosSmall }}</span><span style="font-size:16.5px;font-weight:800">{{ t.storeIosBig }}</span></span>
+</a>
+<div style="height:60px;padding:0 28px;border-radius:999px;display:flex;align-items:center;gap:10px;font-size:15.5px;font-weight:700;color:#ffb08a;background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:0 12px 28px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.09);cursor:pointer">📞 {{ t.heroCall }}</div>
+</div>
+<div data-anim style="display:flex;gap:22px;margin-top:30px;flex-wrap:wrap">
+<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-2)"><span style="color:#4ade80;font-weight:800">✓</span>{{ t.heroPoint1 }}</div>
+<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-2)"><span style="color:#4ade80;font-weight:800">✓</span>{{ t.heroPoint2 }}</div>
+<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-2)"><span style="color:#4ade80;font-weight:800">✓</span>{{ t.heroPoint3 }}</div>
+</div>
+</div>
+
+<div data-anim style="flex:1 1 430px;min-width:320px;display:flex;justify-content:center">
+<div style="width:100%;border-radius:28px;overflow:hidden;box-shadow:0 40px 80px -24px rgba(0,0,0,.45)">
+<mockup-player style="display:block;width:100%;aspect-ratio:4/3" mockup-id="20b2ea20-9ec0-4a45-b978-56879bc2dbb5" width="100%" aspect-ratio="4 / 3" cursor-affect-page="false" cursor-range="17-69-16-75" click-range="41-19-42-21" camera-zoom="39" background-color="#0a0a0b"></mockup-player>
+</div>
+</div>
+</div>
+
+<!-- ============ MARQUEE ============ -->
+<div style="margin-top:84px;padding:22px 0;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border-top:1px solid rgba(255,255,255,.09);border-bottom:1px solid rgba(255,255,255,.09);-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)">
+<div style="display:flex;width:max-content;animation:om-marquee 38s linear infinite">
+<div style="display:flex;align-items:center;gap:34px;padding-right:34px;font-size:17px;font-weight:800;letter-spacing:-.01em;color:var(--ink);white-space:nowrap">
+<span>New order</span><span style="color:var(--accent)">◆</span><span>Today's rate</span><span style="color:var(--accent)">◆</span><span>Kata parchi</span><span style="color:var(--accent)">◆</span><span>Pre-arrival slip</span><span style="color:var(--accent)">◆</span><span>GRN</span><span style="color:var(--accent)">◆</span><span>Challan</span><span style="color:var(--accent)">◆</span><span>Factory receipt</span><span style="color:var(--accent)">◆</span><span>Purchase receipt</span><span style="color:var(--accent)">◆</span><span>Pay slip</span><span style="color:var(--accent)">◆</span><span>Payment due</span><span style="color:var(--accent)">◆</span>
+</div>
+<div style="display:flex;align-items:center;gap:34px;padding-right:34px;font-size:17px;font-weight:800;letter-spacing:-.01em;color:var(--ink);white-space:nowrap">
+<span>New order</span><span style="color:var(--accent)">◆</span><span>Today's rate</span><span style="color:var(--accent)">◆</span><span>Kata parchi</span><span style="color:var(--accent)">◆</span><span>Pre-arrival slip</span><span style="color:var(--accent)">◆</span><span>GRN</span><span style="color:var(--accent)">◆</span><span>Challan</span><span style="color:var(--accent)">◆</span><span>Factory receipt</span><span style="color:var(--accent)">◆</span><span>Purchase receipt</span><span style="color:var(--accent)">◆</span><span>Pay slip</span><span style="color:var(--accent)">◆</span><span>Payment due</span><span style="color:var(--accent)">◆</span>
+</div>
+</div>
+</div>
+
+<!-- ============ PROBLEM ============ -->
+<div style="max-width:1180px;margin:0 auto;padding:104px 32px 0">
+<div data-anim style="max-width:640px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.probKicker }}</div>
+<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.probTitle }}</h2>
+<p style="margin:16px 0 0;font-size:16.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.probSub }}</p>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:40px">
+<div data-anim data-lift style="border-radius:28px;padding:26px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(160deg,rgba(240,86,26,.18),rgba(240,86,26,.06));border:var(--glass-brd);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);margin-bottom:18px">📵</div>
+<div style="font-size:18px;font-weight:800;letter-spacing:-.015em">{{ t.prob1Title }}</div>
+<p style="margin:9px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.prob1Body }}</p>
+</div>
+<div data-anim data-lift style="border-radius:28px;padding:26px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(160deg,rgba(240,86,26,.18),rgba(240,86,26,.06));border:var(--glass-brd);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);margin-bottom:18px">🧾</div>
+<div style="font-size:18px;font-weight:800;letter-spacing:-.015em">{{ t.prob2Title }}</div>
+<p style="margin:9px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.prob2Body }}</p>
+</div>
+<div data-anim data-lift style="border-radius:28px;padding:26px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(160deg,rgba(240,86,26,.18),rgba(240,86,26,.06));border:var(--glass-brd);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);margin-bottom:18px">📅</div>
+<div style="font-size:18px;font-weight:800;letter-spacing:-.015em">{{ t.prob3Title }}</div>
+<p style="margin:9px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.prob3Body }}</p>
+</div>
+</div>
+</div>
+
+<!-- ============ HOW IT WORKS — 7 STEPS ============ -->
+<div style="margin-top:104px;padding:80px 32px;background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.006))">
+<div style="max-width:1180px;margin:0 auto">
+<div data-anim style="max-width:660px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.flowKicker }}</div>
+<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.flowTitle }}</h2>
+<p style="margin:16px 0 0;font-size:16.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.flowSub }}</p>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:16px;margin-top:44px">
+<div data-anim data-lift style="border-radius:26px;padding:22px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5),inset 0 1px 2px rgba(255,255,255,.5)">1</div><span style="font-size:26px">🌾</span></div>
+<div style="font-size:15.5px;font-weight:800">{{ t.s1Title }}</div>
+<p style="margin:7px 0 0;font-size:13px;line-height:1.58;font-weight:500;color:var(--ink-2)">{{ t.s1Body }}</p>
+</div>
+<div data-anim data-lift style="border-radius:26px;padding:22px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5),inset 0 1px 2px rgba(255,255,255,.5)">2</div><span style="font-size:26px">🚚</span></div>
+<div style="font-size:15.5px;font-weight:800">{{ t.s2Title }}</div>
+<p style="margin:7px 0 0;font-size:13px;line-height:1.58;font-weight:500;color:var(--ink-2)">{{ t.s2Body }}</p>
+</div>
+<div data-anim data-lift style="border-radius:26px;padding:22px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5),inset 0 1px 2px rgba(255,255,255,.5)">3</div><span style="font-size:26px">🎤</span></div>
+<div style="font-size:15.5px;font-weight:800">{{ t.s3Title }}</div>
+<p style="margin:7px 0 0;font-size:13px;line-height:1.58;font-weight:500;color:var(--ink-2)">{{ t.s3Body }}</p>
+</div>
+<div data-anim data-lift style="border-radius:26px;padding:22px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5),inset 0 1px 2px rgba(255,255,255,.5)">4</div><span style="font-size:26px">🏭</span></div>
+<div style="font-size:15.5px;font-weight:800">{{ t.s4Title }}</div>
+<p style="margin:7px 0 0;font-size:13px;line-height:1.58;font-weight:500;color:var(--ink-2)">{{ t.s4Body }}</p>
+</div>
+<div data-anim data-lift style="border-radius:26px;padding:22px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5),inset 0 1px 2px rgba(255,255,255,.5)">5</div><span style="font-size:26px">💰</span></div>
+<div style="font-size:15.5px;font-weight:800">{{ t.s5Title }}</div>
+<p style="margin:7px 0 0;font-size:13px;line-height:1.58;font-weight:500;color:var(--ink-2)">{{ t.s5Body }}</p>
+</div>
+<div data-anim data-lift style="border-radius:26px;padding:22px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5),inset 0 1px 2px rgba(255,255,255,.5)">6</div><span style="font-size:26px">📅</span></div>
+<div style="font-size:15.5px;font-weight:800">{{ t.s6Title }}</div>
+<p style="margin:7px 0 0;font-size:13px;line-height:1.58;font-weight:500;color:var(--ink-2)">{{ t.s6Body }}</p>
+</div>
+<div data-anim data-lift style="border-radius:26px;padding:22px;background:linear-gradient(160deg,rgba(240,86,26,.15),rgba(240,86,26,.04));border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5),inset 0 1px 2px rgba(255,255,255,.5)">7</div><span style="font-size:26px">✅</span></div>
+<div style="font-size:15.5px;font-weight:800">{{ t.s7Title }}</div>
+<p style="margin:7px 0 0;font-size:13px;line-height:1.58;font-weight:500;color:var(--ink-2)">{{ t.s7Body }}</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ PAPER ENGINE ============ -->
+<div style="max-width:1180px;margin:0 auto;padding:104px 32px 0;display:flex;gap:56px;flex-wrap:wrap;align-items:center">
+<div data-anim style="flex:1 1 420px;min-width:320px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.paperKicker }}</div>
+<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.paperTitle }}</h2>
+<p style="margin:16px 0 0;font-size:16.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.paperSub }}</p>
+<div style="display:flex;flex-direction:column;gap:11px;margin-top:28px">
+<div style="display:flex;gap:13px;align-items:flex-start"><div style="width:24px;height:24px;flex:0 0 24px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#4ade80;background:linear-gradient(160deg,rgba(74,222,128,.16),rgba(74,222,128,.05));border:1px solid rgba(255,255,255,.10)">✓</div><div><span style="font-size:14.5px;font-weight:800">{{ t.paperL1 }}</span><span style="font-size:14px;font-weight:500;color:var(--ink-2)"> — {{ t.paperL1b }}</span></div></div>
+<div style="display:flex;gap:13px;align-items:flex-start"><div style="width:24px;height:24px;flex:0 0 24px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#4ade80;background:linear-gradient(160deg,rgba(74,222,128,.16),rgba(74,222,128,.05));border:1px solid rgba(255,255,255,.10)">✓</div><div><span style="font-size:14.5px;font-weight:800">{{ t.paperL2 }}</span><span style="font-size:14px;font-weight:500;color:var(--ink-2)"> — {{ t.paperL2b }}</span></div></div>
+<div style="display:flex;gap:13px;align-items:flex-start"><div style="width:24px;height:24px;flex:0 0 24px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#4ade80;background:linear-gradient(160deg,rgba(74,222,128,.16),rgba(74,222,128,.05));border:1px solid rgba(255,255,255,.10)">✓</div><div><span style="font-size:14.5px;font-weight:800">{{ t.paperL3 }}</span><span style="font-size:14px;font-weight:500;color:var(--ink-2)"> — {{ t.paperL3b }}</span></div></div>
+</div>
+</div>
+
+<div style="flex:1 1 400px;min-width:320px">
+<div data-anim style="border-radius:32px;padding:26px;background:var(--glass);border:var(--glass-brd);box-shadow:0 34px 70px -20px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.09)">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+<div><div style="font-size:17px;font-weight:800">Truck 1</div><div style="font-size:11.5px;font-weight:600;color:var(--ink-2);margin-top:2px">PO-2026-000016 · DFG Non-Sortex</div></div>
+<div style="font-size:14px;font-weight:800;color:var(--accent)">14%</div>
+</div>
+<div style="height:8px;border-radius:999px;margin:12px 0 20px;background:rgba(255,255,255,.12);box-shadow:inset 0 1px 2px rgba(0,0,0,.6);overflow:hidden"><div style="width:14%;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent-lo),var(--accent-hi));box-shadow:0 2px 8px rgba(226,72,16,.5)"></div></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+<div style="text-align:center"><div style="width:48px;height:48px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(74,222,128,.10);border:2px solid rgba(74,222,128,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)">📗</div><div style="font-size:9px;font-weight:700;color:#4ade80;margin-top:6px">Party invoice</div></div>
+<div style="text-align:center"><div style="width:48px;height:48px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(240,86,26,.14);border:2px solid rgba(240,86,26,.6);box-shadow:0 6px 16px -6px rgba(226,72,16,.4),inset 0 1px 0 rgba(255,255,255,.08)">📝</div><div style="font-size:9px;font-weight:700;color:var(--accent);margin-top:6px">Kata parchi</div></div>
+<div style="text-align:center"><div style="width:48px;height:48px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.10);opacity:.6">📋</div><div style="font-size:9px;font-weight:600;color:var(--ink-3);margin-top:6px">Pre-arrival</div></div>
+<div style="text-align:center"><div style="width:48px;height:48px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.10);opacity:.6">📒</div><div style="font-size:9px;font-weight:600;color:var(--ink-3);margin-top:6px">GRN</div></div>
+<div style="text-align:center"><div style="width:48px;height:48px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.10);opacity:.6">🚛</div><div style="font-size:9px;font-weight:600;color:var(--ink-3);margin-top:6px">Challan</div></div>
+<div style="text-align:center"><div style="width:48px;height:48px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.10);opacity:.6">🏭</div><div style="font-size:9px;font-weight:600;color:var(--ink-3);margin-top:6px">Factory rcv</div></div>
+<div style="text-align:center"><div style="width:48px;height:48px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.10);opacity:.6">🧾</div><div style="font-size:9px;font-weight:600;color:var(--ink-3);margin-top:6px">Purchase</div></div>
+<div style="text-align:center"><div style="width:48px;height:48px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.10);opacity:.6">💰</div><div style="font-size:9px;font-weight:600;color:var(--ink-3);margin-top:6px">Pay slip</div></div>
+</div>
+<div style="display:flex;gap:18px;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);flex-wrap:wrap">
+<div style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--ink-2)"><span style="width:11px;height:11px;border-radius:50%;border:2px solid rgba(74,222,128,.5)"></span>{{ t.legDone }}</div>
+<div style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--ink-2)"><span style="width:11px;height:11px;border-radius:50%;border:2px solid rgba(240,86,26,.65)"></span>{{ t.legNow }}</div>
+<div style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--ink-2)"><span style="width:11px;height:11px;border-radius:50%;border:2px solid rgba(255,255,255,.12)"></span>{{ t.legWait }}</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- ============ USER MANUAL ============ -->
+<div style="margin-top:104px;padding:88px 0 96px;background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.006));border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)">
+<div style="max-width:1180px;margin:0 auto;padding:0 32px 62px">
+<div data-anim style="max-width:700px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.manKicker }}</div>
+<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.manTitle }}</h2>
+<p style="margin:18px 0 0;font-size:16.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.manSub }}</p>
+<p style="margin:14px 0 0;font-size:14px;line-height:1.6;font-weight:600;color:var(--ink-3)">{{ t.flySub }}</p>
+</div>
+</div>
+
+<div data-manual-mobile style="display:none;flex-direction:column;gap:16px;max-width:420px;margin:0 auto;padding:0 22px">
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/01-home.png" alt="{{ t.m1t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">01</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m1t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC1Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m1b }}</p>
+</div>
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/02-selling.png" alt="{{ t.m2t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">02</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m2t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC1Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m2b }}</p>
+</div>
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/03-weight.png" alt="{{ t.m3t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">03</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m3t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC1Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m3b }}</p>
+</div>
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/04-rate.png" alt="{{ t.m4t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">04</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m4t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC1Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m4b }}</p>
+</div>
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/05-factory.png" alt="{{ t.m5t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">05</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m5t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC1Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m5b }}</p>
+</div>
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/06-payment.png" alt="{{ t.m6t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">06</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m6t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC1Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m6b }}</p>
+</div>
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/07-delivery.png" alt="{{ t.m7t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">07</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m7t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC1Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m7b }}</p>
+</div>
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/08-confirm.png" alt="{{ t.m8t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">08</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m8t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC1Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m8b }}</p>
+</div>
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/09-updates.png" alt="{{ t.m9t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">09</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m9t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC2Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m9b }}</p>
+</div>
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/10-order.png" alt="{{ t.m10t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">10</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m10t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC2Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m10b }}</p>
+</div>
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/11-truck.png" alt="{{ t.m11t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">11</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m11t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC3Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m11b }}</p>
+</div>
+<div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
+<img src="screens/12-help.png" alt="{{ t.m12t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+<span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">12</span>
+<span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m12t }}</span>
+</div>
+<div style="font-size:9.5px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);margin-top:12px">{{ t.manC3Tag }}</div>
+<p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m12b }}</p>
+</div>
+</div>
+
+<div data-manual-reel-wrap style="position:relative;width:100%;background:radial-gradient(46% 42% at 50% 50%,rgba(240,86,26,.14),transparent 72%)">
+<div data-manual-track style="position:relative;height:calc(100vh + 2400px)">
+<div class="manual-rig" style="position:sticky;top:0;height:100vh;max-width:1320px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:1fr 400px 1fr;align-items:center;gap:40px">
+<div style="position:absolute;top:26px;right:32px;pointer-events:none;z-index:5">
+<span style="display:inline-block;padding:8px 15px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;background:rgba(10,10,11,.82);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);color:#f4f4f5;box-shadow:0 6px 18px rgba(0,0,0,.35)">{{ t.flyHint }}</span>
+</div>
+<div class="manual-flank" data-flank="left" style="height:min(78vh,780px);display:flex;align-items:center;justify-content:flex-end;pointer-events:none">
+<div data-step-left style="text-align:right;will-change:transform,opacity">
+<div data-cap="tag" style="font-size:10.5px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;color:var(--accent);margin-bottom:20px">Part one</div>
+<div data-cap="num" style="font-size:64px;font-weight:800;letter-spacing:-.05em;line-height:.9;color:rgba(255,255,255,.16)">01</div>
+<div data-cap="title" style="font-size:34px;font-weight:800;letter-spacing:-.035em;line-height:1.08;margin-top:12px">Open the app</div>
+</div>
+</div>
+<div class="manual-reel" style="height:min(78vh,780px)">
+<x-import component-from-global-scope="FlyingPosters" from="./flying-posters.jsx" items="{{ posterItems }}" dc-props="{{ posterProps }}" plane-width="{{ 300 }}" plane-height="{{ 640 }}" distortion="{{ 3 }}" scroll-ease="{{ 0.06 }}" camera-fov="{{ 45 }}" camera-z="{{ 20 }}" hint-size="100%,100%"></x-import>
+</div>
+<div class="manual-flank" data-flank="right" style="height:min(78vh,780px);display:flex;align-items:center;pointer-events:none">
+<div data-step-right style="will-change:transform,opacity">
+<div data-cap="rule" style="width:34px;height:2px;background:var(--accent);margin-bottom:20px"></div>
+<p data-cap="body" style="margin:0;font-size:17px;line-height:1.6;font-weight:500;color:var(--ink-2);max-width:330px">Today's rate for every commodity sits on the home screen, above your live orders. Tap New order to start.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ ARCHITECTURE ============ -->
+<div style="margin-top:104px;padding:80px 32px;background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.006))">
+<div style="max-width:1180px;margin:0 auto">
+<div data-anim style="max-width:660px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.archKicker }}</div>
+<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.archTitle }}</h2>
+<p style="margin:16px 0 0;font-size:16.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.archSub }}</p>
+</div>
+
+<div style="display:flex;align-items:stretch;gap:12px;margin-top:44px;flex-wrap:wrap">
+<div data-anim data-lift style="flex:1 1 170px;min-width:160px;border-radius:24px;padding:20px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:22px;margin-bottom:12px">🎤</div>
+<div style="font-size:10px;font-weight:800;letter-spacing:.13em;color:var(--accent);text-transform:uppercase">{{ t.a1Tag }}</div>
+<div style="font-size:14.5px;font-weight:800;margin-top:6px">{{ t.a1Title }}</div>
+<p style="margin:6px 0 0;font-size:12px;line-height:1.55;font-weight:500;color:var(--ink-2)">{{ t.a1Body }}</p>
+</div>
+<div style="display:flex;align-items:center;font-size:20px;color:var(--ink-3);font-weight:800">→</div>
+<div data-anim data-lift style="flex:1 1 170px;min-width:160px;border-radius:24px;padding:20px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:22px;margin-bottom:12px">🧮</div>
+<div style="font-size:10px;font-weight:800;letter-spacing:.13em;color:var(--accent);text-transform:uppercase">{{ t.a2Tag }}</div>
+<div style="font-size:14.5px;font-weight:800;margin-top:6px">{{ t.a2Title }}</div>
+<p style="margin:6px 0 0;font-size:12px;line-height:1.55;font-weight:500;color:var(--ink-2)">{{ t.a2Body }}</p>
+</div>
+<div style="display:flex;align-items:center;font-size:20px;color:var(--ink-3);font-weight:800">→</div>
+<div data-anim data-lift style="flex:1 1 170px;min-width:160px;border-radius:24px;padding:20px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:22px;margin-bottom:12px">🗂️</div>
+<div style="font-size:10px;font-weight:800;letter-spacing:.13em;color:var(--accent);text-transform:uppercase">{{ t.a3Tag }}</div>
+<div style="font-size:14.5px;font-weight:800;margin-top:6px">{{ t.a3Title }}</div>
+<p style="margin:6px 0 0;font-size:12px;line-height:1.55;font-weight:500;color:var(--ink-2)">{{ t.a3Body }}</p>
+</div>
+<div style="display:flex;align-items:center;font-size:20px;color:var(--ink-3);font-weight:800">→</div>
+<div data-anim data-lift style="flex:1 1 170px;min-width:160px;border-radius:24px;padding:20px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:22px;margin-bottom:12px">🔔</div>
+<div style="font-size:10px;font-weight:800;letter-spacing:.13em;color:var(--accent);text-transform:uppercase">{{ t.a4Tag }}</div>
+<div style="font-size:14.5px;font-weight:800;margin-top:6px">{{ t.a4Title }}</div>
+<p style="margin:6px 0 0;font-size:12px;line-height:1.55;font-weight:500;color:var(--ink-2)">{{ t.a4Body }}</p>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:16px">
+<div data-anim data-lift style="border-radius:24px;padding:22px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:14.5px;font-weight:800">📴 {{ t.arch1Title }}</div>
+<p style="margin:7px 0 0;font-size:12.5px;line-height:1.58;font-weight:500;color:var(--ink-2)">{{ t.arch1Body }}</p>
+</div>
+<div data-anim data-lift style="border-radius:24px;padding:22px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:14.5px;font-weight:800">🗣️ {{ t.arch2Title }}</div>
+<p style="margin:7px 0 0;font-size:12.5px;line-height:1.58;font-weight:500;color:var(--ink-2)">{{ t.arch2Body }}</p>
+</div>
+<div data-anim data-lift style="border-radius:24px;padding:22px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:14.5px;font-weight:800">🔒 {{ t.arch3Title }}</div>
+<p style="margin:7px 0 0;font-size:12.5px;line-height:1.58;font-weight:500;color:var(--ink-2)">{{ t.arch3Body }}</p>
+</div>
+<div data-anim data-lift style="border-radius:24px;padding:22px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:14.5px;font-weight:800">📄 {{ t.arch4Title }}</div>
+<p style="margin:7px 0 0;font-size:12.5px;line-height:1.58;font-weight:500;color:var(--ink-2)">{{ t.arch4Body }}</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ WHO IT'S FOR ============ -->
+<div style="max-width:1180px;margin:0 auto;padding:104px 32px 0">
+<div data-anim style="max-width:640px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.whoKicker }}</div>
+<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.whoTitle }}</h2>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:18px;margin-top:40px">
+<div data-anim data-lift style="border-radius:28px;padding:26px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh);display:flex;flex-direction:column">
+<div style="font-size:26px;margin-bottom:16px">👨‍🌾</div>
+<div style="font-size:17.5px;font-weight:800;letter-spacing:-.015em">{{ t.who1Title }}</div>
+<p style="margin:9px 0 18px;font-size:13.5px;line-height:1.6;font-weight:500;color:var(--ink-2);flex:1">{{ t.who1Body }}</p>
+<div style="font-size:12px;font-weight:800;color:var(--accent)">{{ t.who1Link }} →</div>
+</div>
+<div data-anim data-lift style="border-radius:28px;padding:26px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh);display:flex;flex-direction:column">
+<div style="font-size:26px;margin-bottom:16px">🏭</div>
+<div style="font-size:17.5px;font-weight:800;letter-spacing:-.015em">{{ t.who2Title }}</div>
+<p style="margin:9px 0 18px;font-size:13.5px;line-height:1.6;font-weight:500;color:var(--ink-2);flex:1">{{ t.who2Body }}</p>
+<div style="font-size:12px;font-weight:800;color:var(--accent)">{{ t.who2Link }} →</div>
+</div>
+<div data-anim data-lift style="border-radius:28px;padding:26px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh);display:flex;flex-direction:column">
+<div style="font-size:26px;margin-bottom:16px">🤝</div>
+<div style="font-size:17.5px;font-weight:800;letter-spacing:-.015em">{{ t.who3Title }}</div>
+<p style="margin:9px 0 18px;font-size:13.5px;line-height:1.6;font-weight:500;color:var(--ink-2);flex:1">{{ t.who3Body }}</p>
+<div style="font-size:12px;font-weight:800;color:var(--accent)">{{ t.who3Link }} →</div>
+</div>
+<div data-anim data-lift style="border-radius:28px;padding:26px;background:linear-gradient(160deg,rgba(240,86,26,.15),rgba(240,86,26,.04));border:var(--glass-brd);box-shadow:var(--glass-sh);display:flex;flex-direction:column">
+<div style="font-size:26px;margin-bottom:16px">📈</div>
+<div style="font-size:17.5px;font-weight:800;letter-spacing:-.015em">{{ t.who4Title }}</div>
+<p style="margin:9px 0 18px;font-size:13.5px;line-height:1.6;font-weight:500;color:var(--ink-2);flex:1">{{ t.who4Body }}</p>
+<div style="font-size:12px;font-weight:800;color:var(--accent)">{{ t.who4Link }} →</div>
+</div>
+</div>
+</div>
+
+<!-- ============ BUSINESS MODEL ============ -->
+<div style="max-width:1180px;margin:0 auto;padding:104px 32px 0">
+<div data-anim style="border-radius:36px;padding:44px;background:var(--glass);border:var(--glass-brd);box-shadow:0 34px 70px -20px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.09)">
+<div data-anim style="max-width:620px">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.bizKicker }}</div>
+<h2 style="margin:0;font-size:46px;line-height:1.05;font-weight:800;letter-spacing:-.04em">{{ t.bizTitle }}</h2>
+<p style="margin:15px 0 0;font-size:15.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.bizSub }}</p>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:26px;margin-top:38px;padding-top:34px;border-top:1px solid rgba(255,255,255,.08)">
+<div>
+<div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px">{{ t.biz1Tag }}</div>
+<div style="font-size:16px;font-weight:800">{{ t.biz1Title }}</div>
+<p style="margin:7px 0 0;font-size:13px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.biz1Body }}</p>
+</div>
+<div>
+<div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px">{{ t.biz2Tag }}</div>
+<div style="font-size:16px;font-weight:800">{{ t.biz2Title }}</div>
+<p style="margin:7px 0 0;font-size:13px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.biz2Body }}</p>
+</div>
+<div>
+<div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px">{{ t.biz3Tag }}</div>
+<div style="font-size:16px;font-weight:800">{{ t.biz3Title }}</div>
+<p style="margin:7px 0 0;font-size:13px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.biz3Body }}</p>
+</div>
+<div>
+<div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px">{{ t.biz4Tag }}</div>
+<div style="font-size:16px;font-weight:800">{{ t.biz4Title }}</div>
+<p style="margin:7px 0 0;font-size:13px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.biz4Body }}</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============ FAQ ============ -->
+<div style="max-width:1180px;margin:0 auto;padding:104px 32px 0">
+<h2 data-anim style="margin:0 0 36px;font-size:48px;line-height:1.04;font-weight:800;letter-spacing:-.04em">{{ t.faqTitle }}</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px">
+<div data-anim data-lift style="border-radius:26px;padding:24px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:15.5px;font-weight:800">{{ t.q1 }}</div>
+<p style="margin:9px 0 0;font-size:13.5px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.a1 }}</p>
+</div>
+<div data-anim data-lift style="border-radius:26px;padding:24px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:15.5px;font-weight:800">{{ t.q2 }}</div>
+<p style="margin:9px 0 0;font-size:13.5px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.a2 }}</p>
+</div>
+<div data-anim data-lift style="border-radius:26px;padding:24px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:15.5px;font-weight:800">{{ t.q3 }}</div>
+<p style="margin:9px 0 0;font-size:13.5px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.a3 }}</p>
+</div>
+<div data-anim data-lift style="border-radius:26px;padding:24px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:15.5px;font-weight:800">{{ t.q4 }}</div>
+<p style="margin:9px 0 0;font-size:13.5px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.a4 }}</p>
+</div>
+<div data-anim data-lift style="border-radius:26px;padding:24px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:15.5px;font-weight:800">{{ t.q5 }}</div>
+<p style="margin:9px 0 0;font-size:13.5px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.a5 }}</p>
+</div>
+<div data-anim data-lift style="border-radius:26px;padding:24px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div style="font-size:15.5px;font-weight:800">{{ t.q6 }}</div>
+<p style="margin:9px 0 0;font-size:13.5px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.a6 }}</p>
+</div>
+</div>
+</div>
+
+<!-- ============ FINAL CTA ============ -->
+<div style="max-width:1180px;margin:0 auto;padding:104px 32px 0">
+<div data-anim style="border-radius:40px;padding:64px 44px;text-align:center;background:linear-gradient(155deg,rgba(255,255,255,.06),rgba(240,86,26,.10) 55%,rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:0 40px 90px -24px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.10);position:relative;overflow:hidden">
+<div style="position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,150,90,.22),transparent 70%);top:-150px;left:-90px"></div>
+<div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(150,160,255,.20),transparent 70%);bottom:-140px;right:-70px"></div>
+<div style="position:relative">
+<h2 style="margin:0;font-size:58px;line-height:1.0;font-weight:800;letter-spacing:-.045em;max-width:600px;margin-left:auto;margin-right:auto">{{ t.ctaTitle }}</h2>
+<p style="margin:18px auto 0;font-size:16.5px;line-height:1.6;font-weight:500;color:var(--ink-2);max-width:500px">{{ t.ctaSub }}</p>
+<div style="display:flex;gap:13px;margin-top:34px;justify-content:center;flex-wrap:wrap">
+<div style="height:62px;padding:0 32px;border-radius:999px;display:flex;align-items:center;gap:12px;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:var(--pill-sh);cursor:pointer">
+<span style="font-size:21px">▶</span>
+<span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><span style="font-size:9.5px;font-weight:700;opacity:.85;letter-spacing:.09em;text-transform:uppercase">{{ t.storeSmall }}</span><span style="font-size:17px;font-weight:800">{{ t.storeBig }}</span></span>
+</div>
+<a href="#" style="height:62px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh);cursor:pointer">
+<svg width="17" height="20" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" style="flex:0 0 auto"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-36.5-2.8-76.4 21.2-91 21.2-15.4 0-50.7-20.2-78.4-20.2C61.7 141.6 8 184.7 8 271.2c0 25.6 4.7 52 14 79.3 12.5 35.9 56.1 123.8 101.6 122.4 23.8-.6 40.6-16.9 71.6-16.9 30.1 0 45.6 16.9 72.2 16.9 45.9-.7 85.3-80.6 97.2-116.6-61.4-29-46.1-86.6-45.9-87.6zM255.2 84.6c15.2-18.5 22.9-40.1 21.6-64.6-24.3 1.4-45.9 13.2-63.6 33.5-15.7 18.2-24.1 39.7-22.5 63.3 26.1 2 49.4-10.5 64.5-32.2z"/></svg>
+<span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><span style="font-size:9.5px;font-weight:700;opacity:.7;letter-spacing:.09em;text-transform:uppercase">{{ t.storeIosSmall }}</span><span style="font-size:17px;font-weight:800">{{ t.storeIosBig }}</span></span>
+</a>
+<div style="height:62px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;color:#ffb08a;background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:0 12px 28px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.09);cursor:pointer">📞 91200 35500</div>
+</div>
+<div style="font-size:12.5px;font-weight:600;color:var(--ink-3);margin-top:22px">{{ t.ctaNote }}</div>
+</div>
+</div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<div style="max-width:1180px;margin:0 auto;padding:70px 32px 56px">
+<div style="display:flex;gap:40px;flex-wrap:wrap;justify-content:space-between;padding-top:34px;border-top:1px solid rgba(255,255,255,.10)">
+<div style="max-width:300px">
+<div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+<div style="width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5),inset 0 1px 2px rgba(255,255,255,.5)">ॐ</div>
+<div style="font-size:14.5px;font-weight:800">Om Shri Hari Trading Pvt Ltd</div>
+</div>
+<p style="margin:0;font-size:12.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.footBlurb }}</p>
+</div>
+<div style="display:flex;gap:52px;flex-wrap:wrap">
+<div>
+<div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px">{{ t.footCol1 }}</div>
+<div style="display:flex;flex-direction:column;gap:9px;font-size:13px;font-weight:600;color:var(--ink-2)">
+<span>{{ t.footL1 }}</span><span>{{ t.footL2 }}</span><span>{{ t.footL3 }}</span>
+</div>
+</div>
+<div>
+<div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px">{{ t.footCol2 }}</div>
+<div style="display:flex;flex-direction:column;gap:9px;font-size:13px;font-weight:600;color:var(--ink-2)">
+<span>91200 35500</span><span>{{ t.footL4 }}</span><span>{{ t.footL5 }}</span>
+</div>
+</div>
+</div>
+</div>
+<div style="font-size:11.5px;font-weight:600;color:var(--ink-3);margin-top:34px">© 2026 Om Shri Hari Trading Pvt Ltd</div>
+</div>
+
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;English&quot;,&quot;options&quot;:[&quot;English&quot;,&quot;Hindi&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Page&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#f0561a&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#f0561a&quot;,&quot;#c2410c&quot;,&quot;#1d4ed8&quot;,&quot;#0d9488&quot;],&quot;section&quot;:&quot;Page&quot;}}">
+const EN = {
+  flyKicker:"All twelve screens", flyTitle:"The whole app, in one pass.",
+  flySub:"Scroll and the screens fly through in order. Drag to move through them yourself. Every step is written out underneath.",
+  flyHint:"Scroll to fly through · drag to explore",
+
+  manKicker:"User manual", manTitle:"Every screen, in the order you'll meet them.",
+  manSub:"Twelve screens carry a trade from the first tap to the last paper. Here is all of it, in sequence — nothing hidden behind a menu.",
+  manC1Tag:"Part one", manC1Title:"Placing the order", manC1Sub:"Eight screens. One question at a time, and a full read-back before anything is sent.",
+  manC2Tag:"Part two", manC2Title:"Watching it move", manC2Sub:"Once the office approves, the order tells you where it is and what it needs next.",
+  manC3Tag:"Part three", manC3Title:"Papers and closing out", manC3Sub:"Every truck carries its own file. Send what is yours, and the payment clock keeps running.",
+  m1t:"Open the app", m1b:"Today's rate for every commodity sits on the home screen, above your live orders. Tap New order to start.",
+  m2t:"Pick the commodity", m2b:"Maize, DFG non-sortex, DFG sortex or rice. One tap — the app speaks the choice back to you.",
+  m3t:"Give the weight", m3b:"Tons or trucks, whichever you think in. The app converts and shows how many trucks that becomes.",
+  m4t:"Say the rate", m4b:"Speak the number or type it. Always per quintal, the way it is quoted in the mandi.",
+  m5t:"Choose the factory", m5b:"Pick the buyer taking the goods from the factories you already deal with. The selected one is highlighted.",
+  m6t:"Set payment terms", m6b:"Advance, 7, 15 or 30 days — or your own number. The exact due date is calculated as you choose.",
+  m7t:"Set delivery", m7b:"Pick a window and the app shows the real calendar date, so nobody argues about which day was meant.",
+  m8t:"Check and send", m8b:"The whole order on one screen. Read it, then send — the office is notified the moment you do.",
+  m9t:"Watch for updates", m9b:"Approvals and uploads arrive here as they happen, each one telling you what to send next.",
+  m10t:"Open the order", m10b:"Progress across every truck, a warning banner for what is missing, and the papers each truck still owes.",
+  m11t:"Send the papers", m11b:"Photograph the slip or attach a file. Each paper shows whether it is yours to send or the office's.",
+  m12t:"Get help", m12b:"The help button is on every screen. One tap gives you a number that a person answers.",
+
+  navKicker:"Pvt Ltd", navCta:"Get the app",
+  heroBadge:"Built for the mandi, not the office",
+  heroTitle:"Your whole trade, in your voice.",
+  heroSub:"Speak an order and it becomes a purchase order. Every truck, every paper, every payment date — tracked from the first call to the last rupee.",
+  storeSmall:"Get it on", storeBig:"Google Play", storeIosSmall:"Download on the", storeIosBig:"App Store", heroCall:"Talk to us",
+  heroPoint1:"No typing needed", heroPoint2:"Hindi and English", heroPoint3:"Works on any phone",
+
+  probKicker:"The problem",
+  probTitle:"Grain moves fast. Paper doesn't.",
+  probSub:"A trade is agreed in a two-minute phone call. Then it takes three weeks of slips, calls and follow-ups to actually close — and that is where the money leaks.",
+  prob1Title:"Orders live in phone calls",
+  prob1Body:"Rate, quantity, factory and terms are agreed verbally. Nothing is written down until someone remembers to write it down.",
+  prob2Title:"Seven papers per truck",
+  prob2Body:"Party invoice, kata parchi, pre-arrival slip, GRN, challan, factory receipt, pay slip. One missing slip holds up the whole payment.",
+  prob3Title:"Due dates live in memory",
+  prob3Body:"Fifteen days from which day? Nobody is sure. Payment gets chased instead of scheduled.",
+
+  flowKicker:"How it works",
+  flowTitle:"Seven questions. One purchase order.",
+  flowSub:"The app asks one thing at a time, out loud, in the trader's own language. Answer by speaking or tapping. At the end it reads the whole order back before anything is sent.",
+  s1Title:"What are you selling?",
+  s1Body:"Pick the commodity — maize, DFG non-sortex, DFG sortex, rice.",
+  s2Title:"How much weight?",
+  s2Body:"In tons or in trucks. The app converts and tells you how many trucks that is.",
+  s3Title:"What is the rate?",
+  s3Body:"Speak the number. Per quintal, the way the mandi quotes it.",
+  s4Title:"Which factory?",
+  s4Body:"Choose the buyer taking the goods, from the factories you already deal with.",
+  s5Title:"How will payment be made?",
+  s5Body:"Advance, 7, 15 or 30 days — or type your own. The due date is calculated for you.",
+  s6Title:"When can you deliver?",
+  s6Body:"Pick a window and the app shows the exact calendar date, not a countdown.",
+  s7Title:"Is this right?",
+  s7Body:"The full order, read back in one screen. Send it and the office is notified instantly.",
+
+  paperKicker:"The paper engine",
+  paperTitle:"Seven papers, per truck, never lost.",
+  paperSub:"Every truck on an order carries its own set of documents, and each one has a state: yours to upload, the office's to send, or done. The app always shows the one thing being waited on.",
+  paperL1:"Per-truck, not per-order", paperL1b:"a five-truck order is five independent document sets, each with its own progress.",
+  paperL2:"Whose turn it is", paperL2b:"every paper is labelled from you or from the office, so nobody waits on the wrong person.",
+  paperL3:"Photo is enough", paperL3b:"snap the slip with the camera or attach a file. No scanner, no printing, no laptop.",
+  legDone:"Done", legNow:"Waiting on you", legWait:"Not yet due",
+
+  archKicker:"Under the hood",
+  archTitle:"Voice in, ledger out.",
+  archSub:"The order flow is the easy part to see. What makes it hold up in a village with one bar of signal is what sits behind it.",
+  a1Tag:"Capture", a1Title:"Speech & taps", a1Body:"Every step accepts voice or touch. Numbers are confirmed on screen before they count.",
+  a2Tag:"Resolve", a2Title:"Terms engine", a2Body:"Tons to trucks, payment terms to a real due date, delivery window to a calendar date.",
+  a3Tag:"Record", a3Title:"PO & documents", a3Body:"A numbered purchase order with a document set per truck and a full history trail.",
+  a4Tag:"Notify", a4Title:"Office & updates", a4Body:"Approvals, uploads and status changes push to everyone on the order as they happen.",
+  arch1Title:"Offline-first", arch1Body:"Orders and photos are captured on the phone and sync when signal returns. A dead network never blocks a trade.",
+  arch2Title:"Language at the core", arch2Body:"Hindi and English are equal citizens — every prompt, every label, every voice line. Switching is one tap, mid-order.",
+  arch3Title:"Approval before commitment", arch3Body:"A trader raises, the office approves. Nothing becomes binding on a single tap, and every change is attributed.",
+  arch4Title:"History as the record", arch4Body:"Raised, approved, uploaded — who did what, when, on every order. The audit trail is the product, not a report.",
+
+  whoKicker:"Who it's for",
+  whoTitle:"Four sides of the same trade.",
+  who1Title:"Traders & suppliers",
+  who1Body:"Raise an order in the time it takes to finish the phone call. See today's rate before you commit, and know exactly which paper is holding up your payment.",
+  who1Link:"Get the app",
+  who2Title:"Factories & mills",
+  who2Body:"Receive orders as structured purchase orders instead of WhatsApp messages. Pre-arrival slips, GRNs and receipts land against the right truck automatically.",
+  who2Link:"Talk to procurement",
+  who3Title:"Brokers & agents",
+  who3Body:"Bring your own traders onto the platform and keep your book in one place. Every order carries the terms you agreed, in writing, from the start.",
+  who3Link:"Partner with us",
+  who4Title:"Investors & partners",
+  who4Body:"An operating trading business with the workflow already digitised — order capture, document compliance and payment terms on one rail.",
+  who4Link:"Request the deck",
+
+  bizKicker:"The business",
+  bizTitle:"A trading company that decided to build its own rails.",
+  bizSub:"Om Shri Hari Trading Pvt Ltd moves agricultural commodities between suppliers and processing factories. The app is not a side project — it is how the business runs.",
+  biz1Tag:"What we do", biz1Title:"Physical commodity trade", biz1Body:"Sourcing maize and rice grades from suppliers and delivering them to distilleries, sugar and glycol factories.",
+  biz2Tag:"Where we sit", biz2Title:"Between supply and mill", biz2Body:"We carry the price risk, the paperwork and the delivery obligation so neither side has to hold both.",
+  biz3Tag:"How it scales", biz3Title:"Software, not headcount", biz3Body:"Every order that arrives through the app is an order nobody had to transcribe, chase or reconcile by hand.",
+  biz4Tag:"What's next", biz4Title:"Open the rail", biz4Body:"The same flow that runs our own trade can carry other traders' and brokers' books.",
+
+  faqTitle:"Common questions",
+  q1:"Do I need to type?", a1:"No. Every question can be answered by speaking. Typing is there if you prefer it.",
+  q2:"What if there is no network?", a2:"Keep going. The order and the photos are saved on your phone and sent as soon as signal comes back.",
+  q3:"Which languages does it speak?", a3:"Hindi and English today, both in text and voice. You can switch in the middle of an order.",
+  q4:"Can I still order on paper?", a4:"Yes. There is an Order on paper option on the home screen for when that is simply faster.",
+  q5:"Who approves an order?", a5:"You raise it, the office approves it. You get an update the moment it is approved and know what to send next.",
+  q6:"What does it cost me?", a6:"Nothing to download and nothing to use as a supplier trading with us. Call us and we will set you up.",
+
+  ctaTitle:"Your next order can take two minutes.",
+  ctaSub:"Download the app, or call us and we will set your firm up on the phone — in Hindi or English.",
+  ctaNote:"iPhone and Android · free for suppliers trading with Om Shri Hari Trading Pvt Ltd",
+
+  footBlurb:"Agricultural commodity trading, and the app that runs it. Built for the people doing the trade, in the language they do it in.",
+  footCol1:"Product", footL1:"How it works", footL2:"For factories", footL3:"For brokers",
+  footCol2:"Contact", footL4:"Order support", footL5:"Partnerships"
+};
+
+const HI = {
+  flyKicker:"पूरी बारह स्क्रीन", flyTitle:"पूरा ऐप, एक ही बार में।",
+  flySub:"स्क्रॉल कीजिए और स्क्रीन क्रम से उड़ती हुई निकलती हैं। ख़ुद घुमाना हो तो खींचिए। हर क़दम नीचे लिखा है।",
+  flyHint:"स्क्रॉल कीजिए · खींचकर देखिए",
+
+  manKicker:"इस्तेमाल की गाइड", manTitle:"हर स्क्रीन, उसी क्रम में जिसमें मिलेगी।",
+  manSub:"पहले टैप से आख़िरी कागज़ तक सौदा बारह स्क्रीन में चलता है। पूरा क्रम यहाँ है — कुछ भी मेन्यू में छिपा नहीं।",
+  manC1Tag:"भाग एक", manC1Title:"ऑर्डर देना", manC1Sub:"आठ स्क्रीन। एक बार में एक सवाल, और भेजने से पहले पूरा ऑर्डर दोबारा पढ़कर।",
+  manC2Tag:"भाग दो", manC2Title:"आगे बढ़ता देखना", manC2Sub:"दफ़्तर की मंज़ूरी के बाद ऑर्डर ख़ुद बताता है कि कहाँ पहुँचा और अब क्या चाहिए।",
+  manC3Tag:"भाग तीन", manC3Title:"कागज़ और समापन", manC3Sub:"हर ट्रक की अपनी फ़ाइल। जो आपका है वह भेजिए, भुगतान की घड़ी चलती रहती है।",
+  m1t:"ऐप खोलिए", m1b:"हर जिंस का आज का रेट होम स्क्रीन पर है, आपके चालू ऑर्डर के ऊपर। शुरू करने के लिए 'नया ऑर्डर' दबाइए।",
+  m2t:"जिंस चुनिए", m2b:"मक्का, DFG नॉन-सॉर्टेक्स, DFG सॉर्टेक्स या चावल। एक टैप — ऐप आपका चुनाव बोलकर दोहराता है।",
+  m3t:"वज़न बताइए", m3b:"टन में या ट्रक में, जैसे आप सोचते हैं। ऐप हिसाब लगाकर बताता है कितने ट्रक बनेंगे।",
+  m4t:"रेट बोलिए", m4b:"संख्या बोलिए या लिखिए। हमेशा प्रति क्विंटल, जैसे मंडी में बोला जाता है।",
+  m5t:"फ़ैक्ट्री चुनिए", m5b:"माल लेने वाला ख़रीदार उन फ़ैक्ट्रियों में से चुनिए जिनसे आपका काम है। चुनी हुई अलग दिखती है।",
+  m6t:"भुगतान की शर्त", m6b:"एडवांस, 7, 15 या 30 दिन — या अपना नंबर। चुनते ही सही देय तारीख़ निकल आती है।",
+  m7t:"डिलीवरी तय कीजिए", m7b:"अवधि चुनिए और ऐप असली कैलेंडर तारीख़ दिखाता है, ताकि दिन को लेकर बहस न हो।",
+  m8t:"जाँचिए और भेजिए", m8b:"पूरा ऑर्डर एक स्क्रीन पर। पढ़िए, फिर भेजिए — भेजते ही दफ़्तर को सूचना चली जाती है।",
+  m9t:"अपडेट देखिए", m9b:"मंज़ूरी और अपलोड यहीं आते हैं, और हर एक बताता है कि अब क्या भेजना है।",
+  m10t:"ऑर्डर खोलिए", m10b:"हर ट्रक की प्रगति, जो बाक़ी है उसकी चेतावनी, और हर ट्रक पर कौन से कागज़ बचे हैं।",
+  m11t:"कागज़ भेजिए", m11b:"पर्ची की फ़ोटो लीजिए या फ़ाइल लगाइए। हर कागज़ पर लिखा है वह आपसे है या दफ़्तर से।",
+  m12t:"मदद लीजिए", m12b:"मदद का बटन हर स्क्रीन पर है। एक टैप और वह नंबर मिलता है जिसे इंसान उठाता है।",
+
+  navKicker:"प्रा. लि.", navCta:"ऐप लें",
+  heroBadge:"मंडी के लिए बना है, दफ़्तर के लिए नहीं",
+  heroTitle:"आपका पूरा व्यापार, आपकी आवाज़ में।",
+  heroSub:"ऑर्डर बोलिए और वह परचेज़ ऑर्डर बन जाता है। हर ट्रक, हर कागज़, हर भुगतान की तारीख़ — पहली बात से आख़िरी रुपये तक दर्ज।",
+  storeSmall:"डाउनलोड करें", storeBig:"Google Play", storeIosSmall:"डाउनलोड करें", storeIosBig:"App Store", heroCall:"बात कीजिए",
+  heroPoint1:"टाइप करने की ज़रूरत नहीं", heroPoint2:"हिंदी और अंग्रेज़ी", heroPoint3:"किसी भी फ़ोन पर चले",
+
+  probKicker:"समस्या",
+  probTitle:"अनाज तेज़ चलता है। कागज़ नहीं।",
+  probSub:"सौदा दो मिनट की फ़ोन कॉल में तय हो जाता है। फिर उसे पूरा करने में तीन हफ़्ते की पर्चियाँ, कॉल और तक़ाज़े लगते हैं — और पैसा वहीं फँसता है।",
+  prob1Title:"ऑर्डर फ़ोन कॉल में रह जाते हैं",
+  prob1Body:"रेट, मात्रा, फ़ैक्ट्री और शर्तें ज़ुबानी तय होती हैं। जब तक कोई लिखना याद न रखे, कहीं दर्ज नहीं होता।",
+  prob2Title:"हर ट्रक पर सात कागज़",
+  prob2Body:"पार्टी इनवॉइस, कांटा पर्ची, प्री-अराइवल स्लिप, GRN, चालान, फ़ैक्ट्री रसीद, पे स्लिप। एक पर्ची छूटी तो पूरा भुगतान रुका।",
+  prob3Title:"तारीख़ें याद के भरोसे",
+  prob3Body:"पंद्रह दिन — किस दिन से? किसी को पक्का नहीं। भुगतान तय होने की जगह पीछा किया जाता है।",
+
+  flowKicker:"कैसे चलता है",
+  flowTitle:"सात सवाल। एक परचेज़ ऑर्डर।",
+  flowSub:"ऐप एक बार में एक ही बात पूछता है, बोलकर, व्यापारी की अपनी भाषा में। बोलकर या छूकर जवाब दें। अंत में भेजने से पहले पूरा ऑर्डर पढ़कर सुनाता है।",
+  s1Title:"क्या बेच रहे हैं?",
+  s1Body:"जिंस चुनिए — मक्का, DFG नॉन-सॉर्टेक्स, DFG सॉर्टेक्स, चावल।",
+  s2Title:"कितना वज़न?",
+  s2Body:"टन में या ट्रक में। ऐप हिसाब लगाकर बताता है कि कितने ट्रक होंगे।",
+  s3Title:"रेट क्या है?",
+  s3Body:"संख्या बोल दें। प्रति क्विंटल, जैसे मंडी में बोला जाता है।",
+  s4Title:"कौन सी फ़ैक्ट्री?",
+  s4Body:"माल लेने वाला ख़रीदार चुनिए — उन फ़ैक्ट्रियों में से जिनसे आपका काम है।",
+  s5Title:"भुगतान कैसे होगा?",
+  s5Body:"एडवांस, 7, 15 या 30 दिन — या अपने दिन लिखें। देय तारीख़ अपने आप निकल आती है।",
+  s6Title:"डिलीवरी कब?",
+  s6Body:"अवधि चुनिए और ऐप गिनती नहीं, सीधी कैलेंडर तारीख़ दिखाता है।",
+  s7Title:"यह सही है?",
+  s7Body:"पूरा ऑर्डर एक स्क्रीन में। भेजते ही दफ़्तर को तुरंत सूचना।",
+
+  paperKicker:"कागज़ का सिस्टम",
+  paperTitle:"सात कागज़, हर ट्रक के, कभी न खोएँ।",
+  paperSub:"ऑर्डर के हर ट्रक का अपना दस्तावेज़ सेट होता है, और हर कागज़ की एक स्थिति — आपको भेजना है, दफ़्तर को भेजना है, या हो गया। ऐप हमेशा वही एक चीज़ दिखाता है जिसका इंतज़ार है।",
+  paperL1:"हर ट्रक का अलग", paperL1b:"पाँच ट्रक के ऑर्डर में पाँच अलग दस्तावेज़ सेट, हर एक की अपनी प्रगति।",
+  paperL2:"किसकी बारी है", paperL2b:"हर कागज़ पर लिखा है आपसे या दफ़्तर से — ग़लत आदमी का इंतज़ार कोई नहीं करता।",
+  paperL3:"फ़ोटो ही काफ़ी है", paperL3b:"कैमरे से पर्ची की फ़ोटो लें या फ़ाइल लगाएँ। स्कैनर, प्रिंट, लैपटॉप कुछ नहीं चाहिए।",
+  legDone:"हो गया", legNow:"आपका इंतज़ार", legWait:"अभी बाक़ी",
+
+  archKicker:"अंदर से",
+  archTitle:"आवाज़ अंदर, हिसाब बाहर।",
+  archSub:"ऑर्डर का फ़्लो तो दिखता है। एक बार सिग्नल वाले गाँव में यह टिका क्यों रहता है — वजह पीछे है।",
+  a1Tag:"पकड़ना", a1Title:"आवाज़ और टैप", a1Body:"हर क़दम आवाज़ या छूने से चलता है। संख्या गिनने से पहले स्क्रीन पर पक्की होती है।",
+  a2Tag:"हिसाब", a2Title:"शर्तों का इंजन", a2Body:"टन से ट्रक, भुगतान की शर्त से असली देय तारीख़, डिलीवरी अवधि से कैलेंडर तारीख़।",
+  a3Tag:"दर्ज", a3Title:"PO और दस्तावेज़", a3Body:"नंबर वाला परचेज़ ऑर्डर, हर ट्रक का दस्तावेज़ सेट, और पूरा इतिहास।",
+  a4Tag:"सूचना", a4Title:"दफ़्तर और अपडेट", a4Body:"मंज़ूरी, अपलोड और स्थिति में बदलाव — ऑर्डर से जुड़े सबको उसी वक़्त।",
+  arch1Title:"बिना नेटवर्क भी", arch1Body:"ऑर्डर और फ़ोटो फ़ोन पर सुरक्षित रहते हैं और सिग्नल आते ही चले जाते हैं। नेटवर्क बंद होने से सौदा नहीं रुकता।",
+  arch2Title:"भाषा जड़ में", arch2Body:"हिंदी और अंग्रेज़ी बराबर हैं — हर सवाल, हर लेबल, हर आवाज़। ऑर्डर के बीच में भी एक टैप से बदलें।",
+  arch3Title:"पहले मंज़ूरी", arch3Body:"व्यापारी उठाता है, दफ़्तर मंज़ूर करता है। एक टैप से कुछ पक्का नहीं होता, और हर बदलाव किसके नाम है यह दर्ज रहता है।",
+  arch4Title:"इतिहास ही रिकॉर्ड है", arch4Body:"उठाया, मंज़ूर हुआ, अपलोड हुआ — किसने, कब, किस ऑर्डर पर। यही रिकॉर्ड है, अलग रिपोर्ट नहीं।",
+
+  whoKicker:"किसके लिए",
+  whoTitle:"एक ही सौदे के चार पक्ष।",
+  who1Title:"व्यापारी और सप्लायर",
+  who1Body:"फ़ोन कॉल ख़त्म होने तक ऑर्डर दर्ज। सौदा करने से पहले आज का रेट देखें, और जानें कि आपका भुगतान किस कागज़ पर रुका है।",
+  who1Link:"ऐप लें",
+  who2Title:"फ़ैक्ट्री और मिल",
+  who2Body:"ऑर्डर WhatsApp संदेश की जगह पूरे परचेज़ ऑर्डर की तरह आएँ। प्री-अराइवल स्लिप, GRN और रसीदें सही ट्रक पर अपने आप लगें।",
+  who2Link:"ख़रीद विभाग से बात करें",
+  who3Title:"दलाल और एजेंट",
+  who3Body:"अपने व्यापारियों को साथ लाएँ और पूरा बही-खाता एक जगह रखें। हर ऑर्डर पर तय शर्तें शुरू से लिखित रहती हैं।",
+  who3Link:"साझेदारी करें",
+  who4Title:"निवेशक और साझेदार",
+  who4Body:"एक चलता हुआ ट्रेडिंग व्यापार, जिसका कामकाज पहले से डिजिटल है — ऑर्डर, दस्तावेज़ और भुगतान की शर्तें एक ही पटरी पर।",
+  who4Link:"डेक मंगाएँ",
+
+  bizKicker:"व्यापार",
+  bizTitle:"एक ट्रेडिंग कंपनी जिसने अपनी पटरी ख़ुद बनाई।",
+  bizSub:"ओम श्री हरी ट्रेडिंग प्रा. लि. सप्लायर से प्रोसेसिंग फ़ैक्ट्रियों तक कृषि जिंस पहुँचाती है। ऐप कोई अलग प्रोजेक्ट नहीं — व्यापार इसी से चलता है।",
+  biz1Tag:"हम क्या करते हैं", biz1Title:"असली माल का व्यापार", biz1Body:"सप्लायर से मक्का और चावल की श्रेणियाँ लेकर डिस्टिलरी, शुगर और ग्लाइकॉल फ़ैक्ट्रियों तक पहुँचाना।",
+  biz2Tag:"हम कहाँ हैं", biz2Title:"सप्लाई और मिल के बीच", biz2Body:"दाम का जोखिम, कागज़ और डिलीवरी की ज़िम्मेदारी हम उठाते हैं, ताकि दोनों तरफ़ दोनों बोझ न पड़ें।",
+  biz3Tag:"बढ़त कैसे", biz3Title:"सॉफ़्टवेयर से, स्टाफ़ से नहीं", biz3Body:"ऐप से आया हर ऑर्डर वह ऑर्डर है जिसे किसी ने हाथ से लिखा, पीछा या मिलान नहीं किया।",
+  biz4Tag:"आगे क्या", biz4Title:"पटरी सबके लिए", biz4Body:"जो फ़्लो हमारा व्यापार चलाता है, वही दूसरे व्यापारियों और दलालों का खाता भी चला सकता है।",
+
+  faqTitle:"आम सवाल",
+  q1:"टाइप करना पड़ेगा?", a1:"नहीं। हर सवाल का जवाब बोलकर दिया जा सकता है। टाइप करना चाहें तो वह भी है।",
+  q2:"नेटवर्क न हो तो?", a2:"काम चलता रहेगा। ऑर्डर और फ़ोटो फ़ोन में सुरक्षित रहते हैं और सिग्नल आते ही चले जाते हैं।",
+  q3:"कौन सी भाषाएँ?", a3:"आज हिंदी और अंग्रेज़ी, लिखी और बोली दोनों। ऑर्डर के बीच में भी बदल सकते हैं।",
+  q4:"कागज़ पर ऑर्डर हो सकता है?", a4:"हाँ। होम स्क्रीन पर 'ऑर्डर ऑन पेपर' है, जब वही तेज़ पड़े।",
+  q5:"ऑर्डर मंज़ूर कौन करता है?", a5:"आप उठाते हैं, दफ़्तर मंज़ूर करता है। मंज़ूरी मिलते ही अपडेट आता है और अगला कागज़ पता चल जाता है।",
+  q6:"मुझे कितना लगेगा?", a6:"डाउनलोड और इस्तेमाल — हमारे साथ व्यापार करने वाले सप्लायर के लिए कुछ नहीं। कॉल कीजिए, हम सेट कर देंगे।",
+
+  ctaTitle:"आपका अगला ऑर्डर दो मिनट का हो सकता है।",
+  ctaSub:"ऐप डाउनलोड कीजिए, या कॉल कीजिए और हम फ़ोन पर ही आपकी फ़र्म सेट कर देंगे — हिंदी या अंग्रेज़ी में।",
+  ctaNote:"iPhone और Android · ओम श्री हरी ट्रेडिंग प्रा. लि. के साथ व्यापार करने वाले सप्लायर के लिए निःशुल्क",
+
+  footBlurb:"कृषि जिंस का व्यापार, और उसे चलाने वाला ऐप। व्यापार करने वालों के लिए, उनकी ही भाषा में बना।",
+  footCol1:"प्रोडक्ट", footL1:"कैसे चलता है", footL2:"फ़ैक्ट्रियों के लिए", footL3:"दलालों के लिए",
+  footCol2:"संपर्क", footL4:"ऑर्डर सहायता", footL5:"साझेदारी"
+};
+
+class Component extends DCLogic {
+  state = { lang: null };
+
+  hexToRgb(h){const s=String(h).replace('#','');const n=s.length===3?s.split('').map(c=>c+c).join(''):s;const v=parseInt(n,16);return{r:(v>>16)&255,g:(v>>8)&255,b:v&255};}
+  shift(hex,amt){const{r,g,b}=this.hexToRgb(hex);const f=c=>Math.max(0,Math.min(255,Math.round(amt>0?c+(255-c)*amt:c*(1+amt))));return `rgb(${f(r)}, ${f(g)}, ${f(b)})`;}
+  renderVals(){
+    const accent = this.props.accent ?? '#f0561a';
+    const lang = this.state.lang ?? (this.props.startLang === 'Hindi' ? 'hi' : 'en');
+    const on = {padding:'8px 18px',borderRadius:'999px',fontSize:'12.5px',fontWeight:800,color:'#fff',cursor:'pointer',background:'var(--pill)',boxShadow:'0 6px 14px -4px rgba(226,72,16,.5),inset 0 1px 2px rgba(255,255,255,.5)'};
+    const off = {padding:'8px 18px',borderRadius:'999px',fontSize:'12.5px',fontWeight:700,color:'var(--ink-2)',cursor:'pointer',background:'transparent'};
+    const _t = lang === 'hi' ? HI : EN;
+    const _parts = ['manC1Tag','manC1Tag','manC1Tag','manC1Tag','manC1Tag','manC1Tag','manC1Tag','manC1Tag','manC2Tag','manC2Tag','manC3Tag','manC3Tag'];
+    return {
+      posterProps: {
+        steps: _parts.map((p, i) => ({
+          tag: _t[p], num: String(i + 1).padStart(2, '0'),
+          title: _t['m' + (i + 1) + 't'], body: _t['m' + (i + 1) + 'b']
+        }))
+      },
+      posterItems: ['screens/01-home.png','screens/02-selling.png','screens/03-weight.png','screens/04-rate.png','screens/05-factory.png','screens/06-payment.png','screens/07-delivery.png','screens/08-confirm.png','screens/09-updates.png','screens/10-order.png','screens/11-truck.png','screens/12-help.png'],
+      t: lang === 'hi' ? HI : EN,
+      setEn: () => this.setState({lang:'en'}),
+      setHi: () => this.setState({lang:'hi'}),
+      enTabStyle: lang === 'en' ? on : off,
+      hiTabStyle: lang === 'hi' ? on : off,
+      themeVars: {
+        '--accent': accent,
+        '--accent-lo': this.shift(accent, 0.28),
+        '--accent-hi': this.shift(accent, -0.16)
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
