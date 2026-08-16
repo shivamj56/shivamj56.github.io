@@ -29,9 +29,9 @@
      in step with the footage instead of needing each section hand-themed. */
   --lit:0;
   --ink-warm:color-mix(in srgb,#ffb08a,#9c3d0c calc(var(--lit) * 100%));
-  --ink:color-mix(in srgb,#f4f4f5,#101017 calc(var(--lit) * 100%));
-  --ink-2:color-mix(in srgb,#9c9ca6,#45454f calc(var(--lit) * 100%));
-  --ink-3:color-mix(in srgb,#6c6c76,#6f6f7b calc(var(--lit) * 100%));
+  --ink:color-mix(in srgb,#f4f4f5,#0a0a10 calc(var(--lit) * 100%));
+  --ink-2:color-mix(in srgb,#9c9ca6,#2e2e38 calc(var(--lit) * 100%));
+  --ink-3:color-mix(in srgb,#6c6c76,#54545e calc(var(--lit) * 100%));
   --glass:linear-gradient(155deg,rgba(255,255,255,calc(.055 + var(--lit) * .58)),rgba(255,255,255,calc(.018 + var(--lit) * .5)));
   --glass-brd:1px solid rgba(255,255,255,calc(.09 + var(--lit) * .5));
   --glass-sh:0 20px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);
@@ -84,7 +84,8 @@ a:hover{color:var(--accent-hi)}
 /* With the emblem this bright, the copy over it needs its own contrast rather
    than a heavier scrim — otherwise brightening the art just dims the art again.
    These carry the text that sits directly over the glow. */
-[data-step-left],[data-step-right],[data-over-art]{text-shadow:0 2px 18px rgba(10,10,11,calc(.95 - var(--lit) * .95)),0 1px 4px rgba(10,10,11,calc(.9 - var(--lit) * .9))}
+[data-step-left],[data-step-right],[data-over-art]{text-shadow:0 2px 18px rgba(10,10,11,calc(.95 - var(--lit) * .95)),0 1px 4px rgba(10,10,11,calc(.9 - var(--lit) * .9)),
+   0 1px 14px rgba(255,255,255,calc(var(--lit) * .92)),0 0 3px rgba(255,255,255,calc(var(--lit) * .85))}
 /* ---- hero device mockup ----------------------------------------------
    The screenshots in screens/ are the single source of truth: the hero shows
    the same files the manual section does, so a UI change lands in both.
@@ -174,6 +175,8 @@ a:hover{color:var(--accent-hi)}
   background:linear-gradient(180deg,rgba(10,10,11,calc(.92 - var(--lit) * .78)),rgba(10,10,11,calc(.6 - var(--lit) * .52)) 46%,transparent)}
 .cta-card{-webkit-backdrop-filter:blur(calc(var(--lit) * 16px)) saturate(calc(100% + var(--lit) * 40%));
   backdrop-filter:blur(calc(var(--lit) * 16px)) saturate(calc(100% + var(--lit) * 40%))}
+h1,h2,h3,p,li{text-shadow:0 1px 14px rgba(255,255,255,calc(var(--lit) * .8)),
+  0 0 3px rgba(255,255,255,calc(var(--lit) * .7))}
 .nav-progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;pointer-events:none}
 .nav-row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:flex-end;
   gap:9px;flex-wrap:wrap}

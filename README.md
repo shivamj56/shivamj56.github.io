@@ -126,18 +126,28 @@ unreadable first. Check both after any change.
 
 ### Re-encoding
 
-Source is 50 × 3840×2160 PNG. Shipped as keyed 1024×576 WebP with alpha, 3.3 MB:
+Source is 50 × 3840×2160 PNG. Shipped as 2560×1636 WebP, 3.6 MB.
+
+**Resolution is set by the canvas, not the viewport.** The canvas is sized
+`innerWidth × devicePixelRatio`, so a 1440px retina viewport needs a 2880px
+source. An earlier pass encoded at 1440w and the background looked soft for
+exactly that reason — it was being upscaled 2×, and no amount of quality setting
+fixes an upscale.
+
+Frames are cropped to the left 88% before resizing. The generator's watermark
+sits at 88.8–92.5% of the width, so that crop takes it out of frame; the
+artwork's widest trails end around 82%, so nothing is lost.
 
 ```bash
 for i in $(seq -f "%03g" 1 50); do
-  WIDTH=1024 python3 key.py "src/ezgif-frame-$i.png" "/tmp/$i.png"
-  cwebp -q 58 -alpha_q 52 -m 6 -mt -quiet "/tmp/$i.png" -o "bg/f$i.webp"
+  # crop to left 88%, resize to 2560w  (see scratchpad, PIL)
+  cwebp -q 72 -m 6 -mt -quiet "/tmp/$i.png" -o "bg/f$i.webp"
 done
 ```
 
-Alpha costs real bytes — the same frames opaque were 1.9 MB. Zeroing the colour
-of fully transparent pixels before encoding is worth about 25%, because it gives
-the encoder flat regions instead of keyed noise.
+Text over the light half carries a **white** halo, not a dark one — `--lit`
+inverts the `text-shadow` along with the ink. Mid-grey body copy with a dark glow
+on a light, busy backdrop is what makes type look smudged rather than set.
 
 ## The hero device mockup
 
