@@ -51,6 +51,29 @@ then, at runtime in the browser:
 
 To change copy, edit the `EN` and `HI` objects near the bottom of `index.html`.
 
+## Responsiveness
+
+The page is fluid rather than stepped — `clamp()` on type and gutters, so it
+holds at every width instead of only at breakpoints someone happened to test.
+Verified with no horizontal overflow from 320px to 1920px.
+
+Two things to know before touching it:
+
+- **The dc-runtime normalises the `style` attribute.** `min-width:340px` in the
+  source is `min-width: 340px` in the DOM. The responsive layer overrides inline
+  styles via `[style*="…"]` selectors, so any selector that includes a property
+  name **must** be written against the spaced form or it silently does nothing.
+  Value-only matches like `[style*="104px 32px"]` are safe either way.
+- **The shell has `overflow-x: clip`**, which means overflow does not produce a
+  scrollbar — it just quietly cuts content off. `document.scrollWidth` will read
+  clean while the headline is being sliced in half. Check narrow widths visually;
+  the metric will not tell you.
+
+Gutters come from `--gut` (`clamp(16px, 4.4vw, 32px)`), applied to the section
+padding shorthands. Below 680px the `auto-fit` grids collapse to one column,
+because a track with a fixed `minmax()` minimum overflows once the viewport is
+narrower than that minimum.
+
 ## The scroll-scrubbed background
 
 `bg/f001.webp` … `bg/f050.webp` are 50 frames of the brand emblem lighting up,

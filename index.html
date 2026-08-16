@@ -28,6 +28,7 @@
   --glass-brd:1px solid rgba(255,255,255,.09);
   --glass-sh:0 20px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);
   --pill:linear-gradient(180deg,var(--accent-lo) 0%,var(--accent) 46%,var(--accent-hi) 100%);
+  --gut:clamp(16px,4.4vw,32px);
   --pill-sh:0 14px 30px -6px rgba(226,72,16,.55),inset 0 2px 3px rgba(255,255,255,.6),inset 0 -8px 16px rgba(150,38,0,.32);
 }
 *{box-sizing:border-box}
@@ -108,9 +109,9 @@ a:hover{color:var(--accent-hi)}
    axis-aligned box is wider than the element, so a steep angle on a narrow
    screen pushes the phone past the viewport. */
 @media (max-width:1080px){
-  .hero-stage{width:min(100%,330px);aspect-ratio:392/846}
+  .hero-stage{width:min(100%,320px);aspect-ratio:392/846}
   .hero-phone--back{display:none}
-  .hero-phone--front{width:100%;--tilt:rotateX(3deg) rotateY(7deg) rotateZ(-3deg)}
+  .hero-phone--front{width:100%;--tilt:rotateX(3deg) rotateY(6deg) rotateZ(-2deg)}
 }
 .hero-phone-screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   opacity:0;transition:opacity .85s cubic-bezier(.4,0,.2,1)}
@@ -152,6 +153,81 @@ a:hover{color:var(--accent-hi)}
 .posters-container{width:100%;height:100%;overflow:hidden;position:relative;z-index:2}
 .posters-canvas{display:block;width:100%;height:100%;cursor:grab}
 .posters-canvas:active{cursor:grabbing}
+
+/* ---- floating nav pills ------------------------------------------------
+   Not a bar. Three pills that ride along at the top, with no logo — the brand
+   is carried by the background emblem and the footer, so the bar was spending
+   half a narrow viewport restating it and pushing the CTA off screen. */
+/* A soft fade rather than a bar: content dissolves as it passes under the pills
+   instead of colliding with them, and there is no edge to look at. */
+.nav-float{position:sticky;top:0;z-index:50;padding:14px var(--gut) 30px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(10,10,11,.92),rgba(10,10,11,.6) 46%,transparent)}
+.nav-progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;pointer-events:none}
+.nav-row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:flex-end;
+  gap:9px;flex-wrap:wrap}
+.nav-row>*{pointer-events:auto}
+.nav-lang{display:flex;padding:3px;border-radius:999px;background:rgba(10,10,11,.74);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  border:var(--glass-brd);box-shadow:var(--glass-sh)}
+.nav-help{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 18px;
+  border-radius:999px;font-size:13.5px;font-weight:700;color:#ffb08a;text-decoration:none;
+  white-space:nowrap;background:rgba(10,10,11,.74);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  border:var(--glass-brd);box-shadow:var(--glass-sh);transition:color .25s ease}
+.nav-help:hover{color:#fff}
+.nav-cta{height:42px;padding:0 20px;border-radius:999px;display:inline-flex;align-items:center;
+  gap:9px;font-size:13.5px;font-weight:800;color:#fff;background:var(--pill);white-space:nowrap;
+  border:1px solid rgba(255,255,255,.4);box-shadow:var(--pill-sh);cursor:pointer}
+
+/* ---- the 10x promise --------------------------------------------------- */
+.ten-quote{display:flex;gap:clamp(18px,3vw,40px);align-items:flex-start}
+.ten-mark{flex:0 0 auto;font-size:clamp(54px,9vw,124px);font-weight:800;line-height:.8;
+  letter-spacing:-.06em;background:var(--pill);-webkit-background-clip:text;background-clip:text;
+  color:transparent}
+.ten-line{margin:22px 0 0;font-size:clamp(20px,2.7vw,31px);line-height:1.28;font-weight:800;
+  letter-spacing:-.03em;color:var(--ink);max-width:16ch}
+.ten-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));
+  gap:16px;margin-top:clamp(30px,4vw,52px)}
+.ten-card{padding:26px 24px 28px;border-radius:20px;background:var(--glass);
+  border:var(--glass-brd);box-shadow:var(--glass-sh)}
+.ten-num{font-size:34px;font-weight:800;letter-spacing:-.04em;color:var(--accent);line-height:1}
+.ten-t{margin-top:12px;font-size:19px;font-weight:800;letter-spacing:-.02em}
+.ten-b{margin:9px 0 0;font-size:14.5px;line-height:1.6;font-weight:500;color:var(--ink-2)}
+@media (max-width:640px){.ten-quote{flex-direction:column;gap:6px}.ten-line{max-width:none}}
+
+/* ---- responsive --------------------------------------------------------
+   The imported design sized type, gutters and grid tracks in fixed px, and the
+   shell's overflow-x:clip hid the consequences instead of preventing them: at
+   320px the headline, the hero badge and the nav CTA were all being cut off
+   with no scrollbar to reveal it. These are fluid rather than stepped, so they
+   hold at every width instead of only at the breakpoints someone tested. */
+[style*="104px 32px"],[style*="80px 32px"],[style*="72px 32px"],[style*="70px 32px"],
+[style*="64px 44px"],[style*="0 32px"]{
+  padding-left:var(--gut)!important;padding-right:var(--gut)!important}
+h1{font-size:clamp(33px,7.6vw,82px)!important;letter-spacing:-.042em!important}
+h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
+[data-cap="num"]{font-size:clamp(40px,5vw,64px)!important}
+[data-cap="title"]{font-size:clamp(22px,3.1vw,34px)!important}
+@media (max-width:680px){
+  /* auto-fit tracks with a fixed minimum overflow once the viewport is narrower
+     than that minimum, so collapse to one column rather than clipping. */
+  [style*="repeat(auto-fit"]{grid-template-columns:1fr!important}
+  [style*="repeat(4, 1fr)"]{grid-template-columns:repeat(2,1fr)!important}
+  /* The dc-runtime normalises the style attribute — `min-width:340px` is in the
+     DOM as `min-width: 340px` — so selectors that include a property name have
+     to be written against the spaced form. Value-only matches above are
+     unaffected because the value text is identical either way. */
+  [style*="min-width: 320px"],[style*="min-width: 340px"]{min-width:0!important}
+  /* Pills with a fixed height cannot grow when their label wraps, so they push
+     past the viewport instead. Let them become two lines. */
+  [style*="height: 34px"]{height:auto!important;min-height:34px;
+    padding:7px 14px!important;letter-spacing:.07em!important;line-height:1.35}
+  [style*="104px 32px"]{padding-top:60px!important}
+  [style*="80px 32px"],[style*="72px 32px"],[style*="70px 32px"]{
+    padding-top:56px!important;padding-bottom:56px!important}
+  [style*="64px 44px"]{padding-top:40px!important;padding-bottom:44px!important}
+}
+@media (max-width:430px){[style*="repeat(4, 1fr)"]{grid-template-columns:1fr!important}}
 </style>
 <script>
 /* Scroll-scrubbed background: the brand emblem lighting up across the length of
@@ -352,24 +428,16 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div style="position:relative;z-index:1;background:radial-gradient(70% 45% at 12% -5%,rgba(240,86,26,.16),transparent 62%),radial-gradient(55% 38% at 92% 6%,rgba(90,110,255,.10),transparent 64%),radial-gradient(60% 40% at 50% 102%,rgba(240,86,26,.07),transparent 64%);min-height:100vh;overflow-x:clip">
 
 <!-- ============ NAV ============ -->
-<div style="position:sticky;top:0;z-index:50;padding:14px 32px;backdrop-filter:blur(20px) saturate(160%);background:linear-gradient(180deg,rgba(10,10,11,.88),rgba(10,10,11,.68));border-bottom:1px solid rgba(255,255,255,.08)">
-<div style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px">
-<div style="display:flex;align-items:center;gap:12px">
-<div style="width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:0 8px 18px -5px rgba(226,72,16,.5),inset 0 2px 3px rgba(255,255,255,.55)">ॐ</div>
-<div>
-<div style="font-size:15px;font-weight:800;letter-spacing:-.01em">Om Shri Hari Trading</div>
-<div style="font-size:10.5px;font-weight:600;color:var(--ink-3);letter-spacing:.04em">{{ t.navKicker }}</div>
-</div>
-</div>
-<div style="display:flex;align-items:center;gap:10px">
-<div style="display:flex;padding:3px;border-radius:999px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
+<div class="nav-float">
+<div class="nav-row">
+<div class="nav-lang">
 <div onClick="{{ setEn }}" style="{{ enTabStyle }}">English</div>
 <div onClick="{{ setHi }}" style="{{ hiTabStyle }}">हिंदी</div>
 </div>
-<div style="height:42px;padding:0 22px;border-radius:999px;display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:800;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:0 12px 26px -8px rgba(226,72,16,.5),inset 0 2px 3px rgba(255,255,255,.55),inset 0 -6px 12px rgba(150,38,0,.3);cursor:pointer">▶ {{ t.navCta }}</div>
+<a class="nav-help" href="tel:+919120035500"><span aria-hidden="true">☎</span><span>{{ t.navHelp }}</span></a>
+<div class="nav-cta">▶ {{ t.navCta }}</div>
 </div>
-</div>
-<div style="position:absolute;left:0;bottom:0;height:2px;width:100%"><div data-progress style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent-lo),var(--accent-hi));box-shadow:0 0 10px rgba(226,72,16,.7)"></div></div>
+<div class="nav-progress"><div data-progress style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent-lo),var(--accent-hi));box-shadow:0 0 10px rgba(226,72,16,.7)"></div></div>
 </div>
 
 <!-- ============ HERO ============ -->
@@ -430,6 +498,24 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div style="display:flex;align-items:center;gap:34px;padding-right:34px;font-size:17px;font-weight:800;letter-spacing:-.01em;color:var(--ink);white-space:nowrap">
 <span>New order</span><span style="color:var(--accent)">◆</span><span>Today's rate</span><span style="color:var(--accent)">◆</span><span>Kata parchi</span><span style="color:var(--accent)">◆</span><span>Pre-arrival slip</span><span style="color:var(--accent)">◆</span><span>GRN</span><span style="color:var(--accent)">◆</span><span>Challan</span><span style="color:var(--accent)">◆</span><span>Factory receipt</span><span style="color:var(--accent)">◆</span><span>Purchase receipt</span><span style="color:var(--accent)">◆</span><span>Pay slip</span><span style="color:var(--accent)">◆</span><span>Payment due</span><span style="color:var(--accent)">◆</span>
 </div>
+</div>
+</div>
+
+<!-- ============ 10X ============ -->
+<div style="max-width:1180px;margin:0 auto;padding:104px 32px 0">
+<div data-anim class="ten-quote">
+<div class="ten-mark" aria-hidden="true">10×</div>
+<div class="ten-quote-body">
+<div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.tenKicker }}</div>
+<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.tenTitle }}</h2>
+<p class="ten-line" data-over-art>{{ t.tenQuote }}</p>
+<p style="margin:18px 0 0;font-size:17px;line-height:1.65;font-weight:500;color:var(--ink-2);max-width:620px">{{ t.tenSub }}</p>
+</div>
+</div>
+<div class="ten-grid">
+<div data-anim data-lift class="ten-card"><div class="ten-num">10×</div><div class="ten-t">{{ t.ten1Title }}</div><p class="ten-b">{{ t.ten1Body }}</p></div>
+<div data-anim data-lift class="ten-card"><div class="ten-num">0</div><div class="ten-t">{{ t.ten2Title }}</div><p class="ten-b">{{ t.ten2Body }}</p></div>
+<div data-anim data-lift class="ten-card"><div class="ten-num">∞</div><div class="ten-t">{{ t.ten3Title }}</div><p class="ten-b">{{ t.ten3Body }}</p></div>
 </div>
 </div>
 
@@ -935,8 +1021,19 @@ const EN = {
   m11t:"Send the papers", m11b:"Photograph the slip or attach a file. Each paper shows whether it is yours to send or the office's.",
   m12t:"Get help", m12b:"The help button is on every screen. One tap gives you a number that a person answers.",
 
-  navKicker:"Pvt Ltd", navCta:"Get the app",
-  heroBadge:"Built for the mandi, not the office",
+  navKicker:"Pvt Ltd", navCta:"Get the app", navHelp:"Contact support",
+
+  tenKicker:"Why sellers join us",
+  tenTitle:"Sellers who join us grow 10×.",
+  tenQuote:"Grain was never the bottleneck. Paper was.",
+  tenSub:"A trader's ceiling has never been how much grain they can move — it is how many trades one person can keep straight in their head and on paper. Take that ceiling away and the same trader, on the same phone, runs ten times the business.",
+  ten1Title:"Ten times the orders",
+  ten1Body:"A trade that cost two days of calls, slips and follow-ups is booked in two minutes. Same day, same phone, ten times the volume.",
+  ten2Title:"Nothing leaks",
+  ten2Body:"Every truck, every paper and every due date is tracked from the first call. Money stops falling through the gaps between slips.",
+  ten3Title:"Factories keep coming back",
+  ten3Body:"A complete file, every single time. The buyer trusts your name, and the next order is agreed before you ask for it.",
+  heroBadge:"Grow your trade 10× — built for the mandi",
   heroTitle:"Your whole trade, in your voice.",
   heroSub:"Speak an order and it becomes a purchase order. Every truck, every paper, every payment date — tracked from the first call to the last rupee.",
   storeSmall:"Get it on", storeBig:"Google Play", storeIosSmall:"Download on the", storeIosBig:"App Store", heroCall:"Talk to us",
@@ -1022,7 +1119,7 @@ const EN = {
   q6:"What does it cost me?", a6:"Nothing to download and nothing to use as a supplier trading with us. Call us and we will set you up.",
 
   ctaTitle:"Your next order can take two minutes.",
-  ctaSub:"Download the app, or call us and we will set your firm up on the phone — in Hindi or English.",
+  ctaSub:"Download the app, or call us and we will set your firm up on the phone — in Hindi or English. The traders who joined last season are running ten times the orders on the same staff.",
   ctaNote:"iPhone and Android · free for suppliers trading with Om Shri Hari Trading Pvt Ltd",
 
   footBlurb:"Agricultural commodity trading, and the app that runs it. Built for the people doing the trade, in the language they do it in.",
@@ -1053,8 +1150,19 @@ const HI = {
   m11t:"कागज़ भेजिए", m11b:"पर्ची की फ़ोटो लीजिए या फ़ाइल लगाइए। हर कागज़ पर लिखा है वह आपसे है या दफ़्तर से।",
   m12t:"मदद लीजिए", m12b:"मदद का बटन हर स्क्रीन पर है। एक टैप और वह नंबर मिलता है जिसे इंसान उठाता है।",
 
-  navKicker:"प्रा. लि.", navCta:"ऐप लें",
-  heroBadge:"मंडी के लिए बना है, दफ़्तर के लिए नहीं",
+  navKicker:"प्रा. लि.", navCta:"ऐप लें", navHelp:"सहायता",
+
+  tenKicker:"व्यापारी हमसे क्यों जुड़ते हैं",
+  tenTitle:"हमसे जुड़ने वाले व्यापारी 10× बढ़ते हैं।",
+  tenQuote:"रुकावट अनाज कभी नहीं थी। कागज़ थी।",
+  tenSub:"व्यापारी की हद कभी यह नहीं रही कि वह कितना अनाज चला सकता है — हद यह है कि एक आदमी कितने सौदे दिमाग़ में और कागज़ पर सँभाल सकता है। वह हद हटा दीजिए, और वही व्यापारी, उसी फ़ोन पर, दस गुना काम करता है।",
+  ten1Title:"दस गुना ऑर्डर",
+  ten1Body:"जो सौदा दो दिन की कॉल, परचियों और पीछा करने में जाता था, वह दो मिनट में बुक होता है। वही दिन, वही फ़ोन, दस गुना काम।",
+  ten2Title:"कुछ नहीं छूटता",
+  ten2Body:"हर ट्रक, हर कागज़ और हर तारीख पहली कॉल से दर्ज रहती है। परचियों के बीच से पैसा गिरना बंद।",
+  ten3Title:"फैक्ट्री दोबारा आती है",
+  ten3Body:"हर बार पूरी फाइल। खरीदार आपके नाम पर भरोसा करता है, और अगला ऑर्डर माँगने से पहले तय हो जाता है।",
+  heroBadge:"अपना व्यापार 10× बढ़ाइए — मंडी के लिए बना",
   heroTitle:"आपका पूरा व्यापार, आपकी आवाज़ में।",
   heroSub:"ऑर्डर बोलिए और वह परचेज़ ऑर्डर बन जाता है। हर ट्रक, हर कागज़, हर भुगतान की तारीख़ — पहली बात से आख़िरी रुपये तक दर्ज।",
   storeSmall:"डाउनलोड करें", storeBig:"Google Play", storeIosSmall:"डाउनलोड करें", storeIosBig:"App Store", heroCall:"बात कीजिए",
@@ -1140,7 +1248,7 @@ const HI = {
   q6:"मुझे कितना लगेगा?", a6:"डाउनलोड और इस्तेमाल — हमारे साथ व्यापार करने वाले सप्लायर के लिए कुछ नहीं। कॉल कीजिए, हम सेट कर देंगे।",
 
   ctaTitle:"आपका अगला ऑर्डर दो मिनट का हो सकता है।",
-  ctaSub:"ऐप डाउनलोड कीजिए, या कॉल कीजिए और हम फ़ोन पर ही आपकी फ़र्म सेट कर देंगे — हिंदी या अंग्रेज़ी में।",
+  ctaSub:"ऐप डाउनलोड कीजिए, या कॉल कीजिए और हम फ़ोन पर ही आपकी फ़र्म सेट कर देंगे — हिंदी या अंग्रेज़ी में। पिछले सीज़न जुड़े व्यापारी उतने ही स्टाफ़ पर दस गुना ऑर्डर चला रहे हैं।",
   ctaNote:"iPhone और Android · ओम श्री हरी ट्रेडिंग प्रा. लि. के साथ व्यापार करने वाले सप्लायर के लिए निःशुल्क",
 
   footBlurb:"कृषि जिंस का व्यापार, और उसे चलाने वाला ऐप। व्यापार करने वालों के लिए, उनकी ही भाषा में बना।",
