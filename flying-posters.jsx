@@ -426,7 +426,12 @@ function makeClasses(ogl) {
       /* Full opacity for the whole time the screenshot is parked, then a dip
          that hides the text swap. The old curve peaked at 0.34 + 0.66*(1-a),
          which never actually reached 1 — every caption read as greyed out. */
-      const o = (1 - 0.82 * smootherstep(0.06, 0.42, a)).toFixed(3);
+      /* Dipping to 0.18 between screens reads as a clean fade while the copy is
+         light on a dark page. Once the background has resolved to white the same
+         dip is dark text at 18% — which looks like broken low-contrast type, not
+         a transition. So fade less the lighter the page has become. */
+      const lit = window.__omLit || 0;
+      const o = (1 - (0.82 - lit * 0.44) * smootherstep(0.06, 0.42, a)).toFixed(3);
       if (this.nodeL) {
         this.nodeL.style.opacity = o;
         this.nodeL.style.transform = 'translate3d(' + (-a * lx).toFixed(1) + 'px,' + (-d * ly).toFixed(1) + 'px,0)';

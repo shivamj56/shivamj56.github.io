@@ -35,7 +35,7 @@ There is no build step, so any static host serves this directly from the repo ro
 | `index.html`         | The whole page. Content, styles and page logic. |
 | `support.js`         | Claude Design `dc-runtime`. Parses `<x-dc>`, hoists `<helmet>` into `<head>`, resolves `{{ }}` bindings, and transpiles `<x-import>` components. Generated — do not edit. |
 | `flying-posters.jsx` | WebGL poster reel for the "all twelve screens" section. Adapted from React Bits so the page's own scroll drives it instead of hijacking the wheel. See [The user manual reel](#the-user-manual-reel). |
-| `screens/`           | The twelve app screenshots, in the order a trade moves through them. |
+| `screens/`           | The twelve app screenshots, in the order a trade moves through them. WebP q88 — 304 KB for all twelve, against 4.3 MB as PNG. |
 
 ## How the page is built
 
@@ -120,6 +120,17 @@ full visibility.
 | `.site-bg.is-ready canvas` opacity | `.72` | Presence of the emblem |
 | `.site-bg-scrim` | radial | Protects the middle, where copy sits |
 | `[data-step-left]`, `[data-step-right]`, `[data-over-art]` | `text-shadow` | Contrast for copy sitting directly over the glow |
+
+**Time `--lit` from the frames, never by eye.** Mean luminance climbs from 0.18
+at p=0.24 to 0.72 by p=0.43, so the ramp is `smoothstep(0.24, 0.40)` — leading it
+slightly, so copy has turned dark before the backdrop behind it turns light. It
+was originally guessed at 0.62–0.78, which left roughly a third of the page
+showing light text on a light background.
+
+The reel reads `window.__omLit` to soften its caption fade. Dipping to 18%
+between screens reads as a clean fade for light copy on a dark page; the same dip
+for dark copy on white looks like broken low-contrast type rather than a
+transition.
 
 The manual section's captions and the closing CTA subhead are where text goes
 unreadable first. Check both after any change.

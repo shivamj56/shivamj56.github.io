@@ -9,7 +9,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Om Shri Hari — Your whole trade, in your voice.">
 <meta property="og:description" content="Speak an order and it becomes a purchase order. Every truck, every paper, every payment date — tracked from the first call to the last rupee.">
-<meta property="og:image" content="screens/01-home.png">
+<meta property="og:image" content="screens/01-home.webp">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0a0b'/%3E%3Cpath d='M16 6a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4.4a5.6 5.6 0 1 1 0 11.2 5.6 5.6 0 0 1 0-11.2z' fill='%23f0561a'/%3E%3C/svg%3E">
 <script src="./support.js"></script>
@@ -323,10 +323,16 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
       want = Math.min(1, Math.max(0, (y - start) / span));
       var vis = smoothstep(vh * 0.42, vh * 1.05, y);
       document.documentElement.style.setProperty('--bg-vis', vis.toFixed(4));
-      /* The footage resolves to white across roughly the last third, so the
-         theme crossfades over the same stretch rather than switching. */
-      var lit = smoothstep(0.62, 0.78, want);
+      /* Measured from the frames, not guessed: mean luminance climbs from 0.18
+         at p=0.24 to 0.72 by p=0.43. The theme leads that slightly so the copy
+         has already turned dark by the time the backdrop behind it is light.
+         Set from a guess of 0.62-0.78 originally, which left roughly a third of
+         the page showing light text on a light background. */
+      var lit = smoothstep(0.24, 0.40, want);
       document.documentElement.style.setProperty('--lit', lit.toFixed(4));
+      /* Published for the reel, which has to fade its captions less once they
+         are dark copy on a light ground — see flying-posters.jsx. */
+      window.__omLit = lit;
       if(!raf) raf = requestAnimationFrame(function(){ raf = null; draw(want); });
     }
     function load(i, done){
@@ -511,17 +517,17 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div class="hero-stage-glow" aria-hidden="true"></div>
 <div class="hero-phone hero-phone--back" data-hero-phone data-hero-delay="1300">
 <div class="hero-phone-screen">
-<img src="screens/10-order.png" alt="{{ t.m10t }}" data-hero-shot class="is-on" width="392" height="846" loading="lazy" />
-<img src="screens/06-payment.png" alt="{{ t.m6t }}" data-hero-shot width="392" height="846" loading="lazy" />
-<img src="screens/09-updates.png" alt="{{ t.m9t }}" data-hero-shot width="392" height="846" loading="lazy" />
+<img src="screens/10-order.webp" alt="{{ t.m10t }}" data-hero-shot class="is-on" width="392" height="846" loading="lazy" />
+<img src="screens/06-payment.webp" alt="{{ t.m6t }}" data-hero-shot width="392" height="846" loading="lazy" />
+<img src="screens/09-updates.webp" alt="{{ t.m9t }}" data-hero-shot width="392" height="846" loading="lazy" />
 </div>
 <div class="hero-phone-frame" aria-hidden="true"></div>
 </div>
 <div class="hero-phone hero-phone--front" data-hero-phone data-hero-delay="0">
 <div class="hero-phone-screen">
-<img src="screens/01-home.png" alt="{{ t.m1t }}" data-hero-shot class="is-on" width="392" height="846" fetchpriority="high" />
-<img src="screens/04-rate.png" alt="{{ t.m4t }}" data-hero-shot width="392" height="846" loading="lazy" />
-<img src="screens/08-confirm.png" alt="{{ t.m8t }}" data-hero-shot width="392" height="846" loading="lazy" />
+<img src="screens/01-home.webp" alt="{{ t.m1t }}" data-hero-shot class="is-on" width="392" height="846" fetchpriority="high" />
+<img src="screens/04-rate.webp" alt="{{ t.m4t }}" data-hero-shot width="392" height="846" loading="lazy" />
+<img src="screens/08-confirm.webp" alt="{{ t.m8t }}" data-hero-shot width="392" height="846" loading="lazy" />
 </div>
 <div class="hero-phone-frame" aria-hidden="true"></div>
 </div>
@@ -687,7 +693,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 
 <div data-manual-mobile style="display:none;flex-direction:column;gap:16px;max-width:420px;margin:0 auto;padding:0 22px">
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/01-home.png" alt="{{ t.m1t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/01-home.webp" alt="{{ t.m1t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">01</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m1t }}</span>
@@ -696,7 +702,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m1b }}</p>
 </div>
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/02-selling.png" alt="{{ t.m2t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/02-selling.webp" alt="{{ t.m2t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">02</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m2t }}</span>
@@ -705,7 +711,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m2b }}</p>
 </div>
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/03-weight.png" alt="{{ t.m3t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/03-weight.webp" alt="{{ t.m3t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">03</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m3t }}</span>
@@ -714,7 +720,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m3b }}</p>
 </div>
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/04-rate.png" alt="{{ t.m4t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/04-rate.webp" alt="{{ t.m4t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">04</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m4t }}</span>
@@ -723,7 +729,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m4b }}</p>
 </div>
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/05-factory.png" alt="{{ t.m5t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/05-factory.webp" alt="{{ t.m5t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">05</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m5t }}</span>
@@ -732,7 +738,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m5b }}</p>
 </div>
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/06-payment.png" alt="{{ t.m6t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/06-payment.webp" alt="{{ t.m6t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">06</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m6t }}</span>
@@ -741,7 +747,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m6b }}</p>
 </div>
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/07-delivery.png" alt="{{ t.m7t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/07-delivery.webp" alt="{{ t.m7t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">07</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m7t }}</span>
@@ -750,7 +756,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m7b }}</p>
 </div>
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/08-confirm.png" alt="{{ t.m8t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/08-confirm.webp" alt="{{ t.m8t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">08</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m8t }}</span>
@@ -759,7 +765,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m8b }}</p>
 </div>
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/09-updates.png" alt="{{ t.m9t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/09-updates.webp" alt="{{ t.m9t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">09</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m9t }}</span>
@@ -768,7 +774,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m9b }}</p>
 </div>
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/10-order.png" alt="{{ t.m10t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/10-order.webp" alt="{{ t.m10t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">10</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m10t }}</span>
@@ -777,7 +783,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m10b }}</p>
 </div>
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/11-truck.png" alt="{{ t.m11t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/11-truck.webp" alt="{{ t.m11t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">11</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m11t }}</span>
@@ -786,7 +792,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <p style="margin:8px 0 0;font-size:14px;line-height:1.6;font-weight:500;color:var(--ink-2)">{{ t.m11b }}</p>
 </div>
 <div style="border-radius:26px;padding:18px;background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.10)">
-<img src="screens/12-help.png" alt="{{ t.m12t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
+<img src="screens/12-help.webp" alt="{{ t.m12t }}" loading="lazy" style="display:block;width:min(100%,280px);height:auto;margin:0 auto;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 44px -16px rgba(0,0,0,.7)" />
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
 <span style="flex:0 0 auto;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--pill);box-shadow:0 6px 14px -4px rgba(226,72,16,.5)">12</span>
 <span style="font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ t.m12t }}</span>
@@ -1317,7 +1323,7 @@ class Component extends DCLogic {
           title: _t['m' + (i + 1) + 't'], body: _t['m' + (i + 1) + 'b']
         }))
       },
-      posterItems: ['screens/01-home.png','screens/02-selling.png','screens/03-weight.png','screens/04-rate.png','screens/05-factory.png','screens/06-payment.png','screens/07-delivery.png','screens/08-confirm.png','screens/09-updates.png','screens/10-order.png','screens/11-truck.png','screens/12-help.png'],
+      posterItems: ['screens/01-home.webp','screens/02-selling.webp','screens/03-weight.webp','screens/04-rate.webp','screens/05-factory.webp','screens/06-payment.webp','screens/07-delivery.webp','screens/08-confirm.webp','screens/09-updates.webp','screens/10-order.webp','screens/11-truck.webp','screens/12-help.webp'],
       t: lang === 'hi' ? HI : EN,
       setEn: () => this.setState({lang:'en'}),
       setHi: () => this.setState({lang:'hi'}),
