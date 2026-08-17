@@ -331,15 +331,12 @@ h2[data-fold].is-unfolded{transform:perspective(820px) rotateX(0);opacity:1}
 .cta-card{-webkit-backdrop-filter:blur(calc(var(--lit) * 16px)) saturate(calc(100% + var(--lit) * 40%));
   backdrop-filter:blur(calc(var(--lit) * 16px)) saturate(calc(100% + var(--lit) * 40%))}
 /* The section tint bands and their hairline borders are a dark-page device: a
-   slightly lighter panel separated by a 1px white rule. Over white they invert
-   into visible seams running the width of the page. Dissolve both with --lit
-   rather than deleting them, since they still do their job on the dark half. */
-.tint-band{
-  background-image:linear-gradient(180deg,
-    rgba(255,255,255,calc(.032 * (1 - var(--lit)))),
-    rgba(255,255,255,calc(.009 * (1 - var(--lit)))))!important;
-  border-top-color:rgba(255,255,255,calc(.09 * (1 - var(--lit))))!important;
-  border-bottom-color:rgba(255,255,255,calc(.09 * (1 - var(--lit))))!important}
+   slightly lighter panel separated by a 1px white rule. They read as seams
+   running the full width of the page — inverted and obvious over white, still
+   visible as a tone step over the dark half. Removed outright; the sections are
+   separated by their own spacing, which is enough. */
+.tint-band{background-image:none!important;
+  border-top-color:transparent!important;border-bottom-color:transparent!important}
 .nav-progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;pointer-events:none}
 .nav-row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:flex-end;
   gap:9px;flex-wrap:wrap}
@@ -1258,7 +1255,7 @@ const EN = {
   manKicker:"User manual", manTitle:"Every screen, in the order you'll meet them.",
   manSub:"Twelve screens carry a trade from the first tap to the last paper. Here is all of it, in sequence — nothing hidden behind a menu.",
   manC1Tag:"Part one", manC1Title:"Placing the order", manC1Sub:"Eight screens. One question at a time, and a full read-back before anything is sent.",
-  manC2Tag:"Part two", manC2Title:"Watching it move", manC2Sub:"Once the office approves, the order tells you where it is and what it needs next.",
+  manC2Tag:"Part two", manC2Title:"Watching it move", manC2Sub:"Once the headquarters approves, the order tells you where it is and what it needs next.",
   manC3Tag:"Part three", manC3Title:"Papers and closing out", manC3Sub:"Every truck carries its own file. Send what is yours, and the payment clock keeps running.",
   m1t:"Open the app", m1b:"Today's rate for every commodity sits on the home screen, above your live orders. Tap New order to start.",
   m2t:"Pick the commodity", m2b:"Maize, DFG non-sortex, DFG sortex or rice. One tap — the app speaks the choice back to you.",
@@ -1267,10 +1264,10 @@ const EN = {
   m5t:"Choose the factory", m5b:"Pick the buyer taking the goods from the factories you already deal with. The selected one is highlighted.",
   m6t:"Set payment terms", m6b:"Advance, 7, 15 or 30 days — or your own number. The exact due date is calculated as you choose.",
   m7t:"Set delivery", m7b:"Pick a window and the app shows the real calendar date, so nobody argues about which day was meant.",
-  m8t:"Check and send", m8b:"The whole order on one screen. Read it, then send — the office is notified the moment you do.",
+  m8t:"Check and send", m8b:"The whole order on one screen. Read it, then send — the headquarters is notified the moment you do.",
   m9t:"Watch for updates", m9b:"Approvals and uploads arrive here as they happen, each one telling you what to send next.",
   m10t:"Open the order", m10b:"Progress across every truck, a warning banner for what is missing, and the papers each truck still owes.",
-  m11t:"Send the papers", m11b:"Photograph the slip or attach a file. Each paper shows whether it is yours to send or the office's.",
+  m11t:"Send the papers", m11b:"Photograph the slip or attach a file. Each paper shows whether it is yours to send or the headquarters'.",
   m12t:"Get help", m12b:"The help button is on every screen. One tap gives you a number that a person answers.",
 
   navKicker:"Pvt Ltd", navCta:"Get the app", navHelp:"Customer support",
@@ -1286,7 +1283,7 @@ const EN = {
   ten1Title:"The maths is instant",
   ten1Body:"Rate, weight, trucks, advance, due date — calculated as you speak, and read back before anything is sent. No pen, no calculator, no arguing later about the number.",
   ten2Title:"It is always in your pocket",
-  ten2Body:"Every rate, every due date, every truck — on the phone already in your hand, in the mandi, at the factory gate, at two in the morning. Not in a register at the office.",
+  ten2Body:"Every rate, every due date, every truck — on the phone already in your hand, in the mandi, at the factory gate, at two in the morning. Not in a register at the headquarters.",
   ten3Title:"So you take the next sauda",
   ten3Body:"When the hisaab of the last ten trades is not sitting on your head, you can say yes to the eleventh. That is the whole of it. That is where 10× comes from.",
   heroBadge:"The hisaab, in your pocket — 10× your trade",
@@ -1321,13 +1318,13 @@ const EN = {
   s6Title:"When can you deliver?",
   s6Body:"Pick a window and the app shows the exact calendar date, not a countdown.",
   s7Title:"Is this right?",
-  s7Body:"The full order, read back in one screen. Send it and the office is notified instantly.",
+  s7Body:"The full order, read back in one screen. Send it and the headquarters is notified instantly.",
 
   paperKicker:"The paper engine",
   paperTitle:"Seven papers, per truck, never lost.",
-  paperSub:"Every truck on an order carries its own set of documents, and each one has a state: yours to upload, the office's to send, or done. The app always shows the one thing being waited on.",
+  paperSub:"Every truck on an order carries its own set of documents, and each one has a state: yours to upload, the headquarters' to send, or done. The app always shows the one thing being waited on.",
   paperL1:"Per-truck, not per-order", paperL1b:"a five-truck order is five independent document sets, each with its own progress.",
-  paperL2:"Whose turn it is", paperL2b:"every paper is labelled from you or from the office, so nobody waits on the wrong person.",
+  paperL2:"Whose turn it is", paperL2b:"every paper is labelled from you or from the headquarters, so nobody waits on the wrong person.",
   paperL3:"Photo is enough", paperL3b:"snap the slip with the camera or attach a file. No scanner, no printing, no laptop.",
   legDone:"Done", legNow:"Waiting on you", legWait:"Not yet due",
 
@@ -1340,7 +1337,7 @@ const EN = {
   a4Tag:"Notify", a4Title:"Office & updates", a4Body:"Approvals, uploads and status changes push to everyone on the order as they happen.",
   arch1Title:"Offline-first", arch1Body:"Orders and photos are captured on the phone and sync when signal returns. A dead network never blocks a trade.",
   arch2Title:"Language at the core", arch2Body:"Hindi and English are equal citizens — every prompt, every label, every voice line. Switching is one tap, mid-order.",
-  arch3Title:"Approval before commitment", arch3Body:"A trader raises, the office approves. Nothing becomes binding on a single tap, and every change is attributed.",
+  arch3Title:"Approval before commitment", arch3Body:"A trader raises, the headquarters approves. Nothing becomes binding on a single tap, and every change is attributed.",
   arch4Title:"History as the record", arch4Body:"Raised, approved, uploaded — who did what, when, on every order. The audit trail is the product, not a report.",
 
   whoKicker:"Who it's for",
@@ -1371,7 +1368,7 @@ const EN = {
   q2:"What if there is no network?", a2:"Keep going. The order and the photos are saved on your phone and sent as soon as signal comes back.",
   q3:"Which languages does it speak?", a3:"Hindi and English today, both in text and voice. You can switch in the middle of an order.",
   q4:"Can I still order on paper?", a4:"Yes. There is an Order on paper option on the home screen for when that is simply faster.",
-  q5:"Who approves an order?", a5:"You raise it, the office approves it. You get an update the moment it is approved and know what to send next.",
+  q5:"Who approves an order?", a5:"You raise it, the headquarters approves it. You get an update the moment it is approved and know what to send next.",
   q6:"What does it cost me?", a6:"Nothing to download and nothing to use as a supplier trading with us. Call us and we will set you up.",
 
   ctaTitle:"Your next order can take two minutes.",
