@@ -14,6 +14,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0a0b'/%3E%3Cpath d='M16 6a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4.4a5.6 5.6 0 1 1 0 11.2 5.6 5.6 0 0 1 0-11.2z' fill='%23f0561a'/%3E%3C/svg%3E">
 <script src="./support.js"></script>
 <script src="./nav.js" defer></script>
+<script src="./foldtext.js" defer></script>
 </head>
 <body>
 <x-dc>
@@ -172,6 +173,40 @@ a:hover{color:var(--accent-hi)}
   -webkit-mask:none;mask:none;box-shadow:none;padding:0}
 @media (prefers-reduced-motion:reduce){.hero-phone{animation:none}
   .hero-phone-screen img{transition:none}}
+/* ---- hero strands backdrop ---------------------------------------------
+   Confined to the hero. The scrubbed emblem holds off until the second screen,
+   so the two backdrops never fight; masked at the foot so the ribbons dissolve
+   into the page rather than ending on a line. */
+.hero-wrap{position:relative}
+.hero-strands{position:absolute;inset:-8% -4% 0;z-index:0;pointer-events:none;opacity:.9;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 62%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0%,#000 62%,transparent 100%)}
+.strands-container{position:relative;width:100%;height:100%;background:transparent}
+.strands-container canvas{display:block;width:100%;height:100%}
+@media (prefers-reduced-motion:reduce){.hero-strands{opacity:.5}}
+/* ---- headings unfold into place ---------------------------------------
+   Split per word by foldtext.js. Word rather than character because Devanagari
+   conjuncts are multi-codepoint and tear apart when split per glyph. */
+.fold-w{display:inline-block;perspective:760px}
+.fold-i{display:inline-block;transform-origin:50% 0%;backface-visibility:hidden;
+  transform:rotateX(-88deg);opacity:0;
+  transition:transform .66s cubic-bezier(.2,.85,.24,1),opacity .44s ease}
+h1[data-fold].is-unfolded .fold-i,h2[data-fold].is-unfolded .fold-i{transform:none;opacity:1}
+@media (prefers-reduced-motion:reduce){.fold-i{transform:none;opacity:1;transition:none}}
+
+/* ---- hero title shine --------------------------------------------------
+   The React Bits ShinyText effect without pulling in `motion`: it animates a
+   background-position across a clipped gradient, which CSS does natively. The
+   base stop sits just under white so the highlight has something to travel
+   against; any dimmer and the most important line on the page loses weight. */
+@keyframes om-shine{from{background-position:170% center}to{background-position:-70% center}}
+.hero-title{
+  background-image:linear-gradient(104deg,#e6e6ee 0%,#e6e6ee 38%,#fff 50%,#e6e6ee 62%,#e6e6ee 100%);
+  background-size:220% auto;-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  animation:om-shine 5.2s linear infinite}
+@media (prefers-reduced-motion:reduce){.hero-title{animation:none;
+  -webkit-text-fill-color:#f4f4f5;color:#f4f4f5}}
 .posters-container{width:100%;height:100%;overflow:hidden;position:relative;z-index:2}
 /* The reel was clipped to its grid column, so cards were sliced off mid-travel
    and the section read as a box. The canvas now fills the pinned rig; the grid
@@ -546,12 +581,14 @@ window.dispatchEvent(new Event('ogl-ready'));
 </div>
 
 <!-- ============ HERO ============ -->
-<div style="max-width:1180px;margin:0 auto;padding:72px 32px 0;display:flex;gap:56px;align-items:center;flex-wrap:wrap">
+<div class="hero-wrap">
+<div class="hero-strands" aria-hidden="true"><x-import component-from-global-scope="Strands" from="./strands.jsx" colors="{{ strandColors }}" count="{{ 4 }}" speed="{{ 0.34 }}" amplitude="{{ 1.25 }}" waviness="{{ 0.85 }}" thickness="{{ 0.62 }}" glow="{{ 2.2 }}" taper="{{ 2.4 }}" spread="{{ 1.15 }}" intensity="{{ 0.52 }}" saturation="{{ 1.35 }}" opacity="{{ 0.72 }}" scale="{{ 1.9 }}" hint-size="100%,100%"></x-import></div>
+<div style="position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:72px 32px 0;display:flex;gap:56px;align-items:center;flex-wrap:wrap">
 <div style="flex:1 1 460px;min-width:340px">
 <div style="display:inline-flex;align-items:center;gap:9px;height:34px;padding:0 15px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-warm);background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:var(--glass-sh);margin-bottom:26px">
 <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(240,86,26,.9)"></span>{{ t.heroBadge }}
 </div>
-<h1 data-anim style="margin:0;font-size:82px;line-height:.95;font-weight:800;letter-spacing:-.045em">{{ t.heroTitle }}</h1>
+<h1 class="hero-title" data-anim style="margin:0;font-size:82px;line-height:.95;font-weight:800;letter-spacing:-.045em">{{ t.heroTitle }}</h1>
 <p data-anim style="margin:22px 0 0;font-size:18.5px;line-height:1.6;font-weight:450;color:var(--ink-2);max-width:520px">{{ t.heroSub }}</p>
 <div data-anim style="display:flex;gap:13px;margin-top:34px;flex-wrap:wrap">
 <div style="height:60px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:12px;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:var(--pill-sh);cursor:pointer">
@@ -594,6 +631,8 @@ window.dispatchEvent(new Event('ogl-ready'));
 </div>
 </div>
 
+</div>
+
 <!-- ============ MARQUEE ============ -->
 <div class="tint-band" style="margin-top:84px;padding:22px 0;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border-top:1px solid rgba(255,255,255,.09);border-bottom:1px solid rgba(255,255,255,.09);-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)">
 <div style="display:flex;width:max-content;animation:om-marquee 38s linear infinite">
@@ -612,7 +651,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div class="ten-mark" aria-hidden="true">10×</div>
 <div class="ten-quote-body">
 <div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.tenKicker }}</div>
-<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.tenTitle }}</h2>
+<h2 data-fold style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.tenTitle }}</h2>
 <p class="ten-line" data-over-art>{{ t.tenQuote }}</p>
 <p style="margin:18px 0 0;font-size:17px;line-height:1.65;font-weight:500;color:var(--ink-2);max-width:620px">{{ t.tenSub }}</p>
 </div>
@@ -628,7 +667,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div style="max-width:1180px;margin:0 auto;padding:104px 32px 0">
 <div data-anim style="max-width:640px">
 <div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.probKicker }}</div>
-<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.probTitle }}</h2>
+<h2 data-fold style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.probTitle }}</h2>
 <p style="margin:16px 0 0;font-size:16.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.probSub }}</p>
 </div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:40px">
@@ -655,7 +694,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div style="max-width:1180px;margin:0 auto">
 <div data-anim style="max-width:660px">
 <div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.flowKicker }}</div>
-<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.flowTitle }}</h2>
+<h2 data-fold style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.flowTitle }}</h2>
 <p style="margin:16px 0 0;font-size:16.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.flowSub }}</p>
 </div>
 
@@ -703,7 +742,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div style="max-width:1180px;margin:0 auto;padding:104px 32px 0;display:flex;gap:56px;flex-wrap:wrap;align-items:center">
 <div data-anim style="flex:1 1 420px;min-width:320px">
 <div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.paperKicker }}</div>
-<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.paperTitle }}</h2>
+<h2 data-fold style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.paperTitle }}</h2>
 <p style="margin:16px 0 0;font-size:16.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.paperSub }}</p>
 <div style="display:flex;flex-direction:column;gap:11px;margin-top:28px">
 <div style="display:flex;gap:13px;align-items:flex-start"><div style="width:24px;height:24px;flex:0 0 24px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#4ade80;background:linear-gradient(160deg,rgba(74,222,128,.16),rgba(74,222,128,.05));border:1px solid rgba(255,255,255,.10)">✓</div><div><span style="font-size:14.5px;font-weight:800">{{ t.paperL1 }}</span><span style="font-size:14px;font-weight:500;color:var(--ink-2)"> — {{ t.paperL1b }}</span></div></div>
@@ -744,7 +783,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div style="max-width:1180px;margin:0 auto;padding:0 32px 62px">
 <div data-anim style="max-width:700px">
 <div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.manKicker }}</div>
-<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.manTitle }}</h2>
+<h2 data-fold style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.manTitle }}</h2>
 <p style="margin:18px 0 0;font-size:16.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.manSub }}</p>
 <p style="margin:14px 0 0;font-size:14px;line-height:1.6;font-weight:600;color:var(--ink-3)">{{ t.flySub }}</p>
 </div>
@@ -893,7 +932,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div style="max-width:1180px;margin:0 auto">
 <div data-anim style="max-width:660px">
 <div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.archKicker }}</div>
-<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.archTitle }}</h2>
+<h2 data-fold style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.archTitle }}</h2>
 <p style="margin:16px 0 0;font-size:16.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.archSub }}</p>
 </div>
 
@@ -952,7 +991,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div style="max-width:1180px;margin:0 auto;padding:104px 32px 0">
 <div data-anim style="max-width:640px">
 <div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.whoKicker }}</div>
-<h2 style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.whoTitle }}</h2>
+<h2 data-fold style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.whoTitle }}</h2>
 </div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:18px;margin-top:40px">
 <div data-anim data-lift style="border-radius:28px;padding:26px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh);display:flex;flex-direction:column">
@@ -987,7 +1026,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div data-anim style="border-radius:36px;padding:44px;background:var(--glass);border:var(--glass-brd);box-shadow:0 34px 70px -20px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.09)">
 <div data-anim style="max-width:620px">
 <div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.bizKicker }}</div>
-<h2 style="margin:0;font-size:46px;line-height:1.05;font-weight:800;letter-spacing:-.04em">{{ t.bizTitle }}</h2>
+<h2 data-fold style="margin:0;font-size:46px;line-height:1.05;font-weight:800;letter-spacing:-.04em">{{ t.bizTitle }}</h2>
 <p style="margin:15px 0 0;font-size:15.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.bizSub }}</p>
 </div>
 <div class="tint-band" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:26px;margin-top:38px;padding-top:34px;border-top:1px solid rgba(255,255,255,.08)">
@@ -1017,7 +1056,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 
 <!-- ============ FAQ ============ -->
 <div style="max-width:1180px;margin:0 auto;padding:104px 32px 0">
-<h2 data-anim style="margin:0 0 36px;font-size:48px;line-height:1.04;font-weight:800;letter-spacing:-.04em">{{ t.faqTitle }}</h2>
+<h2 data-fold data-anim style="margin:0 0 36px;font-size:48px;line-height:1.04;font-weight:800;letter-spacing:-.04em">{{ t.faqTitle }}</h2>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px">
 <div data-anim data-lift style="border-radius:26px;padding:24px;background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh)">
 <div style="font-size:15.5px;font-weight:800">{{ t.q1 }}</div>
@@ -1052,7 +1091,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div style="position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,150,90,.22),transparent 70%);top:-150px;left:-90px"></div>
 <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(150,160,255,.20),transparent 70%);bottom:-140px;right:-70px"></div>
 <div data-over-art style="position:relative">
-<h2 style="margin:0;font-size:58px;line-height:1.0;font-weight:800;letter-spacing:-.045em;max-width:600px;margin-left:auto;margin-right:auto">{{ t.ctaTitle }}</h2>
+<h2 data-fold style="margin:0;font-size:58px;line-height:1.0;font-weight:800;letter-spacing:-.045em;max-width:600px;margin-left:auto;margin-right:auto">{{ t.ctaTitle }}</h2>
 <p style="margin:18px auto 0;font-size:16.5px;line-height:1.6;font-weight:500;color:var(--ink-2);max-width:500px">{{ t.ctaSub }}</p>
 <div style="display:flex;gap:13px;margin-top:34px;justify-content:center;flex-wrap:wrap">
 <div style="height:62px;padding:0 32px;border-radius:999px;display:flex;align-items:center;gap:12px;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:var(--pill-sh);cursor:pointer">
@@ -1382,6 +1421,7 @@ class Component extends DCLogic {
           title: _t['m' + (i + 1) + 't'], body: _t['m' + (i + 1) + 'b']
         }))
       },
+      strandColors: ['#f0561a','#ff8a52','#5a6eff','#3ec6d8'],
       posterItems: ['screens/01-home.webp','screens/02-selling.webp','screens/03-weight.webp','screens/04-rate.webp','screens/05-factory.webp','screens/06-payment.webp','screens/07-delivery.webp','screens/08-confirm.webp','screens/09-updates.webp','screens/10-order.webp','screens/11-truck.webp','screens/12-help.webp'],
       t: lang === 'hi' ? HI : EN,
       setEn: () => this.setState({lang:'en'}),
