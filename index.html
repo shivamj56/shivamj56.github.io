@@ -15,6 +15,7 @@
 <script src="./support.js"></script>
 <script src="./nav.js" defer></script>
 <script src="./foldtext.js" defer></script>
+<script src="./hisaab.js" defer></script>
 </head>
 <body>
 <x-dc>
@@ -207,6 +208,40 @@ h1[data-fold].is-unfolded .fold-i,h2[data-fold].is-unfolded .fold-i{transform:no
   animation:om-shine 5.2s linear infinite}
 @media (prefers-reduced-motion:reduce){.hero-title{animation:none;
   -webkit-text-fill-color:#f4f4f5;color:#f4f4f5}}
+/* ---- the hisaab panel --------------------------------------------------
+   Stands where a decorative "10×" used to. The section claims the maths is done
+   before the call ends; this performs it — spoken sauda at the top, then the
+   figures landing in order. Sized to sit beside the copy, stacks below it. */
+.hisaab{flex:0 0 auto;width:min(100%,300px);padding:18px 18px 16px;border-radius:22px;
+  background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh);
+  font-variant-numeric:tabular-nums}
+.hisaab-said{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;
+  line-height:1.4;color:var(--ink-2);padding-bottom:13px;margin-bottom:4px;
+  border-bottom:1px solid rgba(255,255,255,calc(.10 + var(--lit) * .30))}
+.hisaab-wave{display:flex;align-items:flex-end;gap:2.5px;height:16px;flex:0 0 auto}
+.hisaab-wave i{width:2.5px;border-radius:2px;background:var(--accent);height:5px;
+  animation:om-wave 1.1s ease-in-out infinite}
+.hisaab-wave i:nth-child(2){animation-delay:.13s}
+.hisaab-wave i:nth-child(3){animation-delay:.26s}
+.hisaab-wave i:nth-child(4){animation-delay:.39s}
+.hisaab-wave i:nth-child(5){animation-delay:.52s}
+@keyframes om-wave{0%,100%{height:4px;opacity:.55}50%{height:15px;opacity:1}}
+.hisaab-row{display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+  padding:8px 0;font-size:13px;font-weight:600;color:var(--ink-3);
+  opacity:0;transform:translateY(7px);
+  transition:opacity .5s ease,transform .5s cubic-bezier(.2,.85,.24,1)}
+.hisaab.is-on .hisaab-row{opacity:1;transform:none;transition-delay:calc(var(--i) * 190ms + 200ms)}
+.hisaab-row b{font-size:15px;font-weight:800;letter-spacing:-.02em;color:var(--ink);white-space:nowrap}
+.hisaab-sum{margin-top:2px;padding-top:11px;border-top:1px solid rgba(255,255,255,calc(.10 + var(--lit) * .30))}
+.hisaab-sum b{font-size:23px;letter-spacing:-.035em;
+  background:var(--pill);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hisaab-foot{margin-top:11px;font-size:10.5px;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);
+  opacity:0;transition:opacity .6s ease}
+.hisaab.is-on .hisaab-foot{opacity:1;transition-delay:calc(var(--i) * 190ms + 320ms)}
+@media (prefers-reduced-motion:reduce){
+  .hisaab-row,.hisaab-foot{opacity:1;transform:none;transition:none}
+  .hisaab-wave i{animation:none;height:9px}}
 .posters-container{width:100%;height:100%;overflow:hidden;position:relative;z-index:2}
 /* The reel was clipped to its grid column, so cards were sliced off mid-travel
    and the section read as a box. The canvas now fills the pinned rig; the grid
@@ -648,7 +683,14 @@ window.dispatchEvent(new Event('ogl-ready'));
 <!-- ============ 10X ============ -->
 <div style="max-width:1180px;margin:0 auto;padding:104px 32px 0">
 <div data-anim class="ten-quote">
-<div class="ten-mark" aria-hidden="true">10×</div>
+<div class="hisaab" data-hisaab>
+<div class="hisaab-said"><span class="hisaab-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span>{{ t.hqSaid }}</span></div>
+<div class="hisaab-row" style="--i:0"><span>{{ t.hqR1 }}</span><b data-to="5809" data-pre="₹" data-suf="/qtl">₹0/qtl</b></div>
+<div class="hisaab-row" style="--i:1"><span>{{ t.hqR2 }}</span><b data-to="250" data-suf=" qtl">0 qtl</b></div>
+<div class="hisaab-row hisaab-sum" style="--i:2"><span>{{ t.hqR3 }}</span><b data-to="1452250" data-pre="₹" data-group="in">₹0</b></div>
+<div class="hisaab-row" style="--i:3"><span>{{ t.hqR4 }}</span><b>07 Sept 2026</b></div>
+<div class="hisaab-foot" style="--i:4">{{ t.hqDone }}</div>
+</div>
 <div class="ten-quote-body">
 <div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.tenKicker }}</div>
 <h2 data-fold style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.tenTitle }}</h2>
@@ -1168,6 +1210,9 @@ const EN = {
   navKicker:"Pvt Ltd", navCta:"Get the app", navHelp:"Customer support",
 
   tenKicker:"Why sellers grow 10× with us",
+  hqSaid:"\u201cPachchees ton, athhavan sau nau\u201d",
+  hqR1:"Rate", hqR2:"Weight", hqR3:"Order value", hqR4:"Payment due",
+  hqDone:"Done before the call ended",
   tenTitle:"Your hisaab, done before the call ends.",
   tenQuote:"The sauda was never the hard part. The hisaab was.",
   tenSub:"No trader was ever stopped by a shortage of buyers. They were stopped by hisaab — rate into weight into trucks, minus advance, due in fifteen days from a date nobody wrote down. Put that maths in their pocket, finished before the call ends, and the same trader on the same phone runs ten times the business.",
@@ -1298,6 +1343,9 @@ const HI = {
   navKicker:"प्रा. लि.", navCta:"ऐप लें", navHelp:"ग्राहक सहायता",
 
   tenKicker:"हमसे जुड़कर व्यापारी 10× क्यों बढ़ते हैं",
+  hqSaid:"\u201cपच्चीस टन, अट्ठावन सौ नौ\u201d",
+  hqR1:"भाव", hqR2:"वज़न", hqR3:"सौदे की रकम", hqR4:"भुगतान",
+  hqDone:"कॉल ख़त्म होने से पहले तैयार",
   tenTitle:"हिसाब, कॉल ख़त्म होने से पहले।",
   tenQuote:"सौदा कभी मुश्किल नहीं था। हिसाब था।",
   tenSub:"किसी व्यापारी को खरीदार की कमी ने नहीं रोका। रोका हिसाब ने — भाव गुणा वज़न गुणा ट्रक, एडवांस घटाकर, पंद्रह दिन बाद उस तारीख से जो किसी ने लिखी ही नहीं। वह गणित उनकी जेब में डाल दीजिए, कॉल ख़त्म होने से पहले पूरा — और वही व्यापारी उसी फ़ोन पर दस गुना काम करता है।",
