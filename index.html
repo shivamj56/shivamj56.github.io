@@ -188,12 +188,12 @@ a:hover{color:var(--accent-hi)}
 /* ---- headings unfold into place ---------------------------------------
    Split per word by foldtext.js. Word rather than character because Devanagari
    conjuncts are multi-codepoint and tear apart when split per glyph. */
-.fold-w{display:inline-block;perspective:760px}
-.fold-i{display:inline-block;transform-origin:50% 0%;backface-visibility:hidden;
-  transform:rotateX(-88deg);opacity:0;
-  transition:transform .66s cubic-bezier(.2,.85,.24,1),opacity .44s ease}
-h1[data-fold].is-unfolded .fold-i,h2[data-fold].is-unfolded .fold-i{transform:none;opacity:1}
-@media (prefers-reduced-motion:reduce){.fold-i{transform:none;opacity:1;transition:none}}
+h2[data-fold]{transform-origin:50% 0%;backface-visibility:hidden;
+  transform:perspective(820px) rotateX(-72deg);opacity:0;
+  transition:transform .78s cubic-bezier(.2,.85,.22,1),opacity .5s ease}
+h2[data-fold].is-unfolded{transform:perspective(820px) rotateX(0);opacity:1}
+@media (prefers-reduced-motion:reduce){
+  h2[data-fold]{transform:none;opacity:1;transition:none}}
 
 /* ---- hero title shine --------------------------------------------------
    The React Bits ShinyText effect without pulling in `motion`: it animates a
@@ -242,6 +242,41 @@ h1[data-fold].is-unfolded .fold-i,h2[data-fold].is-unfolded .fold-i{transform:no
 @media (prefers-reduced-motion:reduce){
   .hisaab-row,.hisaab-foot{opacity:1;transform:none;transition:none}
   .hisaab-wave i{animation:none;height:9px}}
+/* ---- growth curve under the panel ------------------------------------- */
+.hisaab-graph{display:block;width:100%;height:auto;margin-top:16px;overflow:visible}
+.gr-line{stroke-dasharray:320;stroke-dashoffset:320;
+  transition:stroke-dashoffset 1.5s cubic-bezier(.32,.72,.3,1) .55s}
+.gr-area,.gr-dot{opacity:0;transition:opacity .7s ease 1.5s}
+.hisaab.is-on .gr-line{stroke-dashoffset:0}
+.hisaab.is-on .gr-area{opacity:1}
+.hisaab.is-on .gr-dot{opacity:1;animation:om-pulse 2.4s ease-in-out 2.1s infinite}
+.hisaab-graph-cap{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  margin-top:7px;font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);opacity:0;transition:opacity .6s ease 1.7s}
+.hisaab-graph-cap b{font-size:15px;letter-spacing:-.02em;color:var(--accent)}
+.hisaab.is-on .hisaab-graph-cap{opacity:1}
+@media (prefers-reduced-motion:reduce){
+  .gr-line{stroke-dashoffset:0;transition:none}
+  .gr-area,.gr-dot,.hisaab-graph-cap{opacity:1;transition:none;animation:none}}
+
+/* ---- the hairline between the panel and the copy ------------------------
+   Not a border. A hairline that fades out at both ends and carries a single lit
+   node at the reading line, so it reads as a considered join rather than two
+   blocks pushed apart. Section-scoped by design. */
+.ten-rule{position:relative;flex:0 0 1px;align-self:stretch;margin:10px 0;border-radius:1px;
+  background:linear-gradient(180deg,
+    transparent 0%,
+    rgba(255,255,255,calc(.06 + var(--lit) * .10)) 14%,
+    rgba(240,86,26,calc(.42 + var(--lit) * .18)) 46%,
+    rgba(255,255,255,calc(.06 + var(--lit) * .10)) 78%,
+    transparent 100%)}
+.ten-rule::after{content:'';position:absolute;left:50%;top:46%;width:5px;height:5px;
+  margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 12px 2px rgba(240,86,26,.55)}
+@media (max-width:640px){
+  .ten-rule{flex:0 0 1px;align-self:auto;width:100%;height:1px;margin:6px 0 2px;
+    background:linear-gradient(90deg,transparent,rgba(240,86,26,.5) 50%,transparent)}
+  .ten-rule::after{display:none}}
 .posters-container{width:100%;height:100%;overflow:hidden;position:relative;z-index:2}
 /* The reel was clipped to its grid column, so cards were sliced off mid-travel
    and the section read as a box. The canvas now fills the pinned rig; the grid
@@ -690,7 +725,18 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div class="hisaab-row hisaab-sum" style="--i:2"><span>{{ t.hqR3 }}</span><b data-to="1452250" data-pre="₹" data-group="in">₹0</b></div>
 <div class="hisaab-row" style="--i:3"><span>{{ t.hqR4 }}</span><b>07 Sept 2026</b></div>
 <div class="hisaab-foot" style="--i:4">{{ t.hqDone }}</div>
+<svg class="hisaab-graph" viewBox="0 0 260 104" role="img" aria-label="{{ t.grLabel }}">
+<defs>
+<linearGradient id="grLine" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff8a52"/><stop offset="1" stop-color="#f0561a"/></linearGradient>
+<linearGradient id="grFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0561a" stop-opacity=".34"/><stop offset="1" stop-color="#f0561a" stop-opacity="0"/></linearGradient>
+</defs>
+<path class="gr-area" d="M8,88 C60,87 96,80 132,66 C168,52 206,32 252,10 L252,96 L8,96 Z" fill="url(#grFill)"/>
+<path class="gr-line" d="M8,88 C60,87 96,80 132,66 C168,52 206,32 252,10" fill="none" stroke="url(#grLine)" stroke-width="3" stroke-linecap="round"/>
+<circle class="gr-dot" cx="252" cy="10" r="4.5" fill="#ff8a52"/>
+</svg>
+<div class="hisaab-graph-cap"><span>{{ t.grLabel }}</span><b>10×</b></div>
 </div>
+<div class="ten-rule" aria-hidden="true"></div>
 <div class="ten-quote-body">
 <div style="font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px">{{ t.tenKicker }}</div>
 <h2 data-fold style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.tenTitle }}</h2>
@@ -1213,6 +1259,7 @@ const EN = {
   hqSaid:"\u201cPachchees ton, athhavan sau nau\u201d",
   hqR1:"Rate", hqR2:"Weight", hqR3:"Order value", hqR4:"Payment due",
   hqDone:"Done before the call ended",
+  grLabel:"Orders a month",
   tenTitle:"Your hisaab, done before the call ends.",
   tenQuote:"The sauda was never the hard part. The hisaab was.",
   tenSub:"No trader was ever stopped by a shortage of buyers. They were stopped by hisaab — rate into weight into trucks, minus advance, due in fifteen days from a date nobody wrote down. Put that maths in their pocket, finished before the call ends, and the same trader on the same phone runs ten times the business.",
@@ -1346,6 +1393,7 @@ const HI = {
   hqSaid:"\u201cपच्चीस टन, अट्ठावन सौ नौ\u201d",
   hqR1:"भाव", hqR2:"वज़न", hqR3:"सौदे की रकम", hqR4:"भुगतान",
   hqDone:"कॉल ख़त्म होने से पहले तैयार",
+  grLabel:"महीने के ऑर्डर",
   tenTitle:"हिसाब, कॉल ख़त्म होने से पहले।",
   tenQuote:"सौदा कभी मुश्किल नहीं था। हिसाब था।",
   tenSub:"किसी व्यापारी को खरीदार की कमी ने नहीं रोका। रोका हिसाब ने — भाव गुणा वज़न गुणा ट्रक, एडवांस घटाकर, पंद्रह दिन बाद उस तारीख से जो किसी ने लिखी ही नहीं। वह गणित उनकी जेब में डाल दीजिए, कॉल ख़त्म होने से पहले पूरा — और वही व्यापारी उसी फ़ोन पर दस गुना काम करता है।",
