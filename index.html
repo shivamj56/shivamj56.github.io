@@ -133,13 +133,24 @@ a:hover{color:var(--accent-hi)}
   .hero-phone--back{display:none}
   .hero-phone--front{width:100%;--tilt:rotateX(3deg) rotateY(6deg) rotateZ(-2deg)}
 }
-/* Two dense UI screenshots cross-dissolving read as a rendering fault, not a
-   transition — for 0.85s of every 2.8s the phone showed both screens at once.
-   The outgoing one leaves first and the incoming waits for it, so they never
-   overlap at readable opacity. */
+/* Screen changes read as the app being used, not as a dissolve.
+
+   A plain crossfade showed both dense screenshots at once and looked like a
+   rendering fault. Sequencing the fades fixed the ghosting but left a flat cut.
+   A short vertical travel is what turns it into motion: the outgoing screen
+   lifts away, the incoming one rises into place behind it. They still never
+   overlap at readable opacity, so the ghosting does not come back. */
 .hero-phone-screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:0;transition:opacity .26s ease-in}
-.hero-phone-screen img.is-on{opacity:1;transition:opacity .34s cubic-bezier(.2,.8,.2,1) .22s}
+  opacity:0;transform:translate3d(0,-4%,0) scale(1.012);
+  transition:opacity .3s cubic-bezier(.4,0,1,1),transform .42s cubic-bezier(.4,0,1,1);
+  will-change:opacity,transform}
+/* Staged below the frame for one frame, so it has somewhere to rise from. */
+.hero-phone-screen img.is-next{transform:translate3d(0,5%,0) scale(.992)}
+.hero-phone-screen img.is-on{opacity:1;transform:none;
+  transition:opacity .5s cubic-bezier(.16,.84,.28,1) .2s,
+             transform .74s cubic-bezier(.16,.84,.28,1) .2s}
+@media (prefers-reduced-motion:reduce){
+  .hero-phone-screen img{transform:none!important;transition:opacity .2s ease}}
 /* The bezel, drawn in CSS so the hero ships without waiting on an asset.
    A frame image, when supplied, replaces all of it. */
 /* Brushed-titanium rail. The bright stops sit where the raking light in the
@@ -558,9 +569,18 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
       var i = 0, timer = null, lead = null;
       var delay = parseInt(phone.getAttribute('data-hero-delay'), 10) || 0;
       function tick(){
-        shots[i].classList.remove('is-on');
+        var prev = i;
         i = (i + 1) % shots.length;
-        shots[i].classList.add('is-on');
+        shots[i].classList.add('is-next');
+        shots[prev].classList.remove('is-on');
+        /* Two frames so the staged transform is committed before it animates;
+           one is not always enough once the compositor is busy. */
+        requestAnimationFrame(function(){
+          requestAnimationFrame(function(){
+            shots[i].classList.remove('is-next');
+            shots[i].classList.add('is-on');
+          });
+        });
       }
       function run(on){
         if(on){
@@ -1258,10 +1278,10 @@ const EN = {
   tenKicker:"Why sellers grow 10× with us",
   hqSaid:"\u201cPachchees ton, athhavan sau nau\u201d",
   hqR1:"Rate", hqR2:"Weight", hqR3:"Order value", hqR4:"Payment due",
-  hqDone:"Done before the call ended",
+  hqDone:"No call. No callback. No confusion.",
   grLabel:"Orders a month",
-  tenTitle:"Your hisaab, done before the call ends.",
-  tenQuote:"The sauda was never the hard part. The hisaab was.",
+  tenTitle:"The sauda without the phone call.",
+  tenQuote:"The phone was never the tool. It was the bottleneck.",
   tenSub:"No trader was ever stopped by a shortage of buyers. They were stopped by hisaab — rate into weight into trucks, minus advance, due in fifteen days from a date nobody wrote down. Put that maths in their pocket, finished before the call ends, and the same trader on the same phone runs ten times the business.",
   ten1Title:"The maths is instant",
   ten1Body:"Rate, weight, trucks, advance, due date — calculated as you speak, and read back before anything is sent. No pen, no calculator, no arguing later about the number.",
@@ -1276,7 +1296,7 @@ const EN = {
   heroPoint1:"No typing needed", heroPoint2:"Hindi and English", heroPoint3:"Works on any phone",
 
   probKicker:"The problem",
-  probTitle:"The sauda takes two minutes. The hisaab takes three weeks.",
+  probTitle:"A sauda on a call is not a sauda yet.",
   probSub:"The trading is the easy part — you have done it your whole life. It is the hisaab behind it that eats the month: what is owed, on which truck, against which slip, due on which day. That is where the money leaks, and that is what we built for.",
   prob1Title:"Orders live in phone calls",
   prob1Body:"Rate, quantity, factory and terms are agreed verbally. Nothing is written down until someone remembers to write it down.",
@@ -1392,10 +1412,10 @@ const HI = {
   tenKicker:"हमसे जुड़कर व्यापारी 10× क्यों बढ़ते हैं",
   hqSaid:"\u201cपच्चीस टन, अट्ठावन सौ नौ\u201d",
   hqR1:"भाव", hqR2:"वज़न", hqR3:"सौदे की रकम", hqR4:"भुगतान",
-  hqDone:"कॉल ख़त्म होने से पहले तैयार",
+  hqDone:"न कॉल, न दोबारा कॉल, न उलझन",
   grLabel:"महीने के ऑर्डर",
-  tenTitle:"हिसाब, कॉल ख़त्म होने से पहले।",
-  tenQuote:"सौदा कभी मुश्किल नहीं था। हिसाब था।",
+  tenTitle:"सौदा, बिना फ़ोन कॉल के।",
+  tenQuote:"फ़ोन कभी औज़ार नहीं था। वही अड़चन था।",
   tenSub:"किसी व्यापारी को खरीदार की कमी ने नहीं रोका। रोका हिसाब ने — भाव गुणा वज़न गुणा ट्रक, एडवांस घटाकर, पंद्रह दिन बाद उस तारीख से जो किसी ने लिखी ही नहीं। वह गणित उनकी जेब में डाल दीजिए, कॉल ख़त्म होने से पहले पूरा — और वही व्यापारी उसी फ़ोन पर दस गुना काम करता है।",
   ten1Title:"हिसाब तुरंत",
   ten1Body:"भाव, वज़न, ट्रक, एडवांस, ड्यू डेट — बोलते-बोलते जुड़ जाता है, और भेजने से पहले पूरा पढ़कर सुनाया जाता है। न कलम, न कैलकुलेटर, न बाद में नंबर पर बहस।",
@@ -1410,7 +1430,7 @@ const HI = {
   heroPoint1:"टाइप करने की ज़रूरत नहीं", heroPoint2:"हिंदी और अंग्रेज़ी", heroPoint3:"किसी भी फ़ोन पर चले",
 
   probKicker:"समस्या",
-  probTitle:"सौदा दो मिनट में। हिसाब तीन हफ़्ते में।",
+  probTitle:"कॉल पर हुआ सौदा, अभी सौदा नहीं है।",
   probSub:"व्यापार करना आसान हिस्सा है — वह आप उम्र भर करते आए हैं। महीना खाता है उसके पीछे का हिसाब: किसका बकाया, किस ट्रक पर, किस परची के बदले, किस दिन देना है। पैसा वहीं रिसता है, और हमने इसी के लिए बनाया है।",
   prob1Title:"ऑर्डर फ़ोन कॉल में रह जाते हैं",
   prob1Body:"रेट, मात्रा, फ़ैक्ट्री और शर्तें ज़ुबानी तय होती हैं। जब तक कोई लिखना याद न रखे, कहीं दर्ज नहीं होता।",
