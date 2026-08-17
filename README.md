@@ -234,6 +234,18 @@ different values — a dark gradient needs a loose threshold to span it, while a
 light-grey backdrop sits only ~28 levels from the card and floods straight
 through the screen if the threshold is loose.
 
+Each edge is then trimmed by a **measured** amount, not a fixed one. Captures
+carry a band of the phone's own bezel along every edge and it is not symmetric —
+one export had 2 lines at the top and 8 on the left. Note the detector looks for
+the *last sharp transition* near the edge, not for where the colour settles:
+the backdrop outside the phone is perfectly uniform, so a "has it settled" test
+fires on line zero and trims nothing.
+
+Trimming the box is also why the mask is not simply eroded. A filter-based erode
+only bites where there is a transition inside the image, so it pulls the corner
+arcs in but leaves the straight edges untouched — which is exactly how two rows
+of bezel survived along the top and bottom of every card.
+
 ## The hero device mockup
 
 Two devices float at a shared angle, staged the way a product mockup render would

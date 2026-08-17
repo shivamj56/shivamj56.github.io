@@ -17,7 +17,27 @@ from PIL import Image, ImageDraw, ImageFilter
 
 TARGET_ASPECT = 392 / 846      # the shape the reel and the hero are built around
 THRESH = int(os.environ.get('THRESH', '60'))
-ERODE = int(os.environ.get('ERODE', '5'))   # MinFilter kernel; 5 trims ~2px
+INSET = int(os.environ.get('INSET', '3'))   # floor on the per-edge trim
+MAXTRIM = 14                                # cap, so a bad read cannot eat content
+
+
+def frame_depth(strip, tol=13):
+    """How many lines of phone frame sit at the start of this strip.
+
+    strip runs inward from the edge, one mean colour per line. Looking for where
+    the colour "settles" does not work: the backdrop outside the phone is itself
+    perfectly uniform, so that test fires on line zero and trims nothing. What
+    actually marks the end of the frame is the last sharp colour transition near
+    the edge — backdrop to bezel to screen — so trim past that.
+
+    Bounded tightly, because real screen content can carry an edge of its own and
+    over-trimming eats the design.
+    """
+    last = 0
+    for k in range(min(MAXTRIM, len(strip) - 1)):
+        if abs(strip[k] - strip[k + 1]).max() > tol:
+            last = k + 1
+    return last
 
 
 def refine(src, dst):
@@ -62,13 +82,28 @@ def refine(src, dst):
     # inward pull below absorb the difference.
     radius = round(bw * 0.108)
 
+    # Trim the box itself rather than eroding the mask. A filter-based erode only
+    # bites where there is a transition inside the image, so it pulled the corner
+    # arcs in but left the straight edges untouched — and those carried two rows
+    # of the phone's own frame highlight, which is exactly the line that showed
+    # along the top and bottom of every card.
+    src = np.asarray(im).astype(int)
+    inner = src[box[1]:box[3], box[0]:box[2]]
+    ih, iw = inner.shape[:2]
+    cy, cx = ih // 2, iw // 2
+    t = max(INSET, frame_depth([inner[y, cx // 2:cx + cx // 2].mean(0) for y in range(ih // 3)]))
+    b = max(INSET, frame_depth([inner[ih - 1 - y, cx // 2:cx + cx // 2].mean(0) for y in range(ih // 3)]))
+    l = max(INSET, frame_depth([inner[cy // 2:cy + cy // 2, x].mean(0) for x in range(iw // 3)]))
+    r = max(INSET, frame_depth([inner[cy // 2:cy + cy // 2, iw - 1 - x].mean(0) for x in range(iw // 3)]))
+    box = (box[0] + l, box[1] + t, box[2] - r, box[3] - b)
+    bw, bh = box[2] - box[0], box[3] - box[1]
+    radius = max(2, radius - max(l, r))
+
     SS = 4                                        # supersample for a smooth arc
     mask = Image.new('L', (bw * SS, bh * SS), 0)
     ImageDraw.Draw(mask).rounded_rectangle(
         (0, 0, bw * SS - 1, bh * SS - 1), radius=radius * SS, fill=255)
     mask = mask.resize((bw, bh), Image.LANCZOS)
-    # Pull in by a hair so no row of the old backdrop survives under the arc.
-    mask = mask.filter(ImageFilter.MinFilter(ERODE))
 
     card = Image.fromarray(np.asarray(im)[box[1]:box[3], box[0]:box[2]]).convert('RGB')
     card.putalpha(mask)
