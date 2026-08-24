@@ -22,7 +22,7 @@
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Bodoni+Moda:opsz,wght@6..96,700;6..96,800&display=swap" rel="stylesheet">
 <style>
 :root{
   --accent:#f0561a; --accent-lo:#ff8a52; --accent-hi:#d9420b;
@@ -403,6 +403,67 @@ h2{font-size:clamp(25px,4.7vw,56px)!important;letter-spacing:-.038em!important}
   [style*="64px 44px"]{padding-top:40px!important;padding-bottom:44px!important}
 }
 @media (max-width:430px){[style*="repeat(4, 1fr)"]{grid-template-columns:1fr!important}}
+
+/* ---- What's new: a ledger folio ----------------------------------------
+   Every other section here is a grid of glass cards. This one is ruled rows,
+   because the product is the hisaab and a ledger line is the honest shape for
+   "what was added to the book". The tag sits in a left gutter and is printed
+   only on the FIRST row of each run — paper, order, app — exactly as a ledger
+   column behaves. Repeating it on every row would be decoration; omitting it
+   is what makes it information.
+
+   The one bold move is the market inlay: cream newsprint on a dark page. That
+   is not a flourish, it is what the screen actually looks like — the desk is
+   set as a broadsheet on cream stock with a Bodoni masthead — so the page
+   shows it rather than describing it. Its three columns carry the questions
+   the three tabs answer and NOT invented prices: the screen itself refuses to
+   fill its layout with figures it does not have, and a marketing page making
+   them up would be worse than a plain one.
+   --------------------------------------------------------------------- */
+.nw{max-width:1180px;margin:0 auto;padding:104px var(--gut) 0}
+.nw-kick{font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:14px}
+.nw-sub{margin:16px 0 0;font-size:16.5px;line-height:1.62;font-weight:500;color:var(--ink-2)}
+
+.nw-paper{margin-top:clamp(28px,3.6vw,44px);border-radius:16px;
+  background:#f2e8d5;color:#171310;
+  box-shadow:0 34px 80px -22px rgba(0,0,0,.78),inset 0 1px 0 rgba(255,255,255,.75);
+  padding:clamp(20px,3.2vw,34px) clamp(18px,3.2vw,36px) clamp(22px,3.2vw,30px)}
+.nw-paper-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  font-size:9.5px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;
+  color:rgba(23,19,16,.52)}
+.nw-mast{font-family:'Bodoni Moda','Noto Sans Devanagari',Didot,'Times New Roman',serif;
+  font-weight:800;font-size:clamp(27px,5.2vw,56px);line-height:1.05;letter-spacing:-.012em;
+  margin:10px 0 0;text-align:center;text-wrap:balance}
+.nw-mast-rule{height:0;border-top:3px double rgba(23,19,16,.5);margin:14px 0 0}
+.nw-cols{display:grid;grid-template-columns:repeat(3,1fr);margin-top:18px}
+.nw-col{padding:0 clamp(9px,1.5vw,18px);border-left:1px solid rgba(23,19,16,.17)}
+.nw-col:first-child{border-left:0;padding-left:0}
+.nw-col:last-child{padding-right:0}
+.nw-col-h{font-family:'Bodoni Moda','Noto Sans Devanagari',Didot,'Times New Roman',serif;
+  font-size:clamp(15px,1.8vw,20px);font-weight:700;letter-spacing:.01em}
+.nw-col-b{margin:6px 0 0;font-size:13px;line-height:1.5;font-weight:500;color:rgba(23,19,16,.68)}
+.nw-paper-foot{margin-top:18px;padding-top:13px;border-top:1px solid rgba(23,19,16,.17);
+  font-size:12.5px;line-height:1.5;font-weight:600;color:rgba(23,19,16,.58);text-align:center}
+
+.nw-ledger{margin-top:clamp(30px,4vw,52px);border-top:1px solid rgba(255,255,255,.12)}
+.nw-row{display:grid;grid-template-columns:126px 1fr;gap:clamp(12px,3vw,40px);
+  padding:clamp(17px,2.3vw,25px) 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.nw-tag{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--accent);padding-top:6px}
+.nw-t{font-size:clamp(17px,2vw,23px);font-weight:800;letter-spacing:-.025em;line-height:1.26}
+.nw-b{margin:7px 0 0;font-size:14.5px;line-height:1.62;font-weight:500;color:var(--ink-2);
+  max-width:64ch}
+@media (max-width:640px){
+  .nw-row{grid-template-columns:1fr;gap:0}
+  .nw-tag{padding-top:0}
+  .nw-tag:not(:empty){margin-bottom:9px}
+}
+@media (max-width:560px){
+  .nw-cols{grid-template-columns:1fr}
+  .nw-col{border-left:0;border-top:1px solid rgba(23,19,16,.17);padding:13px 0 0;margin-top:13px}
+  .nw-col:first-child{border-top:0;padding-top:0;margin-top:0}
+}
 </style>
 <script>
 /* Scroll-scrubbed background: the brand emblem lighting up across the length of
@@ -1032,6 +1093,38 @@ window.dispatchEvent(new Event('ogl-ready'));
 </div>
 </div>
 
+<!-- ============ WHAT'S NEW ============ -->
+<div class="nw">
+<div data-anim style="max-width:660px">
+<div class="nw-kick">{{ t.nwKicker }}</div>
+<h2 data-fold style="margin:0;font-size:56px;line-height:1.03;font-weight:800;letter-spacing:-.042em">{{ t.nwTitle }}</h2>
+<p class="nw-sub">{{ t.nwSub }}</p>
+</div>
+
+<!-- The market desk, shown as the broadsheet it is rather than described. -->
+<div data-anim data-lift class="nw-paper">
+<div class="nw-paper-top"><span>{{ t.nwPaperFirm }}</span><span>{{ t.nwPaperWhen }}</span></div>
+<div class="nw-mast">{{ t.nwPaperName }}</div>
+<div class="nw-mast-rule"></div>
+<div class="nw-cols">
+<div class="nw-col"><div class="nw-col-h">{{ t.nwTab1 }}</div><p class="nw-col-b">{{ t.nwTab1b }}</p></div>
+<div class="nw-col"><div class="nw-col-h">{{ t.nwTab2 }}</div><p class="nw-col-b">{{ t.nwTab2b }}</p></div>
+<div class="nw-col"><div class="nw-col-h">{{ t.nwTab3 }}</div><p class="nw-col-b">{{ t.nwTab3b }}</p></div>
+</div>
+<div class="nw-paper-foot">{{ t.nwPaperFoot }}</div>
+</div>
+
+<div class="nw-ledger">
+<div data-anim class="nw-row"><div class="nw-tag">{{ t.nw1Tag }}</div><div><div class="nw-t">{{ t.nw1Title }}</div><p class="nw-b">{{ t.nw1Body }}</p></div></div>
+<div data-anim class="nw-row"><div class="nw-tag">{{ t.nw2Tag }}</div><div><div class="nw-t">{{ t.nw2Title }}</div><p class="nw-b">{{ t.nw2Body }}</p></div></div>
+<div data-anim class="nw-row"><div class="nw-tag">{{ t.nw3Tag }}</div><div><div class="nw-t">{{ t.nw3Title }}</div><p class="nw-b">{{ t.nw3Body }}</p></div></div>
+<div data-anim class="nw-row"><div class="nw-tag">{{ t.nw4Tag }}</div><div><div class="nw-t">{{ t.nw4Title }}</div><p class="nw-b">{{ t.nw4Body }}</p></div></div>
+<div data-anim class="nw-row"><div class="nw-tag">{{ t.nw5Tag }}</div><div><div class="nw-t">{{ t.nw5Title }}</div><p class="nw-b">{{ t.nw5Body }}</p></div></div>
+<div data-anim class="nw-row"><div class="nw-tag">{{ t.nw6Tag }}</div><div><div class="nw-t">{{ t.nw6Title }}</div><p class="nw-b">{{ t.nw6Body }}</p></div></div>
+<div data-anim class="nw-row"><div class="nw-tag">{{ t.nw7Tag }}</div><div><div class="nw-t">{{ t.nw7Title }}</div><p class="nw-b">{{ t.nw7Body }}</p></div></div>
+</div>
+</div>
+
 <!-- ============ ARCHITECTURE ============ -->
 <div class="tint-band" style="margin-top:104px;padding:80px 32px;background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.006))">
 <div style="max-width:1180px;margin:0 auto">
@@ -1328,6 +1421,36 @@ const EN = {
   paperL3:"Photo is enough", paperL3b:"snap the slip with the camera or attach a file. No scanner, no printing, no laptop.",
   legDone:"Done", legNow:"Waiting on you", legWait:"Not yet due",
 
+  nwKicker:"New this season",
+  nwTitle:"The book kept learning.",
+  nwSub:"Everything below is already on the phone in your hand. Most of it exists because one trader or another said the same thing twice.",
+
+  nwPaperFirm:"Om Shri Hari · The market desk",
+  nwPaperWhen:"Every morning",
+  nwPaperName:"What the mandi is doing.",
+  nwTab1:"News",
+  nwTab1b:"Ethanol policy, our own buyers, the world — read through the day, not once a week.",
+  nwTab2:"Prices",
+  nwTab2b:"What the mandi is paying for each grade, before you put a rate on a phone call.",
+  nwTab3:"Brief",
+  nwTab3b:"Five lines from this morning, and a switch for whether your phone should buzz at all.",
+  nwPaperFoot:"Set as a paper, because a broadsheet is what a person standing in a yard can actually scan.",
+
+  nw1Tag:"Paper", nw1Title:"The same slip cannot be filed twice.",
+  nw1Body:"Every upload is checked against every document in the system, not only the ones on that order. A repeat is refused before it lands, and the app names the order it is already sitting on.",
+  nw2Tag:"", nw2Title:"An invoice has to belong to the supplier.",
+  nw2Body:"The app reads the GSTIN off the invoice itself. If it is not the supplier on the order it says so and asks you to change the supplier first — instead of the mismatch surfacing weeks later, at payment.",
+  nw3Tag:"", nw3Title:"Sharper, without a longer wait.",
+  nw3Body:"Documents are captured at 2000 pixels on the long edge. A kata parchi photographed in full sun stays readable when somebody opens it at the other end.",
+  nw4Tag:"Order", nw4Title:"Your own days, and the discount that goes with them.",
+  nw4Body:"Type your own payment terms and the cash discount field appears beside them. It rides on the order instead of living in two people\u2019s memory.",
+  nw5Tag:"", nw5Title:"Say the note. Don\u2019t type it.",
+  nw5Body:"\u201cDriver reaching late.\u201d \u201cParty wants the bilty by Friday.\u201d Speak it on the last screen and it travels with the order, instead of arriving later as a phone call somebody has to write down.",
+  nw6Tag:"", nw6Title:"Trucks, added and removed.",
+  nw6Body:"Change the truck count on an order that is already running. A truck with papers filed against it stays — only an untouched one can come off.",
+  nw7Tag:"App", nw7Title:"It stopped signing you out.",
+  nw7Body:"Signed in once is signed in until you choose otherwise. The session renews itself in the background, including on a network that keeps dropping.",
+
   archKicker:"Under the hood",
   archTitle:"Voice in, ledger out.",
   archSub:"The order flow is the easy part to see. What makes it hold up in a village with one bar of signal is what sits behind it.",
@@ -1461,6 +1584,36 @@ const HI = {
   paperL2:"किसकी बारी है", paperL2b:"हर कागज़ पर लिखा है आपसे या दफ़्तर से — ग़लत आदमी का इंतज़ार कोई नहीं करता।",
   paperL3:"फ़ोटो ही काफ़ी है", paperL3b:"कैमरे से पर्ची की फ़ोटो लें या फ़ाइल लगाएँ। स्कैनर, प्रिंट, लैपटॉप कुछ नहीं चाहिए।",
   legDone:"हो गया", legNow:"आपका इंतज़ार", legWait:"अभी बाक़ी",
+
+  nwKicker:"इस सीज़न में नया",
+  nwTitle:"बही सीखती रही।",
+  nwSub:"नीचे जो कुछ है, वह आपके फ़ोन पर पहले से है। ज़्यादातर तब आया जब किसी न किसी व्यापारी ने एक ही बात दो बार कही।",
+
+  nwPaperFirm:"ओम श्री हरी · मंडी डेस्क",
+  nwPaperWhen:"हर सुबह",
+  nwPaperName:"मंडी क्या कर रही है।",
+  nwTab1:"ख़बर",
+  nwTab1b:"एथेनॉल नीति, हमारे ख़रीदार, और दुनिया — दिन भर पढ़ी जाती है, हफ़्ते में एक बार नहीं।",
+  nwTab2:"भाव",
+  nwTab2b:"हर क्वालिटी का मंडी भाव — कॉल पर रेट बोलने से पहले।",
+  nwTab3:"सार",
+  nwTab3b:"आज सुबह की पाँच लाइनें, और यह तय करने का बटन कि फ़ोन बजे या नहीं।",
+  nwPaperFoot:"अख़बार की तरह, क्योंकि यार्ड में खड़ा आदमी अख़बार ही सरसरी निगाह से पढ़ पाता है।",
+
+  nw1Tag:"काग़ज़", nw1Title:"एक ही पर्ची दो बार नहीं लगेगी।",
+  nw1Body:"हर अपलोड पूरे सिस्टम के हर काग़ज़ से मिलाया जाता है, सिर्फ़ उसी ऑर्डर के नहीं। दोबारा लगी पर्ची पहले ही रोक दी जाती है, और एप बता देता है कि वह किस ऑर्डर पर पहले से लगी है।",
+  nw2Tag:"", nw2Title:"इनवॉइस उसी सप्लायर का होना चाहिए।",
+  nw2Body:"एप इनवॉइस से GSTIN ख़ुद पढ़ लेता है। अगर वह ऑर्डर वाले सप्लायर का नहीं है तो साफ़ बता देता है और पहले सप्लायर बदलने को कहता है — बजाय इसके कि यह गड़बड़ी हफ़्तों बाद पेमेंट के वक़्त निकले।",
+  nw3Tag:"", nw3Title:"ज़्यादा साफ़, बिना ज़्यादा इंतज़ार।",
+  nw3Body:"काग़ज़ अब 2000 पिक्सल पर खिंचते हैं। धूप में खींची काँटा पर्ची दूसरी तरफ़ खोलने पर भी पढ़ी जाती है।",
+  nw4Tag:"ऑर्डर", nw4Title:"अपने दिन, और उनके साथ की छूट।",
+  nw4Body:"अपनी पेमेंट की शर्त टाइप कीजिए और उसी के साथ कैश डिस्काउंट का ख़ाना आ जाता है। यह ऑर्डर पर ही चढ़ जाता है, दो लोगों की याददाश्त में नहीं रहता।",
+  nw5Tag:"", nw5Title:"नोट बोलिए, टाइप मत कीजिए।",
+  nw5Body:"“ड्राइवर देर से पहुँचेगा।” “पार्टी को शुक्रवार तक बिल्टी चाहिए।” आख़िरी स्क्रीन पर बोल दीजिए, वह ऑर्डर के साथ ही चला जाता है — बाद में फ़ोन करके बताने की ज़रूरत नहीं।",
+  nw6Tag:"", nw6Title:"गाड़ी जोड़िए, हटाइए।",
+  nw6Body:"चालू ऑर्डर पर गाड़ियों की गिनती बदल सकते हैं। जिस गाड़ी पर काग़ज़ लग चुके हैं वह रहेगी — सिर्फ़ ख़ाली गाड़ी हटती है।",
+  nw7Tag:"एप", nw7Title:"अब अपने आप लॉगआउट नहीं करता।",
+  nw7Body:"एक बार लॉगिन, तब तक लॉगिन जब तक आप ख़ुद न निकलें। सेशन पीछे-पीछे ख़ुद रिन्यू होता रहता है, नेटवर्क टूटने पर भी।",
 
   archKicker:"अंदर से",
   archTitle:"आवाज़ अंदर, हिसाब बाहर।",
