@@ -1,16 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Om Shri Hari — Your whole trade, in your voice.</title>
-<meta name="description" content="Speak an order and it becomes a purchase order. Every truck, every paper, every payment date — tracked from the first call to the last rupee.">
+<!-- ⚠ SEARCH: everything below until support.js is STATIC on purpose (3 Oct 2026).
+     The rest of the page is drawn by support.js in the browser, so this head is
+     what a search engine reads first. It names the app exactly as both stores
+     list it, "OSHT - Agro Trading", and the company behind it. The canonical is
+     the company's own domain: the same files are also served from
+     shivamj56.github.io and a vercel.app address, and without it those copies
+     compete with the real one. -->
+<title>OSHT - Agro Trading | Om Shri Hari Trading Pvt Ltd</title>
+<meta name="description" content="OSHT - Agro Trading is the app of Om Shri Hari Trading Pvt Ltd. Speak an order in Hindi or English and it becomes a purchase order. On iPhone and Android.">
+<link rel="canonical" href="https://www.omshriharitrading.com/">
 <meta name="theme-color" content="#0a0a0b">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Om Shri Hari — Your whole trade, in your voice.">
-<meta property="og:description" content="Speak an order and it becomes a purchase order. Every truck, every paper, every payment date — tracked from the first call to the last rupee.">
-<meta property="og:image" content="screens/01-home.webp">
+<meta property="og:site_name" content="OSHT - Agro Trading">
+<meta property="og:url" content="https://www.omshriharitrading.com/">
+<meta property="og:title" content="OSHT - Agro Trading — Om Shri Hari Trading Pvt Ltd">
+<meta property="og:description" content="OSHT - Agro Trading is the app of Om Shri Hari Trading Pvt Ltd. Speak an order in Hindi or English and it becomes a purchase order. On iPhone and Android.">
+<meta property="og:image" content="https://www.omshriharitrading.com/screens/01-home.webp">
 <meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.omshriharitrading.com/#organization",
+      "name": "Om Shri Hari Trading Pvt Ltd",
+      "alternateName": ["OSHT", "Om Shri Hari Trading"],
+      "url": "https://www.omshriharitrading.com/",
+      "telephone": "+91-99354-35500"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.omshriharitrading.com/#website",
+      "name": "OSHT - Agro Trading",
+      "alternateName": ["OSHT", "Om Shri Hari Trading"],
+      "url": "https://www.omshriharitrading.com/",
+      "inLanguage": ["en", "hi"],
+      "publisher": { "@id": "https://www.omshriharitrading.com/#organization" }
+    },
+    {
+      "@type": "MobileApplication",
+      "@id": "https://www.omshriharitrading.com/#app",
+      "name": "OSHT - Agro Trading",
+      "alternateName": "OSHT",
+      "description": "Speak a sauda in Hindi or English and OSHT turns it into a purchase order (rate, weight, trucks, advance, due date), then tracks every truck, paper and payment.",
+      "operatingSystem": "Android, iOS",
+      "applicationCategory": "BusinessApplication",
+      "inLanguage": ["en", "hi"],
+      "url": "https://www.omshriharitrading.com/",
+      "image": "https://www.omshriharitrading.com/screens/01-home.webp",
+      "installUrl": "https://play.google.com/store/apps/details?id=com.shreehari.vendors",
+      "sameAs": [
+        "https://apps.apple.com/in/app/osht-agro-trading/id6802507783",
+        "https://play.google.com/store/apps/details?id=com.shreehari.vendors"
+      ],
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+      "publisher": { "@id": "https://www.omshriharitrading.com/#organization" }
+    }
+  ]
+}
+</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0a0b'/%3E%3Cpath d='M16 6a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4.4a5.6 5.6 0 1 1 0 11.2 5.6 5.6 0 0 1 0-11.2z' fill='%23f0561a'/%3E%3C/svg%3E">
 <script src="./support.js"></script>
 <script src="./nav.js" defer></script>
@@ -219,6 +272,15 @@ h2[data-fold].is-unfolded{transform:perspective(820px) rotateX(0);opacity:1}
   animation:om-shine 5.2s linear infinite}
 @media (prefers-reduced-motion:reduce){.hero-title{animation:none;
   -webkit-text-fill-color:#f4f4f5;color:#f4f4f5}}
+/* The app's name as both stores list it, at the head of the hero's <h1> (3 Oct
+   2026) — so the page's main heading says what the app is called. A solid fill
+   of its own: the title around it is shimmer clipped to the glyphs, and an
+   inherited transparent fill would hand the name to the shimmer. Sized here,
+   fluidly, not inline, so the responsive layer's [style*="font-size: …"]
+   overrides never catch it. */
+.hero-brand{display:block;margin:0 0 16px;font-size:clamp(17px,2.1vw,24px);line-height:1.2;
+  font-weight:800;letter-spacing:-.01em;
+  -webkit-text-fill-color:var(--accent-hi);color:var(--accent-hi)}
 /* ---- the hisaab panel --------------------------------------------------
    Stands where a decorative "10×" used to. The section claims the maths is done
    before the call ends; this performs it — spoken sauda at the top, then the
@@ -736,14 +798,14 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div style="display:inline-flex;align-items:center;gap:9px;height:34px;padding:0 15px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-warm);background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.03));border:var(--glass-brd);box-shadow:var(--glass-sh);margin-bottom:26px">
 <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(240,86,26,.9)"></span>{{ t.heroBadge }}
 </div>
-<h1 class="hero-title" data-anim style="margin:0;font-size:82px;line-height:.95;font-weight:800;letter-spacing:-.045em">{{ t.heroTitle }}</h1>
+<h1 class="hero-title" data-anim style="margin:0;font-size:82px;line-height:.95;font-weight:800;letter-spacing:-.045em"><span class="hero-brand">OSHT - Agro Trading</span>{{ t.heroTitle }}</h1>
 <p data-anim style="margin:22px 0 0;font-size:18.5px;line-height:1.6;font-weight:450;color:var(--ink-2);max-width:520px">{{ t.heroSub }}</p>
 <div data-anim style="display:flex;gap:13px;margin-top:34px;flex-wrap:wrap">
-<a href="https://shree-hari-console.netlify.app/app" target="_blank" rel="noopener noreferrer" style="height:60px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:12px;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:var(--pill-sh);cursor:pointer;text-decoration:none">
+<a href="https://play.google.com/store/apps/details?id=com.shreehari.vendors" target="_blank" rel="noopener noreferrer" style="height:60px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:12px;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:var(--pill-sh);cursor:pointer;text-decoration:none">
 <span style="display:flex;align-items:center"><svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor" aria-hidden="true" style="flex:0 0 auto;display:block"><path d="M0 1.2a1 1 0 0 1 1.5-.87l8.2 5.3a1 1 0 0 1 0 1.74l-8.2 5.3A1 1 0 0 1 0 11.8z"/></svg></span>
 <span style="display:flex;flex-direction:column;line-height:1.15"><span style="font-size:9.5px;font-weight:700;opacity:.85;letter-spacing:.09em;text-transform:uppercase">{{ t.storeSmall }}</span><span style="font-size:16.5px;font-weight:800">{{ t.storeBig }}</span></span>
 </a>
-<a href="https://shree-hari-console.netlify.app/ios" target="_blank" rel="noopener noreferrer" style="height:60px;padding:0 28px;border-radius:999px;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh);cursor:pointer">
+<a href="https://apps.apple.com/in/app/osht-agro-trading/id6802507783" target="_blank" rel="noopener noreferrer" style="height:60px;padding:0 28px;border-radius:999px;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh);cursor:pointer">
 <svg width="17" height="20" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" style="flex:0 0 auto"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-36.5-2.8-76.4 21.2-91 21.2-15.4 0-50.7-20.2-78.4-20.2C61.7 141.6 8 184.7 8 271.2c0 25.6 4.7 52 14 79.3 12.5 35.9 56.1 123.8 101.6 122.4 23.8-.6 40.6-16.9 71.6-16.9 30.1 0 45.6 16.9 72.2 16.9 45.9-.7 85.3-80.6 97.2-116.6-61.4-29-46.1-86.6-45.9-87.6zM255.2 84.6c15.2-18.5 22.9-40.1 21.6-64.6-24.3 1.4-45.9 13.2-63.6 33.5-15.7 18.2-24.1 39.7-22.5 63.3 26.1 2 49.4-10.5 64.5-32.2z"/></svg>
 <span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><span style="font-size:9.5px;font-weight:700;opacity:.7;letter-spacing:.09em;text-transform:uppercase">{{ t.storeIosSmall }}</span><span style="font-size:16.5px;font-weight:800">{{ t.storeIosBig }}</span></span>
 </a>
@@ -1292,11 +1354,11 @@ window.dispatchEvent(new Event('ogl-ready'));
 <h2 data-fold style="margin:0;font-size:58px;line-height:1.0;font-weight:800;letter-spacing:-.045em;max-width:600px;margin-left:auto;margin-right:auto">{{ t.ctaTitle }}</h2>
 <p style="margin:18px auto 0;font-size:16.5px;line-height:1.6;font-weight:500;color:var(--ink-2);max-width:500px">{{ t.ctaSub }}</p>
 <div style="display:flex;gap:13px;margin-top:34px;justify-content:center;flex-wrap:wrap">
-<a href="https://shree-hari-console.netlify.app/app" target="_blank" rel="noopener noreferrer" style="height:62px;padding:0 32px;border-radius:999px;display:flex;align-items:center;gap:12px;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:var(--pill-sh);cursor:pointer;text-decoration:none">
+<a href="https://play.google.com/store/apps/details?id=com.shreehari.vendors" target="_blank" rel="noopener noreferrer" style="height:62px;padding:0 32px;border-radius:999px;display:flex;align-items:center;gap:12px;color:#fff;background:var(--pill);border:1px solid rgba(255,255,255,.4);box-shadow:var(--pill-sh);cursor:pointer;text-decoration:none">
 <span style="display:flex;align-items:center"><svg width="12" height="14" viewBox="0 0 11 13" fill="currentColor" aria-hidden="true" style="flex:0 0 auto;display:block"><path d="M0 1.2a1 1 0 0 1 1.5-.87l8.2 5.3a1 1 0 0 1 0 1.74l-8.2 5.3A1 1 0 0 1 0 11.8z"/></svg></span>
 <span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><span style="font-size:9.5px;font-weight:700;opacity:.85;letter-spacing:.09em;text-transform:uppercase">{{ t.storeSmall }}</span><span style="font-size:17px;font-weight:800">{{ t.storeBig }}</span></span>
 </a>
-<a href="https://shree-hari-console.netlify.app/ios" target="_blank" rel="noopener noreferrer" style="height:62px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh);cursor:pointer">
+<a href="https://apps.apple.com/in/app/osht-agro-trading/id6802507783" target="_blank" rel="noopener noreferrer" style="height:62px;padding:0 30px;border-radius:999px;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);background:var(--glass);border:var(--glass-brd);box-shadow:var(--glass-sh);cursor:pointer">
 <svg width="17" height="20" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" style="flex:0 0 auto"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-36.5-2.8-76.4 21.2-91 21.2-15.4 0-50.7-20.2-78.4-20.2C61.7 141.6 8 184.7 8 271.2c0 25.6 4.7 52 14 79.3 12.5 35.9 56.1 123.8 101.6 122.4 23.8-.6 40.6-16.9 71.6-16.9 30.1 0 45.6 16.9 72.2 16.9 45.9-.7 85.3-80.6 97.2-116.6-61.4-29-46.1-86.6-45.9-87.6zM255.2 84.6c15.2-18.5 22.9-40.1 21.6-64.6-24.3 1.4-45.9 13.2-63.6 33.5-15.7 18.2-24.1 39.7-22.5 63.3 26.1 2 49.4-10.5 64.5-32.2z"/></svg>
 <span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><span style="font-size:9.5px;font-weight:700;opacity:.7;letter-spacing:.09em;text-transform:uppercase">{{ t.storeIosSmall }}</span><span style="font-size:17px;font-weight:800">{{ t.storeIosBig }}</span></span>
 </a>
@@ -1316,6 +1378,7 @@ window.dispatchEvent(new Event('ogl-ready'));
 <div style="font-size:14.5px;font-weight:800">Om Shri Hari Trading Pvt Ltd</div>
 </div>
 <p style="margin:0;font-size:12.5px;line-height:1.62;font-weight:500;color:var(--ink-2)">{{ t.footBlurb }}</p>
+<p style="margin:12px 0 0;font-size:12.5px;line-height:1.62;font-weight:500;color:var(--ink-2)"><b style="color:var(--ink)">OSHT - Agro Trading</b> · <a href="https://apps.apple.com/in/app/osht-agro-trading/id6802507783" target="_blank" rel="noopener" style="color:inherit">App Store</a> · <a href="https://play.google.com/store/apps/details?id=com.shreehari.vendors" target="_blank" rel="noopener" style="color:inherit">Google Play</a></p>
 </div>
 <div style="display:flex;gap:52px;flex-wrap:wrap">
 <div>
@@ -1382,7 +1445,7 @@ const EN = {
   heroBadge:"The hisaab, in your pocket — 10× your trade",
   heroTitle:"Your whole trade, in your voice.",
   heroSub:"Speak the sauda and the app does the hisaab — rate, weight, trucks, advance, due date — and turns it into a purchase order. Every truck, every paper, every rupee, always in your pocket.",
-  storeSmall:"Download for", storeBig:"Android", storeIosSmall:"Join the beta on", storeIosBig:"TestFlight", heroCall:"Talk to us",
+  storeSmall:"Get it on", storeBig:"Google Play", storeIosSmall:"Download on the", storeIosBig:"App Store", heroCall:"Talk to us",
   heroPoint1:"No typing needed", heroPoint2:"Hindi and English", heroPoint3:"Works on any phone",
 
   probKicker:"The problem",
@@ -1546,7 +1609,7 @@ const HI = {
   heroBadge:"हिसाब आपकी जेब में — व्यापार 10×",
   heroTitle:"आपका पूरा व्यापार, आपकी आवाज़ में।",
   heroSub:"सौदा बोलिए और ऐप हिसाब कर देता है — भाव, वज़न, ट्रक, एडवांस, ड्यू डेट — और उसे परचेज़ ऑर्डर बना देता है। हर ट्रक, हर कागज़, हर रुपया, हमेशा आपकी जेब में।",
-  storeSmall:"डाउनलोड कीजिए", storeBig:"Android", storeIosSmall:"बीटा जॉइन कीजिए", storeIosBig:"TestFlight", heroCall:"बात कीजिए",
+  storeSmall:"डाउनलोड कीजिए", storeBig:"Google Play", storeIosSmall:"डाउनलोड कीजिए", storeIosBig:"App Store", heroCall:"बात कीजिए",
   heroPoint1:"टाइप करने की ज़रूरत नहीं", heroPoint2:"हिंदी और अंग्रेज़ी", heroPoint3:"किसी भी फ़ोन पर चले",
 
   probKicker:"समस्या",

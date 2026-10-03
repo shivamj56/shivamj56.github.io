@@ -1,0 +1,5 @@
+# OSHT - Agro Trading — Om Shri Hari Trading Pvt Ltd. Everything here is public.
+User-agent: *
+Allow: /
+
+Sitemap: https://www.omshriharitrading.com/sitemap.xml
