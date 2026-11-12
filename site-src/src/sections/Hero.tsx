@@ -2,38 +2,38 @@
  * The opening: night, a line of light on the horizon, streaks that rush into
  * it — the app's own intro, told in the browser — and the phone playing the
  * real intro film before it settles on the night-mode Home.
+ * Nothing is laid over the phone's screen: the chips sit under it, solid.
  */
 import { useEffect, useRef, useState } from 'react';
 import { BadgeCheck, Crown, Phone as PhoneIcon, RotateCcw, TrendingUp } from 'lucide-react';
 import { LINKS } from '../content';
-import { Example, Phone, StoreButtons, reducedMotion, useSite } from '../site';
+import { Example, Phone, StoreButtons, reducedMotion, useScrollFrame, useSite } from '../site';
 
 const HORIZON = 0.74; // same as .horizon's --hz
 
 /* ---------- nav ---------- */
 export function Nav() {
   const { t, lang, base } = useSite();
-  const ref = useRef<HTMLElement>(null);
   const [solid, setSolid] = useState(false);
   const [tone, setTone] = useState<'dark' | 'light'>('dark');
 
-  useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > 30);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    // The bar takes the tone of whichever section sits under it.
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) if (e.isIntersecting) setTone((e.target as HTMLElement).dataset.tone === 'light' ? 'light' : 'dark');
-      },
-      { rootMargin: '-36px 0px -92% 0px' }
-    );
-    document.querySelectorAll<HTMLElement>('[data-tone]').forEach((s) => io.observe(s));
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      io.disconnect();
-    };
-  }, []);
+  // Solid once the page moves; its tone follows whatever sits under it — the
+  // sunrise counts as night until its sky has turned to day.
+  useScrollFrame(() => {
+    setSolid(window.scrollY > 30);
+    const y = 40;
+    let next: 'dark' | 'light' = 'dark';
+    for (const s of document.querySelectorAll<HTMLElement>('[data-tone], #dawn')) {
+      const r = s.getBoundingClientRect();
+      if (r.top > y || r.bottom <= y) continue;
+      if (s.id === 'dawn') {
+        const stage = s.querySelector<HTMLElement>('.dawn__stage');
+        next = stage && parseFloat(stage.style.getPropertyValue('--day') || '0') > 0.5 ? 'light' : 'dark';
+      } else next = s.dataset.tone === 'light' ? 'light' : 'dark';
+      break;
+    }
+    setTone(next);
+  });
 
   const links: [string, string][] = [
     ['#rate', t.nav.rate],
@@ -46,7 +46,7 @@ export function Nav() {
   ];
   const other = lang === 'hi' ? 'en' : 'hi';
   return (
-    <header ref={ref} className="nav" data-solid={solid ? '1' : '0'} data-tone={tone}>
+    <header className="nav" data-solid={solid ? '1' : '0'} data-tone={tone}>
       <div className="wrap nav__bar">
         <a href="#top" className="flex items-center gap-2.5 mr-auto" aria-label={t.nav.home}>
           <img src={`${base}media/brand/mark.webp`} width={192} height={360} alt="" style={{ height: 36, width: 'auto' }} />
@@ -258,28 +258,46 @@ function HeroPhone() {
   };
 
   return (
-    <div ref={box} className="relative">
-      <Phone
-        screen="home-night"
-        alt={t.hero.phoneAlt}
-        priority
-        width="clamp(232px, 62vw, 330px)"
-        sizes="(max-width: 700px) 62vw, 330px"
-        className="float"
-      >
-        <div className="splash" aria-hidden="true">
-          <img src={`${base}media/brand/mark.webp`} alt="" width={192} height={360} />
+    <div className="flex flex-col items-center gap-6">
+      <div ref={box}>
+        <Phone screen="home-night" alt={t.hero.phoneAlt} priority width="clamp(240px, 64vw, 330px)">
+          <div className="splash" aria-hidden="true">
+            <img src={`${base}media/brand/mark.webp`} alt="" width={192} height={360} />
+          </div>
+        </Phone>
+      </div>
+      <div className="flex flex-wrap justify-center gap-3 max-w-[520px]">
+        <div className="chip panel-dark">
+          <i style={{ background: 'linear-gradient(135deg,#ff9933,#f26b1d)', color: '#fff' }}>
+            <TrendingUp size={18} aria-hidden="true" />
+          </i>
+          <span className="leading-tight">
+            <span className="block text-[12.5px] text-[#ecd3b4]">{t.hero.chipBest}</span>
+            <span className="flex items-center gap-2 text-[#fff3e4] text-[19px] font-semibold">
+              <span className="num">₹2,474</span>
+              <span className="text-[13px] font-medium text-[#ecd3b4]">{t.hero.chipInHand}</span>
+            </span>
+          </span>
         </div>
-      </Phone>
-      <button
-        type="button"
-        onClick={replay}
-        className="absolute -bottom-14 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 whitespace-nowrap text-[14px] font-semibold rounded-full px-4 py-2 glass-dark transition-opacity duration-500"
-        style={{ opacity: over ? 1 : 0, pointerEvents: over ? 'auto' : 'none' }}
-        tabIndex={over ? 0 : -1}
-      >
-        <RotateCcw size={15} aria-hidden="true" /> {t.intro}
-      </button>
+        <div className="chip panel-dark">
+          <i style={{ background: 'linear-gradient(135deg,#fbe3a6,#e7b65c 55%,#b8862b)', color: '#2a1408' }}>
+            <Crown size={18} aria-hidden="true" />
+          </i>
+          <span className="text-[16px] font-semibold text-[#fbe3a6]">{t.hero.chipGold}</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-3 min-h-[40px]">
+        <Example>{t.hero.example}</Example>
+        <button
+          type="button"
+          onClick={replay}
+          className="inline-flex items-center gap-2 whitespace-nowrap text-[14px] font-semibold rounded-full px-4 py-2 panel-dark transition-opacity duration-500"
+          style={{ opacity: over ? 1 : 0, pointerEvents: over ? 'auto' : 'none' }}
+          tabIndex={over ? 0 : -1}
+        >
+          <RotateCcw size={15} aria-hidden="true" /> {t.intro}
+        </button>
+      </div>
     </div>
   );
 }
@@ -299,34 +317,32 @@ export function Hero() {
     };
   }, []);
   const h = t.headline;
-  const word = (i: number) => (
-    <span className={`hl-word${lit === i ? ' is-lit' : ''}`}>{h.words[i]}</span>
-  );
+  const word = (i: number) => <span className={`hl-word${lit === i ? ' is-lit' : ''}`}>{h.words[i]}</span>;
 
   return (
-    <section id="top" className="hero grain on-night" data-tone="dark" aria-labelledby="hero-title">
+    <section id="top" className="hero on-night" data-tone="dark" aria-labelledby="hero-title">
       <Sky />
       <div className="horizon" aria-hidden="true" />
-      <div className="wrap relative z-[2] grid lg:grid-cols-[1.12fr_0.88fr] items-center gap-x-12 gap-y-16 pt-[118px] pb-[110px] min-h-[100svh]">
+      <div className="wrap relative z-[2] grid lg:grid-cols-[1.1fr_0.9fr] items-center gap-x-12 gap-y-14 pt-[118px] pb-[90px] min-h-[100svh]">
         <div>
-          <p className="reveal is-in inline-flex items-center gap-3 rounded-full pl-1.5 pr-4 py-1.5 glass-dark text-[14px] font-semibold text-[#f3d7b5]">
+          <p className="inline-flex items-center gap-3 rounded-full pl-1.5 pr-4 py-1.5 panel-dark text-[14px] font-semibold text-[#f3d7b5]">
             <img src={`${base}media/brand/icon-night.webp`} alt="" width={28} height={28} className="rounded-[9px]" />
             {t.hero.eyebrow}
           </p>
-          <h1 id="hero-title" className="display mt-7 text-[clamp(42px,7.4vw,88px)] leading-[1.14] text-balance">
-            {word(0)}, {word(1)}, {word(2)} {h.and} {word(3)} —{' '}
-            <span className="gold">{h.tail}</span>
+          <h1 id="hero-title" className="display mt-7 text-[clamp(42px,7.2vw,86px)] leading-[1.16] text-balance">
+            {word(0)}, {word(1)}, {word(2)} {h.and} {word(3)},
+            <span className="gold block">{h.tail}</span>
           </h1>
-          <p className="lead mt-6" style={{ color: '#e6d2bf' }}>
+          <p className="lead mt-6" style={{ color: '#ecdac8' }}>
             {t.hero.sub}
           </p>
           <StoreButtons className="mt-9" />
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-[15px] text-[#e6d2bf]">
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-[15px]">
             <a href={LINKS.tel} className="inline-flex items-center gap-2 font-semibold text-[#ffd9a8] hover:text-white">
               <PhoneIcon size={17} aria-hidden="true" /> {t.hero.call} · <span className="num">{LINKS.telDisplay}</span>
             </a>
           </div>
-          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2.5 text-[15px] text-[#d9c3ae]" style={{ listStyle: 'none', padding: 0 }}>
+          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2.5 text-[15px] text-[#e2cdb9]" style={{ listStyle: 'none', padding: 0 }}>
             {t.hero.points.map((p) => (
               <li key={p} className="inline-flex items-center gap-2">
                 <BadgeCheck size={17} className="text-[#e7b65c]" aria-hidden="true" /> {p}
@@ -334,31 +350,7 @@ export function Hero() {
             ))}
           </ul>
         </div>
-
-        <div className="relative justify-self-center lg:justify-self-end lg:mr-6">
-          <HeroPhone />
-          <div className="chip glass-dark left-[-10%] top-[-6%] sm:left-[-30%] sm:top-[16%]" style={{ ['--d' as string]: '2.6s' }}>
-            <i style={{ background: 'linear-gradient(135deg,#ff9933,#f26b1d)', color: '#fff' }}>
-              <TrendingUp size={18} aria-hidden="true" />
-            </i>
-            <span className="leading-tight">
-              <span className="block text-[12px] text-[#e6c9a8]">{t.hero.chipBest}</span>
-              <span className="flex items-center gap-2 text-[#fff3e4] text-[19px] font-semibold">
-                <span className="num">₹2,474</span>
-                <span className="text-[13px] font-medium text-[#e6c9a8]">{t.hero.chipInHand}</span>
-              </span>
-              <span className="block mt-1.5">
-                <Example>{t.hero.example}</Example>
-              </span>
-            </span>
-          </div>
-          <div className="chip glass-dark right-[-8%] bottom-[14%] sm:right-[-24%] sm:bottom-[22%] lg:right-[-10%] min-[1400px]:right-[-24%]" style={{ ['--d' as string]: '3s' }}>
-            <i style={{ background: 'linear-gradient(135deg,#fbe3a6,#e7b65c 55%,#b8862b)', color: '#2a1408' }}>
-              <Crown size={18} aria-hidden="true" />
-            </i>
-            <span className="text-[16px] font-semibold text-[#fbe3a6]">{t.hero.chipGold}</span>
-          </div>
-        </div>
+        <HeroPhone />
       </div>
       <a href="#dawn" className="scroll-cue hidden lg:inline-flex absolute z-[3] bottom-5 left-1/2 -translate-x-1/2 text-[#f3d7b5]" aria-label={t.dawn.scroll}>
         <span aria-hidden="true" />

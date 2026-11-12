@@ -10,21 +10,21 @@ export function Madam() {
   const { t } = useSite();
   const m = t.madam;
   return (
-    <section id="madam" className="section madam grain on-night" data-tone="dark" aria-labelledby="madam-h">
+    <section id="madam" className="section madam on-night" data-tone="dark" aria-labelledby="madam-h">
       <div className="wrap relative z-[2] grid lg:grid-cols-2 items-center gap-x-14 gap-y-16">
         <div>
           <SectionHead kicker={m.kicker} title={m.title} id="madam-h" body={m.body} />
           <Points items={m.points} icons={[<ShieldCheck size={20} />, <Sparkles size={20} />, <Languages size={20} />]} />
         </div>
-        <Reveal className="relative flex flex-col items-center text-center" blur>
+        <Reveal className="relative flex flex-col items-center text-center">
           <div className="orb" aria-hidden="true" />
           <p className="mt-10 text-[15px] text-[#cdb7e6]">{m.hello}</p>
           <p className="display mt-1 text-[clamp(26px,3vw,36px)] leading-tight text-white">{m.help}</p>
           <div className="mt-7 flex flex-wrap justify-center gap-2.5 max-w-[30rem]">
             {m.questions.map((q, i) => (
-              <Reveal as="span" key={q} className="qchip" delay={300 + i * 120}>
+              <span key={q} className="qchip">
                 {q}
-              </Reveal>
+              </span>
             ))}
           </div>
           <div className="mt-9 flex flex-col items-center gap-3">
@@ -48,11 +48,11 @@ export function Levels() {
   const c = L.card;
   const icons = [<Star size={18} key="s" />, <Crown size={18} key="c" />, <Trophy size={18} key="t" />];
   return (
-    <section id="levels" className="section levels grain on-night" data-tone="dark" aria-labelledby="levels-h">
+    <section id="levels" className="section levels on-night" data-tone="dark" aria-labelledby="levels-h">
       <div className="wrap relative z-[2]">
         <SectionHead kicker={L.kicker} title={L.title} id="levels-h" body={L.body} />
         <div className="mt-14 grid lg:grid-cols-[0.9fr_1.1fr] gap-8 items-start">
-          <Reveal blur>
+          <Reveal>
             <div className="supplier-card">
               <div className="flex items-center justify-between">
                 <span className="brand-word text-[12px] tracking-[0.18em] text-[#e7b65c]">{c.brand}</span>
@@ -90,7 +90,7 @@ export function Levels() {
           </Reveal>
           <div className="grid sm:grid-cols-3 gap-4">
             {L.tiers.map((tier, i) => (
-              <Reveal key={tier.key} delay={120 + i * 120} className={`tier ${tier.key}`}>
+              <Reveal key={tier.key} className={`tier ${tier.key}`}>
                 <span className="grid place-items-center w-10 h-10 rounded-[12px] bg-[rgba(255,255,255,.55)]" aria-hidden="true">
                   {icons[i]}
                 </span>

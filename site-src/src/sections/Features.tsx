@@ -2,6 +2,7 @@
  * Morning: the three things a seller opens the app for — today's rate after
  * freight, the money, and where each lorry and its papers are.
  * Every figure is the app's own demo data, and labelled as an example.
+ * Phones stand straight and nothing is laid over a screenshot.
  */
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import {
@@ -20,21 +21,15 @@ export function splitLead(s: string): [string, string] {
 export function SectionHead({ kicker, title, id, body, center = false }: { kicker: string; title: string; id?: string; body?: string; center?: boolean }) {
   const [lead, rest] = splitLead(title);
   return (
-    <div className={center ? 'text-center mx-auto max-w-[46rem]' : ''}>
-      <Reveal as="p" className="kicker">{kicker}</Reveal>
-      <Reveal as="div" delay={80} blur>
-        <h2 className="h2" id={id}>
-          {lead ? <span className="accent">{lead}</span> : null}
-          {lead ? ' ' : ''}
-          {rest}
-        </h2>
-      </Reveal>
-      {body ? (
-        <Reveal as="p" delay={160} className={`lead${center ? ' mx-auto' : ''}`}>
-          {body}
-        </Reveal>
-      ) : null}
-    </div>
+    <Reveal className={center ? 'text-center mx-auto max-w-[46rem]' : ''}>
+      <p className="kicker">{kicker}</p>
+      <h2 className="h2" id={id}>
+        {lead ? <span className="accent">{lead}</span> : null}
+        {lead ? ' ' : ''}
+        {rest}
+      </h2>
+      {body ? <p className={`lead${center ? ' mx-auto' : ''}`}>{body}</p> : null}
+    </Reveal>
   );
 }
 
@@ -42,7 +37,7 @@ export function Points({ items, icons }: { items: { t: string; b: string }[]; ic
   return (
     <ul className="points">
       {items.map((p, i) => (
-        <Reveal as="li" key={p.t} delay={200 + i * 90}>
+        <Reveal as="li" key={p.t}>
           <span className="ic" aria-hidden="true">{icons[i]}</span>
           <span>
             <b>{p.t}</b>
@@ -67,7 +62,7 @@ function RateCard() {
   }, [seen]);
   const big = mill ? 2490 : 2474;
   return (
-    <div ref={ref} className="glass p-4 sm:p-5 w-[min(420px,100%)]">
+    <div ref={ref} className="panel p-4 sm:p-5 w-[min(440px,100%)]">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-[14px] font-semibold">
           <MapPin size={16} className="text-[var(--color-saffron)]" aria-hidden="true" /> {c.from}
@@ -80,11 +75,11 @@ function RateCard() {
       </div>
       <div className="card mt-3 p-4">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <span className="num grid place-items-center w-9 h-9 rounded-[11px] text-white font-bold" style={{ background: 'linear-gradient(135deg,#ff9933,#f26b1d)' }}>
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="num grid place-items-center w-9 h-9 shrink-0 rounded-[11px] text-white font-bold" style={{ background: 'linear-gradient(135deg,#ff9933,#f26b1d)' }}>
               1
             </span>
-            <span>
+            <span className="min-w-0">
               <span className="block font-semibold text-[16px] sm:text-[17px] leading-tight">Gandak Bio-Energy</span>
               <span className="block text-[13px] text-[var(--color-muted)]">
                 44 {c.km} · {fill(c.payDays, { n: 30 })}
@@ -123,12 +118,12 @@ function RateCard() {
           </div>
         </div>
       </div>
-      <div className="card mt-3 px-4 py-3 flex items-center justify-between gap-3 opacity-90">
-        <span>
+      <div className="card mt-3 px-4 py-3 flex items-center justify-between gap-3">
+        <span className="min-w-0">
           <span className="block font-semibold text-[15px]">Saryu Agro Distillery</span>
           <span className="block text-[12.5px] text-[var(--color-sindoor)]">{fill(c.behind, { d: '36', l: '10,800' })}</span>
         </span>
-        <span className="num font-bold text-[20px]">₹2,438</span>
+        <span className="num font-bold text-[20px] shrink-0">₹2,438</span>
       </div>
       <p className="mt-3 text-[12.5px] text-[var(--color-muted)]">{c.note}</p>
     </div>
@@ -140,19 +135,14 @@ export function Rates() {
   const r = t.rate;
   return (
     <section id="rate" className="section day" data-tone="light" aria-labelledby="rate-h">
-      <div className="wrap grid lg:grid-cols-[0.95fr_1.05fr] items-center gap-x-14 gap-y-14">
+      <div className="wrap grid lg:grid-cols-[1fr_1fr] items-center gap-x-16 gap-y-12">
         <div>
           <SectionHead kicker={r.kicker} title={r.title} id="rate-h" body={r.body} />
           <Points items={r.points} icons={[<MapPin size={20} />, <SlidersHorizontal size={20} />, <BellRing size={20} />]} />
         </div>
-        <div className="relative flex flex-col items-center lg:flex-row lg:justify-end">
-          <Reveal className="relative lg:mr-4" delay={120}>
-            <Phone screen="rates" alt={r.title} width="clamp(230px, 24vw, 310px)" style={{ transform: 'rotate(3deg)' }} />
-          </Reveal>
-          <Reveal className="relative z-[2] -mt-56 w-full flex justify-center lg:mt-0 lg:w-auto lg:block lg:absolute lg:left-[-8%] lg:top-[16%]" delay={260} blur>
-            <RateCard />
-          </Reveal>
-        </div>
+        <Reveal className="flex justify-center lg:justify-end">
+          <RateCard />
+        </Reveal>
       </div>
     </section>
   );
@@ -165,71 +155,61 @@ export function Money() {
   const { t } = useSite();
   const m = t.money;
   const c = m.card;
-  const [weekRef, weekSeen] = useInView<HTMLDivElement>();
   return (
     <section id="money" className="section day-2" data-tone="light" aria-labelledby="money-h">
-      <div className="wrap grid lg:grid-cols-[1.05fr_0.95fr] items-center gap-x-14 gap-y-14">
-        <div className="order-2 lg:order-1 relative">
-          <Reveal className="hidden md:block absolute right-[-2%] top-[14%] z-0" delay={300}>
-            <Phone screen="money-night" alt="" width="clamp(200px, 19vw, 250px)" style={{ transform: 'rotate(7deg)' }} />
-          </Reveal>
-          <Reveal className="card relative z-[1] p-5 sm:p-7 md:w-[82%]" blur>
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-[15px] font-semibold text-[var(--color-muted)]">{c.due}</span>
-              <Example />
-            </div>
-            <div className="bigmoney mt-2">
-              <CountUp value={2151100} />
-            </div>
-            <div className="mt-2 text-[16px] font-semibold text-[var(--color-muted)]">{c.dueSub}</div>
-            <div className="mt-5 rounded-[18px] bg-[#fff3e6] px-4 py-3 flex items-center justify-between">
-              <span className="text-[14px] font-semibold text-[var(--color-muted)]">{c.month}</span>
-              <span className="num font-bold text-[22px]">₹14,23,450</span>
-            </div>
-            <div className="mt-6 text-[14px] font-semibold text-[var(--color-muted)]">{c.next7}</div>
-            <div ref={weekRef} className={`week mt-3${weekSeen ? ' is-in' : ''}`} aria-hidden="true">
-              {WEEK.map((v, i) => (
-                <div
-                  key={i}
-                  className={`week__bar${i === 0 ? ' today' : ''}`}
-                  style={{ height: `${46 + ((v - 6.9) / 0.9) * 54}%`, ['--d' as string]: `${i * 70}ms` }}
-                />
-              ))}
-            </div>
-            <div className="grid grid-cols-7 gap-[5px] sm:gap-2">
-              {WEEK.map((v, i) => (
-                <div key={i} className="week__lbl">
-                  {c.days[i]}
-                  <span className="num">{v.toFixed(2)} L</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {c.filters.map((f, i) => (
-                <span key={f} className={`pill${i === 0 ? ' on' : ''}`}>
-                  {f}
-                </span>
-              ))}
-            </div>
-            <div className="mt-4 rounded-[20px] border border-[rgba(122,63,20,.1)] p-4">
-              <div className="flex items-start justify-between gap-3">
-                <span>
-                  <span className="num block font-bold text-[18px]">BR06H3300</span>
-                  <span className="block text-[13.5px] text-[var(--color-muted)]">Saryu Agro Distillery · PO-2026-000018</span>
-                </span>
-                <span className="late">{c.late}</span>
+      <div className="wrap grid lg:grid-cols-[1fr_1fr] items-center gap-x-16 gap-y-12">
+        <Reveal className="order-2 lg:order-1 card p-5 sm:p-7">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-[15px] font-semibold text-[var(--color-muted)]">{c.due}</span>
+            <Example />
+          </div>
+          <div className="bigmoney mt-2">
+            <CountUp value={2151100} />
+          </div>
+          <div className="mt-2 text-[16px] font-semibold text-[var(--color-muted)]">{c.dueSub}</div>
+          <div className="mt-5 rounded-[18px] bg-[#fff3e6] px-4 py-3 flex items-center justify-between gap-3">
+            <span className="text-[14px] font-semibold text-[var(--color-muted)]">{c.month}</span>
+            <span className="num font-bold text-[22px]">₹14,23,450</span>
+          </div>
+          <div className="mt-6 text-[14px] font-semibold text-[var(--color-muted)]">{c.next7}</div>
+          <div className="week mt-3" aria-hidden="true">
+            {WEEK.map((v, i) => (
+              <div key={i} className={`week__bar${i === 0 ? ' today' : ''}`} style={{ height: `${46 + ((v - 6.9) / 0.9) * 54}%` }} />
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-[5px] sm:gap-2">
+            {WEEK.map((v, i) => (
+              <div key={i} className="week__lbl">
+                {c.days[i]}
+                <span className="num">{v.toFixed(2)} L</span>
               </div>
-              <div className="mt-2 flex items-end justify-between gap-3">
-                <span className="num font-bold text-[26px]">₹7,08,050</span>
-                <span className="text-[13.5px] text-[var(--color-muted)]">{c.dueOn}</span>
-              </div>
-              <div className="mt-3 rounded-[14px] bg-[#fff1e3] py-2.5 text-center font-semibold text-[15px] inline-flex w-full justify-center items-center gap-2">
-                <PhoneCall size={16} aria-hidden="true" /> {c.ask}
-              </div>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {c.filters.map((f, i) => (
+              <span key={f} className={`pill${i === 0 ? ' on' : ''}`}>
+                {f}
+              </span>
+            ))}
+          </div>
+          <div className="mt-4 rounded-[20px] border border-[rgba(122,63,20,.12)] p-4">
+            <div className="flex items-start justify-between gap-3">
+              <span className="min-w-0">
+                <span className="num block font-bold text-[18px]">BR06H3300</span>
+                <span className="block text-[13.5px] text-[var(--color-muted)]">Saryu Agro Distillery · PO-2026-000018</span>
+              </span>
+              <span className="late">{c.late}</span>
             </div>
-            <p className="mt-4 text-[12.5px] text-[var(--color-muted)]">{m.note}</p>
-          </Reveal>
-        </div>
+            <div className="mt-2 flex items-end justify-between gap-3">
+              <span className="num font-bold text-[26px]">₹7,08,050</span>
+              <span className="text-[13.5px] text-[var(--color-muted)]">{c.dueOn}</span>
+            </div>
+            <div className="mt-3 rounded-[14px] bg-[#fff1e3] py-2.5 text-center font-semibold text-[15px] inline-flex w-full justify-center items-center gap-2">
+              <PhoneCall size={16} aria-hidden="true" /> {c.ask}
+            </div>
+          </div>
+          <p className="mt-4 text-[12.5px] text-[var(--color-muted)]">{m.note}</p>
+        </Reveal>
         <div className="order-1 lg:order-2">
           <SectionHead kicker={m.kicker} title={m.title} id="money-h" body={m.body} />
           <Points items={m.points} icons={[<CheckCircle2 size={20} />, <SlidersHorizontal size={20} />, <PhoneCall size={20} />]} />
@@ -267,7 +247,6 @@ function Road() {
   const { t } = useSite();
   const L = t.lorry;
   const box = useRef<HTMLDivElement>(null);
-  const truckH = useRef<SVGSVGElement | null>(null);
   const [lit, setLit] = useState(-1);
   const n = L.stages.length;
 
@@ -349,29 +328,22 @@ export function Lorry() {
       <div className="wrap">
         <SectionHead kicker={L.kicker} title={L.title} id="lorry-h" body={L.body} />
         <Road />
-        <Reveal className="mt-12 md:mt-6 rounded-[24px] px-6 py-5 text-center font-semibold text-[clamp(18px,2vw,23px)] text-white" style={{ background: 'linear-gradient(135deg,#2a1408,#4a2410)' }} blur>
-          <span className="text-[#fbe3a6]">“</span>
+        <Reveal className="mt-12 md:mt-6 rounded-[24px] px-6 py-5 text-center font-semibold text-[clamp(18px,2vw,23px)] text-white" style={{ background: 'linear-gradient(135deg,#2a1408,#4a2410)' }}>
           {L.statement}
-          <span className="text-[#fbe3a6]">”</span>
         </Reveal>
         <div className="mt-20 grid lg:grid-cols-[1fr_1fr] items-center gap-x-14 gap-y-14">
-          <div className="relative flex justify-center gap-4 sm:gap-8">
-            <Reveal delay={60}>
-              <Phone screen="lorry" alt={L.where} width="clamp(170px, 20vw, 270px)" style={{ transform: 'rotate(-4deg)' }} />
-            </Reveal>
-            <Reveal delay={200} className="mt-16">
-              <Phone screen="papers" alt={L.papersTitle} width="clamp(170px, 20vw, 270px)" style={{ transform: 'rotate(4deg)' }} />
-            </Reveal>
-          </div>
+          <Reveal className="flex justify-center items-start gap-4 sm:gap-8">
+            <Phone screen="lorry" alt={L.where} width="clamp(150px, 21vw, 280px)" />
+            <Phone screen="papers" alt={L.papersTitle} width="clamp(150px, 21vw, 280px)" className="mt-12" />
+          </Reveal>
           <div>
             <Points items={L.points} icons={[<Camera size={20} />, <WifiOff size={20} />, <FileStack size={20} />]} />
           </div>
         </div>
       </div>
-      <Reveal className="mt-20">
+      <div className="mt-20">
         <Ticker items={t.ticker.items} label={t.ticker.label} />
-      </Reveal>
+      </div>
     </section>
   );
 }
-

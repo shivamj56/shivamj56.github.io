@@ -9,27 +9,27 @@ export function Closing() {
   const { t, base } = useSite();
   const c = t.contact;
   return (
-    <section id="get" className="section closing grain on-night" data-tone="dark" aria-labelledby="get-h">
+    <section id="get" className="section closing on-night" data-tone="dark" aria-labelledby="get-h">
       <div className="wrap relative z-[2] grid lg:grid-cols-[auto_1fr] items-center gap-x-16 gap-y-12">
-        <Reveal className="justify-self-center" blur>
-          <div className="closing__icon float">
+        <Reveal className="justify-self-center">
+          <div className="closing__icon">
             <img src={`${base}media/brand/icon-night-640.webp`} alt="OSHT" width={640} height={640} loading="lazy" decoding="async" />
           </div>
         </Reveal>
         <div className="text-center lg:text-left">
           <Reveal as="p" className="kicker">{c.kicker}</Reveal>
-          <Reveal delay={80} blur>
+          <Reveal>
             <h2 id="get-h" className="h2">
               <span className="gold">{t.cta.title}</span>
             </h2>
           </Reveal>
-          <Reveal as="p" delay={160} className="lead mx-auto lg:mx-0">
+          <Reveal as="p" className="lead mx-auto lg:mx-0">
             {t.cta.body}
           </Reveal>
-          <Reveal delay={240}>
+          <Reveal>
             <StoreButtons className="mt-9 justify-center lg:justify-start" />
           </Reveal>
-          <Reveal delay={320} className="mt-10">
+          <Reveal className="mt-10">
             <p className="font-semibold text-[18px] text-[#fbe3a6]">{c.title}</p>
             <div className="mt-4 flex flex-wrap justify-center lg:justify-start gap-3">
               <a className="contact-link" href={LINKS.tel}>

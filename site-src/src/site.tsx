@@ -78,32 +78,27 @@ export function useScrollFrame(frame: () => void) {
   }, []);
 }
 
+/**
+ * A block that rises in as it scrolls into view. The motion is pure CSS tied to
+ * the scroll position (styles.css, `.reveal`), so it cannot get stuck half-way:
+ * no observer, no hidden state, and browsers without scroll timelines just show it.
+ */
 export function Reveal({
   as: Tag = 'div',
-  delay = 0,
-  blur = false,
   className = '',
   style,
   children,
   ...rest
 }: {
   as?: 'div' | 'li' | 'section' | 'p' | 'span' | 'figure' | 'header';
-  delay?: number;
-  blur?: boolean;
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
   [k: string]: unknown;
 }) {
-  const [ref, seen] = useInView<HTMLElement>();
   const El = Tag as 'div';
   return (
-    <El
-      ref={ref as never}
-      className={`reveal${blur ? ' blur' : ''}${seen ? ' is-in' : ''} ${className}`}
-      style={{ ['--d' as string]: `${delay}ms`, ...style }}
-      {...rest}
-    >
+    <El className={`reveal ${className}`} style={style} {...rest}>
       {children}
     </El>
   );
@@ -138,14 +133,18 @@ export type ScreenName =
   | 'home' | 'rates' | 'money' | 'lorry' | 'papers' | 'repeat' | 'madam' | 'level'
   | 'ask' | 'review' | 'login' | 'updates' | 'home-night' | 'money-night';
 
-export function ScreenImg({ name, alt, priority, sizes }: { name: ScreenName; alt: string; priority?: boolean; sizes?: string }) {
+/**
+ * An app screenshot. Only the 720 and 1080 px files are offered: with a 400 px
+ * choice, Chrome on a 2× phone picked it for a ~230 px phone and the text went soft.
+ */
+export function ScreenImg({ name, alt, priority }: { name: ScreenName; alt: string; priority?: boolean }) {
   const { base } = useSite();
   const src = (w: number) => `${base}media/screens/${name}-${w}.webp`;
   return (
     <img
       src={src(720)}
-      srcSet={`${src(400)} 400w, ${src(720)} 720w, ${src(1080)} 1080w`}
-      sizes={sizes ?? '(max-width: 700px) 66vw, 330px'}
+      srcSet={`${src(720)} 720w, ${src(1080)} 1080w`}
+      sizes="(max-width: 700px) 72vw, 360px"
       width={1080}
       height={2341}
       alt={alt}
@@ -161,7 +160,6 @@ export function Phone({
   alt,
   width = 'clamp(240px, 26vw, 330px)',
   priority,
-  sizes,
   className = '',
   style,
   children
@@ -170,7 +168,6 @@ export function Phone({
   alt: string;
   width?: string;
   priority?: boolean;
-  sizes?: string;
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
@@ -181,38 +178,26 @@ export function Phone({
       <span className="phone__btn b" aria-hidden="true" />
       <span className="phone__btn c" aria-hidden="true" />
       <div className="phone__screen">
-        <ScreenImg name={screen} alt={alt} priority={priority} sizes={sizes} />
+        <ScreenImg name={screen} alt={alt} priority={priority} />
         {children}
         <span className="phone__island" aria-hidden="true" />
-        <span className="phone__glare" aria-hidden="true" />
       </div>
     </div>
   );
 }
 
+/* The stores' own marks, monochrome (shapes after Simple Icons, CC0). */
 function PlayGlyph() {
   return (
-    <svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true">
-      <defs>
-        <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#ffd27a" />
-          <stop offset="1" stopColor="#f26b1d" />
-        </linearGradient>
-      </defs>
-      <path d="M3.2 1.6c-.7.4-1.2 1.2-1.2 2.2v20.4c0 1 .5 1.8 1.2 2.2l12.2-12.4L3.2 1.6z" fill="url(#pg)" />
-      <path d="M19.6 9.8 15.4 14l4.2 4.2 4.6-2.6c1.5-.9 1.5-2.4 0-3.2l-4.6-2.6z" fill="#ffd27a" />
-      <path d="M3.2 1.6 15.4 14l4.2-4.2L5.6 1.8c-.9-.5-1.7-.6-2.4-.2z" fill="#fff4dc" />
-      <path d="M3.2 26.4c.7.4 1.5.3 2.4-.2l14-8L15.4 14 3.2 26.4z" fill="#e8590c" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff4dc" aria-hidden="true">
+      <path d="M22.018 13.298l-3.919 2.218-3.515-3.493 3.543-3.521 3.891 2.202a1.49 1.49 0 0 1 0 2.594zM1.337.924a1.486 1.486 0 0 0-.112.568v21.017c0 .217.045.419.124.6l11.155-11.087L1.337.924zm12.207 10.065l3.258-3.238L3.45.195a1.466 1.466 0 0 0-.946-.179l11.04 10.973zm0 2.067l-11 10.933c.298.036.612-.016.906-.183l13.324-7.54-3.23-3.21z" />
     </svg>
   );
 }
-function AppStoreGlyph() {
+function AppleGlyph() {
   return (
-    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#fff4dc" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
-      <path d="M13.8 4.5 7 18.5" />
-      <path d="M12.2 4.5 19 18.5" />
-      <path d="M5 15.5h16" />
-      <path d="M4 21.5h4.5M17.5 21.5H22" stroke="#ffd27a" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff4dc" aria-hidden="true">
+      <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701" />
     </svg>
   );
 }
@@ -229,7 +214,7 @@ export function StoreButtons({ className = '' }: { className?: string }) {
         </span>
       </a>
       <a className="store" href={LINKS.ios} target="_blank" rel="noopener">
-        <AppStoreGlyph />
+        <AppleGlyph />
         <span>
           <small>{t.store.iosSmall}</small>
           <b>{t.store.iosBig}</b>
