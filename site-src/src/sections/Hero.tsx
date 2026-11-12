@@ -352,7 +352,7 @@ export function Hero() {
               </span>
             </span>
           </div>
-          <div className="chip glass-dark right-[-8%] bottom-[14%] sm:right-[-24%] sm:bottom-[22%]" style={{ ['--d' as string]: '3s' }}>
+          <div className="chip glass-dark right-[-8%] bottom-[14%] sm:right-[-24%] sm:bottom-[22%] lg:right-[-10%] min-[1400px]:right-[-24%]" style={{ ['--d' as string]: '3s' }}>
             <i style={{ background: 'linear-gradient(135deg,#fbe3a6,#e7b65c 55%,#b8862b)', color: '#2a1408' }}>
               <Crown size={18} aria-hidden="true" />
             </i>
