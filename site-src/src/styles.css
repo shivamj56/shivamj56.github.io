@@ -299,6 +299,30 @@ html:not(.js) .dawn__stage { --night: 0; --glow: 0; --day: 1; --rise: 1; }
   transition: transform 0.6s var(--ease-expo);
 }
 .toggle[data-on="1"]::before { transform: translateX(100%); }
+/* The grains' chips (सब first), the grain's tag and the card's headline — the app's own, 13 Nov 2026.
+   Flat fills and hard edges only; the motion runs once and ends level and full. */
+.grain-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-weight: 600; font-size: 13px; line-height: 1.5; background: #fff; border: 1px solid rgba(122, 63, 20, 0.12); color: var(--color-muted); }
+.grain-chip.on { font-weight: 700; color: var(--color-saffron-hi); background: #fde3d2; border-color: rgba(242, 107, 29, 0.35); }
+.grain-chip i { width: 8px; height: 8px; border-radius: 50%; }
+.grain-tag {
+  position: relative; display: inline-flex; align-items: center; gap: 4px; height: 26px; padding: 0 9px 0 15px; border-radius: 0 7px 7px 0;
+  font-weight: 700; font-size: 13px; line-height: 1; color: #8a6100; background: #f7e9c3;
+  clip-path: polygon(11px 0, 100% 0, 100% 100%, 11px 100%, 0 50%); transform-origin: 0 50%;
+}
+.grain-tag::before { content: ""; position: absolute; left: 5px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; box-sizing: border-box; border-radius: 50%; border: 1.25px solid #d4a017; }
+.grain-tag.swing { animation: tag-swing 1.2s cubic-bezier(0.3, 0, 0.2, 1) both; }
+@keyframes tag-swing { 0% { transform: rotate(-8deg); } 30% { transform: rotate(5deg); } 55% { transform: rotate(-2.4deg); } 78% { transform: rotate(0.9deg); } 100% { transform: rotate(0deg); } }
+.offer-line { position: relative; overflow: hidden; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; padding: 7px 12px 7px 15px; border-radius: 12px; font-weight: 600; font-size: 15px; line-height: 1.6; color: var(--color-ink); }
+.offer-line::before { content: ""; position: absolute; inset: 0; background: #f8efd6; transform-origin: 0 50%; }
+.offer-line::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #d4a017; }
+.offer-line > span { position: relative; }
+.offer-line .g { color: #8a6100; font-weight: 700; font-size: 17px; }
+.offer-line .dot { color: var(--color-faint); }
+.offer-line .r { white-space: nowrap; font: 700 20px/1.6 var(--font-num); letter-spacing: -0.01em; }
+.offer-line .r small { font: 500 13px/1 var(--font-body); letter-spacing: 0; color: var(--color-muted); }
+.offer-line.wipe::before { animation: marker-draw 0.55s var(--ease-expo) both; }
+@keyframes marker-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .grain-tag.swing, .offer-line.wipe::before { animation: none; } }
 
 .points { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 18px; }
 .points li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; }

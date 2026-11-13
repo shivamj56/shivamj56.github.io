@@ -6,7 +6,7 @@
  */
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import {
-  BellRing, Camera, CheckCircle2, CircleDashed, FileStack, MapPin, PhoneCall, SlidersHorizontal, WifiOff
+  BellRing, Camera, CheckCircle2, CircleDashed, FileStack, MapPin, PhoneCall, SlidersHorizontal, Wheat, WifiOff
 } from 'lucide-react';
 import {
   CountUp, Example, Phone, Reveal, Ticker, fill, inr, reducedMotion, useInView, useScrollFrame, useSite
@@ -50,13 +50,20 @@ export function Points({ items, icons }: { items: { t: string; b: string }[]; ic
 }
 
 /* ---------- आज का भाव ---------- */
+/** The grains' own colours, as the app draws their chips' dots and tags: maize gold, Sortex violet, Non-Sortex neel. */
+const GRAIN_DOTS = ['#d4a017', '#7b61d1', '#3b7dd8'];
+
 function RateCard() {
   const { t } = useSite();
   const c = t.rate.card;
   const [ref, seen] = useInView<HTMLDivElement>();
   const [mill, setMill] = useState(false); // false = in hand (after freight)
+  // The tag swings once and the headline's marker is drawn once as the card comes into view; until
+  // then — and for good under reduced motion — both simply stand at their end state.
+  const [moved, setMoved] = useState(false);
   useEffect(() => {
     if (!seen || reducedMotion()) return;
+    setMoved(true);
     const id = window.setInterval(() => setMill((m) => !m), 3400);
     return () => window.clearInterval(id);
   }, [seen]);
@@ -68,6 +75,16 @@ function RateCard() {
           <MapPin size={16} className="text-[var(--color-saffron)]" aria-hidden="true" /> {c.from}
         </div>
         <Example />
+      </div>
+      {/* सब first and on, as the app opens (13 Nov 2026). */}
+      <div className="mt-3 flex flex-wrap gap-2" aria-hidden="true">
+        <span className="grain-chip on">{c.all}</span>
+        {c.grains.map((g, i) => (
+          <span key={g} className="grain-chip">
+            <i style={{ background: GRAIN_DOTS[i] }} />
+            {g}
+          </span>
+        ))}
       </div>
       <div className="toggle mt-3" data-on={mill ? '1' : '0'} aria-hidden="true">
         <span className={mill ? '' : 'on'}>{c.tabInHand}</span>
@@ -86,7 +103,25 @@ function RateCard() {
               </span>
             </span>
           </div>
-          <span className="shrink-0 rounded-full px-2.5 py-1 text-[12.5px] font-bold text-[var(--color-saffron-hi)] bg-[rgba(242,107,29,.1)]">{c.rank1}</span>
+          <span className="shrink-0 flex flex-col items-end gap-1.5">
+            <span className="rounded-full px-2.5 py-1 text-[12.5px] font-bold text-[var(--color-saffron-hi)] bg-[rgba(242,107,29,.1)]">{c.rank1}</span>
+            {/* What this mill wants, under "#1", as on every card of the app. */}
+            <span className={`grain-tag${moved ? ' swing' : ''}`}>
+              <Wheat size={14} aria-hidden="true" />
+              {c.grains[0]}
+            </span>
+          </span>
+        </div>
+        {/* The card's headline: the grain and the mill's rate for it. */}
+        <div className={`offer-line mt-3${moved ? ' wipe' : ''}`}>
+          <span>
+            <b className="g">{c.grains[0]}</b>
+            <span className="dot"> · </span>
+            {c.millRate}
+          </span>
+          <span className="r num">
+            ₹2,490<small>{c.perQtl.replace(/\s+/g, '')}</small>
+          </span>
         </div>
         <div className="mt-3 flex items-end justify-between gap-3">
           <div>
@@ -138,7 +173,7 @@ export function Rates() {
       <div className="wrap grid lg:grid-cols-[1fr_1fr] items-center gap-x-16 gap-y-12">
         <div>
           <SectionHead kicker={r.kicker} title={r.title} id="rate-h" body={r.body} />
-          <Points items={r.points} icons={[<MapPin size={20} />, <SlidersHorizontal size={20} />, <BellRing size={20} />]} />
+          <Points items={r.points} icons={[<Wheat size={20} />, <MapPin size={20} />, <SlidersHorizontal size={20} />, <BellRing size={20} />]} />
         </div>
         <Reveal className="flex justify-center lg:justify-end">
           <RateCard />

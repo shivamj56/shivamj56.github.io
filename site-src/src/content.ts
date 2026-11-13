@@ -86,6 +86,7 @@ const hi = {
     title: 'भाड़ा काटकर, हाथ में कितना',
     body: 'ऐप हर मिल के भाव में से आपकी जगह से मिल तक का भाड़ा घटाता है, और जिस मिल से सबसे ज़्यादा पैसा हाथ में आए, उसे सबसे ऊपर रखता है। साथ में यह भी कि एक गाड़ी (30 टन) पर कितना बनेगा।',
     points: [
+      { t: 'सब माल, एक साथ', b: 'ऐप खुलते ही हर फैक्ट्री का आज का भाव — हर कार्ड पर माल का नाम, जैसे “मक्का · मिल का भाव ₹2,490/क्विंटल”।' },
       { t: 'अपनी जगह से हिसाब', b: 'गाँव, शहर या पिन कोड डालिए — जगह कभी भी बदल सकते हैं।' },
       { t: 'हाथ का भाव, या मिल का भाव', b: 'एक टैप में दोनों तरह देखिए — भाड़ा काटकर, या मिल का अपना भाव।' },
       { t: 'भाव अलार्म', b: 'एक अंक तय कीजिए — किसी मिल का भाव उससे ऊपर जाए या नीचे आए, तो ऐप बताएगा।' }
@@ -93,6 +94,8 @@ const hi = {
     card: {
       title: 'आज का भाव',
       from: 'Bettiah से',
+      all: 'सब',
+      grains: ['मक्का', 'DFG Sortex', 'DFG Non-Sortex'],
       tabInHand: 'हाथ में (भाड़ा काटकर)',
       tabMill: 'मिल का भाव',
       rank1: 'आपके लिए #1',
@@ -362,6 +365,7 @@ const en: Copy = {
     title: 'See what lands in hand, after freight',
     body: "The app takes each mill's rate, subtracts the freight from your place to the mill, and puts the mill that leaves the most money in your hand at the top — with what one 30-tonne lorry comes to.",
     points: [
+      { t: 'Every grain at once', b: 'The app opens on All: every mill’s rate today, each card naming its grain — “Maize · Mill’s rate ₹2,490/qtl”.' },
       { t: 'Worked out from your place', b: 'Enter your village, town or PIN code — and change it any time.' },
       { t: 'In-hand rate, or the mill’s rate', b: 'One tap shows it either way — after freight, or the mill’s own rate.' },
       { t: 'Rate alarm', b: 'Set a figure. When a mill’s rate goes above or below it, the app tells you.' }
@@ -369,6 +373,8 @@ const en: Copy = {
     card: {
       title: "Today's rate",
       from: 'from Bettiah',
+      all: 'All',
+      grains: ['Maize', 'DFG Sortex', 'DFG Non-Sortex'],
       tabInHand: 'In hand (after freight)',
       tabMill: "Mill's rate",
       rank1: '#1 for you',
